@@ -54,9 +54,9 @@
 </script>
 
 <!-- Using cdnjs (works everywhere including Claude's renderer) -->
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js"></script>
+<script crossorigin integrity="sha512-8Q6Y9XnTbOE+JNvjBQwJ2H8S+UV4uA6hiRykhdtIyDYZ2TprdNmWOUaKdGzOhyr4dCyk287OejbPvwl7lrfqrQ==" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin integrity="sha512-MOCpqoRoisCTwJ8vQQiciZv0qcpROCidek3GTFS6KTk2+y7munJIlKCVkFCYY+p3ErYFXCjmFjnfTTRSC1OHWQ==" src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin integrity="sha512-aKni+N2bgewoe8CGZlB9c0IDLU5LQaMEZFNjP6FbDK8gZhdTdNKhYKgZaY/EYL9GKJeJigN/wA7WDAOJShgMAQ==" src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
 html{background:#0a0a0c;-webkit-overflow-scrolling:touch;overflow-y:scroll}
@@ -268,8 +268,24 @@ function extractJSON(raw) {
   throw new Error("Could not parse JSON from Claude response");
 }
 
+// ── RATE LIMITER ──────────────────────────────────────────────────────────────
+const RATE = { perMinute: 10, perDay: 100, minMs: 1200 };
+function checkRateLimit() {
+  const now = Date.now(), today = tdk();
+  const rl = ld("dos_rl", { calls: [], daily: {}, last: 0 });
+  rl.calls = (rl.calls || []).filter(t => now - t < 60000);
+  if (now - (rl.last || 0) < RATE.minMs) throw new Error("Too fast — wait a moment.");
+  if (rl.calls.length >= RATE.perMinute) throw new Error("Rate limit: 10 requests/min. Please wait.");
+  const count = ((rl.daily || {})[today] || 0);
+  if (count >= RATE.perDay) throw new Error(`Daily limit of ${RATE.perDay} AI requests reached.`);
+  rl.calls.push(now); rl.last = now;
+  rl.daily = { ...(rl.daily || {}), [today]: count + 1 };
+  sv("dos_rl", rl);
+}
+
 // ── CLAUDE API ────────────────────────────────────────────────────────────────
 async function callClaude(apiKey, messages, system, maxTokens, model) {
+  checkRateLimit();
   const body = { model: model || "claude-haiku-4-5-20251001", max_tokens: maxTokens || 1000, messages };
   if (system) body.system = system;
   const r = await fetch("https://api.anthropic.com/v1/messages", {
@@ -283,6 +299,7 @@ async function callClaude(apiKey, messages, system, maxTokens, model) {
 }
 
 async function analyzePhotoWithKey(apiKey, b64, mime) {
+  checkRateLimit();
   const body = {
     model:"claude-sonnet-4-6", max_tokens:1000,
     messages:[{ role:"user", content:[
@@ -368,7 +385,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
   useEffect(() => { bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [messages, loading]);
 
   const sendMessage = async (text) => {
-    if (!text.trim() || loading) return;
+    if (!text.trim() || loading || photoScanning) return;
     const userMsg = {role:"user", content:text.trim()};
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
@@ -394,6 +411,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
 
   const handlePhoto = (e) => {
     const f = e.target.files[0]; if (!f) return; e.target.value="";
+    if (loading || photoScanning) return;
     const reader = new FileReader();
     reader.onload = async (ev) => {
       const b64 = ev.target.result.split(",")[1];
