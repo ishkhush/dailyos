@@ -127,6 +127,38 @@ video,img{display:block}
 @keyframes glow{0%,100%{box-shadow:0 0 8px rgba(163,230,53,0.3)}50%{box-shadow:0 0 22px rgba(163,230,53,0.7)}}
 @keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0.5)}50%{box-shadow:0 0 12px 4px rgba(163,230,53,0.2)}}
 @keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}50%{box-shadow:0 0 22px 6px rgba(163,230,53,0.14)}}
+@keyframes orbDrift{0%{transform:translate(0,0)}25%{transform:translate(14px,-10px)}50%{transform:translate(5px,14px)}75%{transform:translate(-10px,5px)}100%{transform:translate(0,0)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.7}50%{transform:scale(1.22);opacity:1}}
+@keyframes neonText{0%,100%{filter:drop-shadow(0 0 6px rgba(163,230,53,0.8)) drop-shadow(0 0 12px rgba(163,230,53,0.5))}50%{filter:drop-shadow(0 0 18px rgba(163,230,53,1)) drop-shadow(0 0 36px rgba(20,184,166,0.7)) drop-shadow(0 0 54px rgba(163,230,53,0.3))}}
+@keyframes streakFire{0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(22deg) brightness(1.18)}}
+@keyframes waveBar{0%,100%{transform:scaleY(0.25)}50%{transform:scaleY(1)}}
+@keyframes cardRise{0%{opacity:0;transform:translateY(22px) scale(0.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes gradientPan{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes ringExpand{0%{transform:scale(1);opacity:0.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes sparkPop{0%{transform:scale(0) rotate(0deg);opacity:1}100%{transform:scale(1.6) rotate(90deg);opacity:0}}
+@keyframes energyPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0.6)}40%{box-shadow:0 0 0 8px rgba(163,230,53,0.2)}80%{box-shadow:0 0 0 18px rgba(163,230,53,0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:translateX(0)}}
+@keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.12)}70%{transform:scale(0.96)}100%{transform:scale(1);opacity:1}}
+@keyframes floatOrb{0%,100%{transform:translateY(0) scale(1);opacity:0.5}50%{transform:translateY(-22px) scale(1.12);opacity:0.9}}
+@keyframes shimmerMove{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes iconHover{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.18) rotate(-6deg)}}
+@keyframes glowBorder{0%,100%{box-shadow:0 0 0 1px rgba(163,230,53,0.18)}50%{box-shadow:0 0 0 2px rgba(163,230,53,0.55),0 0 24px rgba(163,230,53,0.16)}}
+@keyframes heroGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes missionPulse{0%,100%{box-shadow:0 0 20px rgba(163,230,53,0.12),0 12px 40px rgba(0,0,0,0.5)}50%{box-shadow:0 0 40px rgba(163,230,53,0.22),0 12px 40px rgba(0,0,0,0.5)}}
+@keyframes dotDance{0%,100%{transform:translateY(0)}33%{transform:translateY(-5px)}66%{transform:translateY(2px)}}
+@keyframes statCountUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes colorCycle{0%{border-color:rgba(163,230,53,0.3)}33%{border-color:rgba(20,184,166,0.3)}66%{border-color:rgba(244,114,182,0.3)}100%{border-color:rgba(163,230,53,0.3)}}
+@keyframes tiltIn{0%{transform:perspective(500px) rotateY(-18deg);opacity:0}100%{transform:perspective(500px) rotateY(0deg);opacity:1}}
+.orb-drift{animation:orbDrift 9s ease-in-out infinite}
+.breathe{animation:breathe 3s ease-in-out infinite}
+.card-rise{animation:cardRise 0.42s cubic-bezier(0.34,1.56,0.64,1) both}
+.glow-border{animation:glowBorder 4s ease-in-out infinite}
+.hero-gradient{background-size:300% 300%;animation:heroGradient 8s ease infinite}
+.wave-bar{animation:waveBar 1.2s ease-in-out infinite}
+.neon-text{animation:neonText 4s ease-in-out infinite}
+.mission-pulse{animation:missionPulse 3s ease-in-out infinite}
+.stat-count-up{animation:statCountUp 0.5s cubic-bezier(0.34,1.56,0.64,1) both}
 .cyber-border{border:1px solid rgba(163,230,53,0.18)!important;box-shadow:0 0 0 0 transparent,inset 0 1px 0 rgba(255,255,255,0.06);transition:box-shadow 0.4s}
 .cyber-border:hover{box-shadow:0 0 20px rgba(163,230,53,0.14),inset 0 1px 0 rgba(255,255,255,0.09)}
 .cyber-card{background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(163,230,53,0.14);border-radius:20px;position:relative;overflow:hidden}
@@ -484,6 +516,35 @@ function speakGoogle(text, locale) {
   }
 }
 
+// ── STREAMELEMENTS TTS (FREE, NO KEY REQUIRED) ────────────────────────────────
+// AWS Polly voices proxied via StreamElements CDN. Zero setup, no API key.
+const SE_VOICES = [
+  {id:"Brian",   label:"Brian — British Male (Recommended)"},
+  {id:"Amy",     label:"Amy — British Female"},
+  {id:"Justin",  label:"Justin — American Male"},
+  {id:"Joanna",  label:"Joanna — American Female"},
+  {id:"Matthew", label:"Matthew — American Male (Deep)"},
+  {id:"Kendra",  label:"Kendra — American Female"},
+  {id:"Russell", label:"Russell — Australian Male"},
+  {id:"Nicole",  label:"Nicole — Australian Female"},
+  {id:"Geraint", label:"Geraint — Welsh Male"},
+];
+let _seAudio = null;
+function speakStreamElements(text, voice) {
+  const v = voice || "Brian";
+  const url = `https://api.streamelements.com/kappa/v2/speech?voice=${v}&text=${encodeURIComponent(text)}`;
+  try {
+    if (_seAudio) { _seAudio.pause(); _seAudio = null; }
+    _seAudio = new Audio(url);
+    const p = _seAudio.play();
+    if (p && p.catch) p.catch(() => speak(text, 0.82));
+    return _seAudio;
+  } catch {
+    speak(text, 0.82);
+    return null;
+  }
+}
+
 // Module-level ref prevents V8 GC from killing utterance mid-speech
 let _currentUtt = null;
 const _isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -497,6 +558,8 @@ function speakText(text, rate) {
       .catch(() => speak(text, rate || 0.82));
   } else if (prefs.provider === "google") {
     speakGoogle(text, prefs.gtLocale || "en-US");
+  } else if (prefs.provider === "streamelements") {
+    speakStreamElements(text, prefs.seVoice || SE_VOICES[0].id);
   } else {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
@@ -523,6 +586,15 @@ async function playSyllablesText(syls) {
     for (let i = 0; i < syls.length; i++) {
       await new Promise(resolve => {
         const audio = speakGoogle(syls[i], prefs.gtLocale || "en-US");
+        if (audio) { audio.onended = resolve; setTimeout(resolve, 2000); }
+        else setTimeout(resolve, 600);
+      });
+      if (i < syls.length - 1) await new Promise(r => setTimeout(r, 350));
+    }
+  } else if (prefs.provider === "streamelements") {
+    for (let i = 0; i < syls.length; i++) {
+      await new Promise(resolve => {
+        const audio = speakStreamElements(syls[i], prefs.seVoice || SE_VOICES[0].id);
         if (audio) { audio.onended = resolve; setTimeout(resolve, 2000); }
         else setTimeout(resolve, 600);
       });
@@ -1135,10 +1207,12 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
 
   const todayChecked = habitChecked[today] || {};
   const allDone = habits.length > 0 && habits.every(h => todayChecked[h.id]);
-  const [dragIdx, setDragIdx] = useState(null);
+  const dragIdxRef = useRef(null);
+  const dragOverRef = useRef(null);
+  const [dragging, setDragging] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
   const moveHabitAbs = (from, to) => {
-    if (from === to) return;
+    if (from === null || to === null || from === to) return;
     setHabits(prev => {
       const next = [...prev];
       const [item] = next.splice(from, 1);
@@ -1167,11 +1241,11 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
           return (
             <div key={h.id}
               draggable={true}
-              onDragStart={(e)=>{setDragIdx(i);e.dataTransfer.effectAllowed="move";}}
-              onDragEnd={()=>{setDragIdx(null);setDragOverIdx(null);}}
-              onDragOver={(e)=>{e.preventDefault();setDragOverIdx(i);}}
-              onDrop={(e)=>{e.preventDefault();moveHabitAbs(dragIdx,i);setDragIdx(null);setDragOverIdx(null);}}
-              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:dragOverIdx===i&&dragIdx!==i?"rgba(163,230,53,0.07)":done?"rgba(74,222,128,0.06)":"rgba(255,255,255,0.01)",opacity:dragIdx===i?0.38:1,transition:"background 0.15s,opacity 0.15s",cursor:"grab",borderLeft:dragOverIdx===i&&dragIdx!==i?`3px solid ${C.accent}`:"3px solid transparent"}}>
+              onDragStart={(e)=>{dragIdxRef.current=i;setDragging(i);e.dataTransfer.effectAllowed="move";}}
+              onDragEnd={()=>{moveHabitAbs(dragIdxRef.current,dragOverRef.current);dragIdxRef.current=null;dragOverRef.current=null;setDragging(null);setDragOverIdx(null);}}
+              onDragOver={(e)=>{e.preventDefault();dragOverRef.current=i;setDragOverIdx(i);}}
+              onDrop={(e)=>{e.preventDefault();}}
+              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:dragOverIdx===i&&dragging!==i?"rgba(163,230,53,0.07)":done?"rgba(74,222,128,0.06)":"rgba(255,255,255,0.01)",opacity:dragging===i?0.38:1,transition:"background 0.15s,opacity 0.15s",cursor:"grab",borderLeft:dragOverIdx===i&&dragging!==i?`3px solid ${C.accent}`:"3px solid transparent"}}>
               {/* Grab handle */}
               <div style={{color:C.text3,fontSize:14,flexShrink:0,opacity:0.4,letterSpacing:-1,userSelect:"none"}}>⠿</div>
               <button onClick={()=>toggle(h.id)} style={{width:34,height:34,borderRadius:"50%",flexShrink:0,border:`2px solid ${done?h.color:C.border2}`,background:done?h.color+"22":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,transition:"all 0.25s",animation:done?"habitCheck 0.35s ease":undefined,boxShadow:done?`0 0 14px ${h.color}66`:undefined}}>
@@ -1211,283 +1285,258 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
 // to other tabs. All data props are read-only snapshots; edits happen in
 // FitnessPage and SupplementsPage, which share the same state from App.
 function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal, water, setWater, energy, setEnergy }) {
-  const today = new Date();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dKey = tdk();
   const info = getDayInfo(today);
-  const todayCal = (meals[tdk()]||[]).reduce((a,m)=>a+(m.cal||0),0);
-  const tgt = TARGETS[info.type];
-  const banLbl = {combo:"Kickboxing + Gym",kb:"Kickboxing Day",gym:"Gym Day",rest:"Rest Day"};
-  const banCol = {combo:C.accent,kb:C.green,gym:C.amber,rest:C.blue};
+  const type = info.type;
 
-  // Parallax / fade math
-  const fadeStart = 40, fadeEnd = 320;
-  const imgOpacity = scrollY < fadeStart ? 1 : scrollY > fadeEnd ? 0 : 1 - (scrollY - fadeStart) / (fadeEnd - fadeStart);
-  const imgTranslateY = scrollY * 0.28;  // slower scroll = parallax depth
-  const imgScale = Math.max(0.88, 1 - scrollY * 0.0004);
+  const todayMeals = meals[dKey] || [];
+  const todayCal  = todayMeals.reduce((a,m)=>a+(m.cal||0),0);
+  const todayProt = todayMeals.reduce((a,m)=>a+(m.prot||0),0);
+  const todayCarb = todayMeals.reduce((a,m)=>a+(m.carb||0),0);
+  const todayFat  = todayMeals.reduce((a,m)=>a+(m.fat||0),0);
+  const tgt = TARGETS[type] || TARGETS.gym;
 
-  const calDays = () => {
-    const t = new Date(); t.setHours(0,0,0,0); const out = [];
-    for (let i=-20; i<=7; i++) { const d=new Date(t); d.setDate(d.getDate()+i); out.push({date:d,key:dk(d),used:!!usage[dk(d)],isToday:i===0}); }
-    return out;
-  };
   const streak = () => {
     let s=0; const t=new Date(); t.setHours(0,0,0,0);
-    for (let i=0; i>=-365; i--) { const d=new Date(t); d.setDate(d.getDate()+i); if(usage[dk(d)]) s++; else break; }
+    for(let i=0;i>=-365;i--){const d=new Date(t);d.setDate(d.getDate()+i);if(usage[dk(d)])s++;else break;}
     return s;
   };
 
-  // Supplement progress for today
-  const todayChecked = suppChecked[tdk()] || {};
+  const todayChecked = suppChecked[dKey] || {};
   const totalSupps = supps.length;
   const takenSupps = supps.filter(s=>todayChecked[s.id]).length;
 
-  // Lean bulk progress — dynamic from weight log
-  const latestBw = bwLog && bwLog.length > 0 ? bwLog[bwLog.length - 1].weight : PROFILE.currentWeight;
-  const bulkPct = Math.min(100, Math.max(0, Math.round(((latestBw - PROFILE.currentWeight) / (PROFILE.goalWeight - PROFILE.currentWeight)) * 100)));
+  const latestBw = bwLog && bwLog.length > 0 ? bwLog[bwLog.length-1].weight : PROFILE.currentWeight;
+  const bulkPct = Math.min(100,Math.max(0,Math.round(((latestBw-PROFILE.currentWeight)/(PROFILE.goalWeight-PROFILE.currentWeight))*100)));
+
+  const wCount = water.date===dKey ? water.count : 0;
+  const addWater = ()=>setWater({date:dKey,count:Math.min(8,wCount+1)});
+
+  const eScore = energy[dKey];
+  const E_LABELS = ["😴 Low","😕 Tired","😐 Okay","😊 Good","⚡ Peak"];
+  const E_COLORS = [C.red,C.amber,C.text2,C.green,C.accent];
+
+  const [aiIcons, setAiIcons] = useState(()=>{try{return JSON.parse(localStorage.getItem("dos_ai_icons_v1"))||{};}catch{return {};}});
+  const [geminiKey, setGeminiKey] = useState(()=>localStorage.getItem("dos_gemini_key_v1")||"");
+  const [genKeyInput, setGenKeyInput] = useState("");
+  const [generatingIcons, setGeneratingIcons] = useState(false);
+  const [showIconSettings, setShowIconSettings] = useState(false);
+
+  const DS = {
+    combo:{grad:"linear-gradient(135deg,rgba(163,230,53,0.18) 0%,rgba(251,191,36,0.14) 60%,rgba(20,184,166,0.12) 100%)",glow:"rgba(163,230,53,0.45)",glowOrb:"rgba(163,230,53,0.18)",glowCard:"rgba(163,230,53,0.12)",border:"rgba(163,230,53,0.40)",label:"Kickboxing + Gym",icons:"🥊🏋️",heroBg:"#090e09"},
+    kb:   {grad:"linear-gradient(135deg,rgba(74,222,128,0.18) 0%,rgba(163,230,53,0.20) 60%,rgba(20,184,166,0.10) 100%)",glow:"rgba(74,222,128,0.45)",glowOrb:"rgba(74,222,128,0.18)",glowCard:"rgba(74,222,128,0.10)",border:"rgba(74,222,128,0.45)",label:"Kickboxing Day",icons:"🥊",heroBg:"#080d08"},
+    gym:  {grad:"linear-gradient(135deg,rgba(251,191,36,0.16) 0%,rgba(245,158,11,0.12) 60%,rgba(163,230,53,0.08) 100%)",glow:"rgba(251,191,36,0.4)",glowOrb:"rgba(251,191,36,0.16)",glowCard:"rgba(251,191,36,0.08)",border:"rgba(251,191,36,0.40)",label:"Gym Day",icons:"🏋️",heroBg:"#0d0b06"},
+    rest: {grad:"linear-gradient(135deg,rgba(20,184,166,0.14) 0%,rgba(34,211,238,0.10) 60%,rgba(163,230,53,0.06) 100%)",glow:"rgba(20,184,166,0.35)",glowOrb:"rgba(20,184,166,0.14)",glowCard:"rgba(20,184,166,0.08)",border:"rgba(20,184,166,0.35)",label:"Rest & Recovery",icons:"😴",heroBg:"#070d0d"},
+  };
+  const ds = DS[type] || DS.gym;
+
+  const generateAIIcons = async () => {
+    const key = geminiKey || genKeyInput.trim();
+    if (!key) return;
+    if (genKeyInput.trim()) { setGeminiKey(genKeyInput.trim()); localStorage.setItem("dos_gemini_key_v1",genKeyInput.trim()); }
+    setGeneratingIcons(true);
+    const tabs = [
+      {id:"home",    prompt:"Minimalist neon lime-green glowing house icon on pure black background, cyberpunk sports app, pixel-perfect tiny icon, no text, no background except black"},
+      {id:"fitness", prompt:"Neon gold glowing dumbbell barbell icon on pure black background, cyberpunk sports, minimal icon, bold, no text"},
+      {id:"habits",  prompt:"Neon lime-green glowing bullseye target with arrow on pure black background, cyberpunk style, minimal icon, no text"},
+      {id:"vocab",   prompt:"Neon teal glowing open book with pages on pure black background, cyberpunk aesthetic, minimal clean icon, no text"},
+      {id:"supplements",prompt:"Neon cyan glowing capsule pill icon on pure black background, sports supplement, cyberpunk minimal icon, no text"},
+    ];
+    const newIcons = {...(aiIcons||{})};
+    for (const tab of tabs) {
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${key}`,{
+          method:"POST", headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({contents:[{parts:[{text:tab.prompt}]}],generationConfig:{responseModalities:["image","text"]}})
+        });
+        const data = await res.json();
+        const part = data?.candidates?.[0]?.content?.parts?.find(p=>p.inlineData);
+        if (part?.inlineData?.data) newIcons[tab.id]=`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+      } catch(e){ console.warn("Icon gen failed",tab.id,e); }
+    }
+    localStorage.setItem("dos_ai_icons_v1",JSON.stringify(newIcons));
+    setAiIcons(newIcons);
+    window.dispatchEvent(new CustomEvent("aiIconsUpdated"));
+    setGeneratingIcons(false);
+    setShowIconSettings(false);
+  };
 
   return (
     <div>
-      {/* ── HERO HEADER with parallax figure ── */}
-      <div style={{position:"relative",height:"calc(390px + env(safe-area-inset-top, 0px))",overflow:"hidden",background:`linear-gradient(180deg, #060608 0%, #050508 60%, ${C.bg} 100%)`}}>
 
-        {/* Ambient glow blobs — sky-blue palette */}
-        <div style={{position:"absolute",top:-60,right:-30,width:340,height:340,borderRadius:"50%",background:"radial-gradient(circle,rgba(163,230,53,0.18) 0%,transparent 60%)",pointerEvents:"none"}}/>
-        <div style={{position:"absolute",bottom:20,left:-50,width:260,height:260,borderRadius:"50%",background:"radial-gradient(circle,rgba(20,184,166,0.14) 0%,transparent 60%)",pointerEvents:"none"}}/>
-        <div style={{position:"absolute",top:60,left:"50%",width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(74,222,128,0.09) 0%,transparent 65%)",pointerEvents:"none",transform:"translateX(-50%)"}}/>
-
-        {/* Spotlight under figure */}
-        <div style={{position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",width:320,height:180,background:"radial-gradient(ellipse,rgba(163,230,53,0.10) 0%,transparent 70%)",pointerEvents:"none",zIndex:1}}/>
-
-        {/* Bottom fade-into-bg */}
-        <div style={{position:"absolute",bottom:0,left:0,right:0,height:110,background:`linear-gradient(transparent,${C.bg})`,zIndex:4,pointerEvents:"none"}}/>
-
-        {/* Floating streak badge — left of figure */}
-        <div className="float" style={{position:"absolute",left:18,top:"calc(env(safe-area-inset-top, 20px) + 160px)",zIndex:6,opacity:imgOpacity,pointerEvents:"none",animationDelay:"0.7s"}}>
-          <div style={{background:"rgba(5,5,8,0.88)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(251,191,36,0.3)",borderRadius:16,padding:"10px 14px",boxShadow:"0 8px 28px rgba(0,0,0,0.4)"}}>
-            <div style={{fontSize:9,color:C.amber,fontWeight:800,letterSpacing:1,textTransform:"uppercase",marginBottom:3}}>Streak</div>
-            <div style={{fontSize:22,fontWeight:900,color:C.text,letterSpacing:-0.5}}>🔥 {streak()}</div>
-            <div style={{fontSize:9,color:C.text3,marginTop:1}}>{streak()===1?"day":"days"}</div>
-          </div>
-        </div>
-
-        {/* ── Parallax figure — transparent PNG, centered bottom ── */}
-        <div style={{
-          position:"absolute",
-          bottom: -8,
-          left:"50%",
-          transform:`translateX(-50%) translateY(${imgTranslateY}px) scale(${imgScale})`,
-          transformOrigin:"bottom center",
-          opacity: imgOpacity,
-          transition:"opacity 0.05s linear",
-          zIndex:2,
-          pointerEvents:"none",
-          width:260,
-          height:"108%",
-        }}>
-          <img src={ISH_IMG} alt="Ish" style={{
-            width:"100%",
-            height:"100%",
-            objectFit:"contain",
-            objectPosition:"top center",
-          }}/>
-        </div>
-
-        {/* Text — top-left, fades on scroll */}
-        <div style={{
-          position:"absolute", left:18, top:"calc(env(safe-area-inset-top, 20px) + 16px)",
-          zIndex:5,
-          transform:`translateY(${scrollY*0.06}px)`,
-          opacity: Math.max(0, 1 - scrollY/180),
-          transition:"opacity 0.05s linear",
-        }}>
-          <div className="pill-badge" style={{marginBottom:10,background:"rgba(6,13,26,0.75)"}}>
-            <span style={{fontSize:11}}>📅</span>
-            <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>{DAYS_L[today.getDay()]}, {MONTHS_L[today.getMonth()]} {today.getDate()}</span>
-          </div>
-          <div style={{fontSize:26,fontWeight:900,letterSpacing:-0.5,lineHeight:1.25,color:C.text}}>Welcome back,</div>
-          <div style={{fontSize:34,fontWeight:900,letterSpacing:-1.2,lineHeight:1.1,marginTop:2}}>
-            <span style={{background:`linear-gradient(90deg,${C.accent},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Ish 👋</span>
-          </div>
-        </div>
-
-        {/* Lean bulk badge — bottom-right */}
-        <div style={{
-          position:"absolute", right:14, bottom:22,
-          zIndex:5,
-          opacity: Math.max(0, 1 - scrollY/160),
-          transition:"opacity 0.05s linear",
-          background:"rgba(163,230,53,0.10)",
-          backdropFilter:"blur(12px)",
-          WebkitBackdropFilter:"blur(12px)",
-          border:"1px solid rgba(163,230,53,0.22)",
-          borderRadius:12,
-          padding:"6px 10px",
-          display:"flex", alignItems:"center", gap:6,
-        }}>
-          <div style={{width:6,height:6,borderRadius:"50%",background:C.green,boxShadow:`0 0 6px ${C.glowGreen}`}}/>
-          <div style={{fontSize:10,color:C.text2,fontWeight:700,letterSpacing:0.5}}>{PROFILE.currentWeight} → {PROFILE.goalWeight} lbs</div>
-        </div>
-
-      </div>
-
-      {/* Daily quote */}
-      <div style={{margin:"20px 16px 0",position:"relative",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.20)",borderRadius:22,padding:"20px 20px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08)",overflow:"hidden"}}>
+      {/* ── COMMAND STRIP ───────────────────────────────────────────── */}
+      <div style={{position:"relative",height:"calc(210px + env(safe-area-inset-top,0px))",overflow:"hidden",background:ds.heroBg}}>
+        <div style={{position:"absolute",inset:0,backgroundImage:"radial-gradient(rgba(255,255,255,0.055) 1px,transparent 1px)",backgroundSize:"24px 24px",pointerEvents:"none"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:260,height:260,borderRadius:"50%",background:`radial-gradient(circle,${ds.glowOrb} 0%,transparent 65%)`,pointerEvents:"none"}}/>
+        <div className="orb-drift" style={{position:"absolute",bottom:-40,left:-20,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(20,184,166,0.12) 0%,transparent 65%)",pointerEvents:"none",animationDelay:"4s"}}/>
         <div className="scan-overlay"/>
-        <div style={{position:"absolute",top:-10,right:-10,fontSize:80,color:"rgba(163,230,53,0.06)",lineHeight:1,pointerEvents:"none",userSelect:"none",fontFamily:"Georgia,serif"}}>❝</div>
-        <div style={{fontSize:9,color:C.accent,fontWeight:800,letterSpacing:1.4,textTransform:"uppercase",marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
-          <span style={{width:4,height:4,borderRadius:"50%",background:C.accent,display:"inline-block",animation:"liveOrb 2.5s ease-in-out infinite"}}/>
-          Daily Inspiration
-        </div>
-        <div style={{fontSize:16,color:C.text,lineHeight:1.8,fontStyle:"italic",fontFamily:"Georgia,serif"}}>{getQuote()}</div>
-      </div>
-
-      {/* Weight sparkline */}
-      <WeightSparkline bwLog={bwLog||[]} onClick={()=>setShowBwModal&&setShowBwModal(true)}/>
-
-      {/* Lean bulk goal */}
-      <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(163,230,53,0.16)`,borderRadius:20,padding:"16px 16px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.6}}>🎯 Lean Bulk Goal</div>
-          <div style={{fontSize:13,color:C.accent,fontWeight:800,letterSpacing:-0.2}}>+{(latestBw - PROFILE.currentWeight).toFixed(1)} lbs gained</div>
-        </div>
-        <div style={{position:"relative",height:8,background:"rgba(255,255,255,0.08)",borderRadius:5,overflow:"hidden",marginBottom:8}}>
-          <div style={{height:"100%",width:bulkPct+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:5,transition:"width 0.8s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:`0 0 10px rgba(163,230,53,0.4)`}}/>
-          {[25,50,75].map(p=>(
-            <div key={p} style={{position:"absolute",top:0,bottom:0,left:p+"%",width:1,background:"rgba(255,255,255,0.10)",transform:"translateX(-50%)"}}/>
-          ))}
-        </div>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div style={{fontSize:10,color:C.text3}}>{latestBw} lbs · {PROFILE.height}</div>
-          <div style={{fontSize:10,color:C.text3}}>{(PROFILE.goalWeight - latestBw).toFixed(1)} lbs to go · <span style={{color:C.accent,fontWeight:700}}>{bulkPct}%</span></div>
-        </div>
-      </div>
-
-      {/* Calorie Display */}
-      <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.07)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.13)",borderRadius:24,padding:"20px 22px",boxShadow:"0 12px 40px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.09)",position:"relative",overflow:"hidden"}}>
-        <div style={{fontSize:9,color:C.text2,fontWeight:700,letterSpacing:1.5,textTransform:"uppercase",marginBottom:10}}>Calories Today</div>
-        <div style={{display:"flex",alignItems:"baseline",justifyContent:"center",gap:6}}>
-          <div className="num-pop" style={{fontSize:56,fontWeight:900,letterSpacing:-3,lineHeight:1,color:todayCal>tgt.cal?C.red:C.text}}>{Math.round(todayCal)}</div>
-          <div style={{fontSize:22,fontWeight:700,color:C.text3,lineHeight:1}}>/</div>
-          <div style={{fontSize:28,fontWeight:800,letterSpacing:-1,lineHeight:1,color:C.text2}}>{tgt.cal}</div>
-          <div style={{fontSize:12,color:C.text3,fontWeight:600,marginLeft:2}}>kcal</div>
-        </div>
-        <div style={{marginTop:16,position:"relative",height:5,background:"rgba(255,255,255,0.08)",borderRadius:3,overflow:"hidden"}}>
-          <div style={{height:"100%",width:Math.min(100,Math.round(todayCal/tgt.cal*100))+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:3,boxShadow:"0 0 10px rgba(163,230,53,0.5)",transition:"width 1s cubic-bezier(0.34,1.56,0.64,1)"}}/>
-        </div>
-        <div style={{position:"relative",height:12,marginTop:0,display:"flex",alignItems:"center"}}>
-          <div style={{position:"absolute",left:`calc(${Math.min(100,Math.round(todayCal/tgt.cal*100))}% - 5px)`,width:10,height:10,borderRadius:"50%",background:C.accent,boxShadow:`0 0 8px ${C.accent}`,transition:"left 1s cubic-bezier(0.34,1.56,0.64,1)"}}/>
-        </div>
-      </div>
-
-      {/* Gold Featured Card — Today's Training */}
-      {info.type!=="rest"?(
-        <div style={{margin:"12px 16px 0",background:"linear-gradient(135deg,#fbbf24 0%,#d97706 60%,#b45309 100%)",borderRadius:24,padding:"22px 20px",boxShadow:"0 16px 48px rgba(251,191,36,0.30), 0 4px 12px rgba(0,0,0,0.3)",position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",right:-10,top:-20,fontSize:130,fontWeight:900,color:"rgba(0,0,0,0.07)",lineHeight:1,pointerEvents:"none",userSelect:"none",fontFamily:"system-ui"}}>{streak()}</div>
-          <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%)",backgroundSize:"200% 100%",animation:"goldShimmer 3s ease-in-out infinite",borderRadius:"inherit",pointerEvents:"none"}}/>
-          <div style={{position:"relative",zIndex:1}}>
-            <div style={{fontSize:9,color:"rgba(0,0,0,0.45)",fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",marginBottom:8}}>Featured · Today</div>
-            <div style={{fontSize:22,fontWeight:900,color:"#1a0a00",letterSpacing:-0.5,marginBottom:4}}>{banLbl[info.type]}</div>
-            {info.gymSplit&&<div style={{fontSize:13,color:"rgba(0,0,0,0.50)",fontWeight:600,marginBottom:12}}>{info.gymSplit}</div>}
-            <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:info.gymSplit?0:8}}>
-              {info.isKick&&<span style={{fontSize:11,fontWeight:700,padding:"4px 12px",borderRadius:999,color:"#5a2d00",background:"rgba(0,0,0,0.12)"}}>🥊 Kickboxing</span>}
-              {info.isGym&&<span style={{fontSize:11,fontWeight:700,padding:"4px 12px",borderRadius:999,color:"#5a2d00",background:"rgba(0,0,0,0.12)"}}>🏋️ Gym</span>}
-            </div>
-          </div>
-        </div>
-      ):(
-        <div style={{margin:"12px 16px 0",background:"rgba(163,230,53,0.08)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.22)",borderRadius:24,padding:"22px 20px",boxShadow:"0 12px 40px rgba(0,0,0,0.35)",position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",right:-10,top:-20,fontSize:130,fontWeight:900,color:"rgba(163,230,53,0.06)",lineHeight:1,pointerEvents:"none",userSelect:"none"}}>😴</div>
-          <div style={{fontSize:9,color:C.text3,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",marginBottom:8}}>Featured · Today</div>
-          <div style={{fontSize:22,fontWeight:900,color:C.text,letterSpacing:-0.5,marginBottom:4}}>Rest Day</div>
-          <div style={{fontSize:13,color:C.text2,fontWeight:600,marginBottom:12}}>Recovery & Low Carb</div>
-          <span style={{fontSize:11,fontWeight:700,padding:"4px 12px",borderRadius:999,color:C.accent,background:"rgba(163,230,53,0.12)",border:"1px solid rgba(163,230,53,0.22)"}}>😴 Active Rest</span>
-        </div>
-      )}
-
-      {/* Supplements status */}
-      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(74,222,128,${takenSupps===totalSupps&&totalSupps>0?"0.32":"0.10"})`,borderRadius:20,padding:"16px 16px",cursor:"pointer",transition:"border-color 0.4s,box-shadow 0.4s",boxShadow:takenSupps===totalSupps&&totalSupps>0?"0 8px 32px rgba(74,222,128,0.10),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)",animationDelay:"0.08s"}} onClick={()=>setPage("supplements")}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div style={{position:"absolute",bottom:0,left:0,right:0,height:70,background:`linear-gradient(transparent,${C.bg})`,zIndex:3,pointerEvents:"none"}}/>
+        <div style={{position:"relative",zIndex:4,padding:"calc(env(safe-area-inset-top,18px) + 18px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
           <div>
-            <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.6,marginBottom:5}}>💊 Supplements</div>
-            <div style={{fontSize:16,fontWeight:800,color:takenSupps===totalSupps&&totalSupps>0?C.green:C.text,letterSpacing:-0.3}}>
-              {takenSupps}/{totalSupps} taken today
+            <div className="pill-badge" style={{marginBottom:10,background:"rgba(4,8,18,0.85)"}}>
+              <span style={{fontSize:10}}>📅</span>
+              <span style={{fontSize:11,fontWeight:700,color:C.text2,letterSpacing:0.3}}>{DAYS_L[today.getDay()]}, {MONTHS_L[today.getMonth()]} {today.getDate()}</span>
+            </div>
+            <div style={{fontSize:13,fontWeight:600,color:C.text3,letterSpacing:0.4,marginBottom:1}}>Welcome back,</div>
+            <div style={{fontSize:38,fontWeight:900,letterSpacing:-2,lineHeight:1}}>
+              <span className="neon-text" style={{background:`linear-gradient(90deg,${C.accent},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",display:"inline-block"}}>Ish</span>
+              <span style={{fontSize:28,marginLeft:6}}>👋</span>
+            </div>
+            <div style={{marginTop:8}}>
+              <span style={{fontSize:10,fontWeight:800,padding:"3px 10px",borderRadius:999,background:ds.grad,border:`1px solid ${ds.border}`,color:C.text,backdropFilter:"blur(8px)",display:"inline-block",animation:"glowBorder 4s ease-in-out infinite"}}>{ds.icons} {ds.label}</span>
             </div>
           </div>
-          <div style={{width:40,height:40,borderRadius:"50%",background:takenSupps===totalSupps&&totalSupps>0?"rgba(74,222,128,0.15)":"rgba(255,255,255,0.05)",border:`1px solid ${takenSupps===totalSupps&&totalSupps>0?"rgba(74,222,128,0.4)":"rgba(255,255,255,0.10)"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,transition:"all 0.3s"}}>{takenSupps===totalSupps&&totalSupps>0?"✅":"›"}</div>
-        </div>
-        {totalSupps>0&&(
-          <div style={{height:4,background:"rgba(255,255,255,0.08)",borderRadius:2,marginTop:12,overflow:"hidden"}}>
-            <div style={{height:"100%",width:Math.round(takenSupps/totalSupps*100)+"%",background:takenSupps===totalSupps?`linear-gradient(90deg,${C.green},${C.teal})`:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:2,transition:"width 0.6s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:takenSupps===totalSupps?`0 0 8px ${C.green}`:undefined}}/>
+          <div className="float" style={{background:"rgba(5,5,8,0.92)",backdropFilter:"blur(18px)",WebkitBackdropFilter:"blur(18px)",border:"1px solid rgba(251,191,36,0.35)",borderRadius:16,padding:"10px 14px",boxShadow:"0 8px 28px rgba(0,0,0,0.5)",textAlign:"center",animationDelay:"0.6s",minWidth:72}}>
+            <div style={{fontSize:8,color:C.amber,fontWeight:800,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Streak</div>
+            <div style={{fontSize:24,fontWeight:900,color:C.text,letterSpacing:-1,lineHeight:1,animation:"streakFire 3s ease-in-out infinite"}}>🔥{streak()}</div>
+            <div style={{fontSize:9,color:C.text3,marginTop:2}}>{streak()===1?"day":"days"}</div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Activity streak */}
-      <div style={{margin:"12px 16px 0"}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-          <div style={{fontSize:10,color:C.text3,fontWeight:700,letterSpacing:0.8,textTransform:"uppercase"}}>Activity Streak</div>
-          <div className="num-pop" style={{fontSize:15,color:C.amber,fontWeight:900,letterSpacing:-0.3}}>🔥 {streak()} {streak()===1?"day":"days"} · {new Date().toLocaleDateString("en-US",{month:"long"})}</div>
+      {/* ── TODAY'S MISSION ─────────────────────────────────────────── */}
+      <div onClick={()=>setPage("fitness")} className="mission-pulse" style={{margin:"12px 16px 0",position:"relative",borderRadius:24,overflow:"hidden",background:"rgba(0,0,0,0.45)",border:`1px solid ${ds.border}`,boxShadow:`0 0 30px ${ds.glowCard},0 12px 40px rgba(0,0,0,0.5)`,cursor:"pointer"}}>
+        <div style={{position:"absolute",inset:0,background:ds.grad,pointerEvents:"none"}}/>
+        {type!=="rest"&&<div style={{position:"absolute",inset:0,overflow:"hidden",borderRadius:"inherit",pointerEvents:"none"}}><div style={{position:"absolute",top:0,bottom:0,width:"60%",background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent)",animation:"shimmerMove 4s ease infinite"}}/></div>}
+        <div style={{position:"relative",zIndex:1,padding:"20px 20px 18px"}}>
+          <div style={{fontSize:9,color:C.text3,fontWeight:800,letterSpacing:2,textTransform:"uppercase",marginBottom:10}}>Today's Mission · Tap to log</div>
+          <div style={{display:"flex",alignItems:"center",gap:14}}>
+            <div style={{fontSize:46,lineHeight:1,filter:`drop-shadow(0 0 14px ${ds.glow})`,animation:"breathe 2.8s ease-in-out infinite"}}>{ds.icons}</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:22,fontWeight:900,color:C.text,letterSpacing:-0.5,lineHeight:1.15}}>{ds.label}</div>
+              {info.gymSplit&&<div style={{fontSize:13,color:C.text2,fontWeight:600,marginTop:4,opacity:0.85}}>{info.gymSplit}</div>}
+            </div>
+            <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(0,0,0,0.28)",border:`1px solid ${ds.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.text2}}>→</div>
+          </div>
         </div>
-        <div style={{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.10)",borderRadius:20,padding:"16px 14px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06)"}}>
-          <div style={{display:"flex",gap:3,flexWrap:"wrap",justifyContent:"center"}}>
-            {calDays().map(d=>(
-              <div key={d.key} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
-                <div style={{fontSize:8,color:C.text3,fontWeight:600}}>{DAYS_S[d.date.getDay()]}</div>
-                <div style={{width:24,height:24,borderRadius:7,background:d.isToday?C.accent:d.used?"rgba(163,230,53,0.22)":"rgba(255,255,255,0.04)",border:d.isToday?`2px solid ${C.accent}`:d.used?"1px solid rgba(163,230,53,0.40)":`1px solid rgba(255,255,255,0.07)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:d.isToday?"white":d.used?C.accent:C.text3,fontWeight:700,boxShadow:d.isToday?`0 0 10px rgba(163,230,53,0.5)`:undefined,transition:"all 0.2s"}}>{d.date.getDate()}</div>
+      </div>
+
+      {/* ── BODY METRICS STRIP ──────────────────────────────────────── */}
+      <div style={{margin:"12px 16px 0",display:"flex",gap:8}}>
+        {[
+          {icon:"🔥",val:streak(),sub:"day streak",color:C.amber,border:"rgba(251,191,36,0.20)",anim:"streakFire 3s ease-in-out infinite",delay:"0s",click:null},
+          {icon:"💧",val:`${wCount}/8`,sub:"tap + water",color:C.blue,border:"rgba(34,211,238,0.20)",anim:undefined,delay:"0.06s",click:addWater},
+          {icon:eScore?E_LABELS[eScore-1].split(" ")[0]:"⚡",val:eScore?E_LABELS[eScore-1].split(" ")[1]:"—",sub:"energy",color:eScore?E_COLORS[eScore-1]:C.text3,border:"rgba(255,255,255,0.10)",anim:undefined,delay:"0.12s",click:null},
+          {icon:"💊",val:`${takenSupps}/${totalSupps}`,sub:"supps",color:takenSupps===totalSupps&&totalSupps>0?C.green:C.text,border:takenSupps===totalSupps&&totalSupps>0?"rgba(74,222,128,0.25)":"rgba(255,255,255,0.10)",anim:undefined,delay:"0.18s",click:()=>setPage("supplements")},
+        ].map((m,idx2)=>(
+          <div key={idx2} className="card-rise" onClick={m.click||undefined} style={{flex:1,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${m.border}`,borderRadius:14,padding:"10px 6px",textAlign:"center",cursor:m.click?"pointer":undefined,animationDelay:m.delay,animation:m.anim}}>
+            <div style={{fontSize:16,marginBottom:3}}>{m.icon}</div>
+            <div style={{fontSize:14,fontWeight:900,color:m.color,letterSpacing:-0.5,lineHeight:1}}>{m.val}</div>
+            <div style={{fontSize:8,color:C.text3,fontWeight:600,letterSpacing:0.4,marginTop:2}}>{m.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── CALORIE RING + MACROS ────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.16)",borderRadius:22,padding:"18px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>🍽️ Nutrition Today</div>
+          <button onClick={()=>setPage("fitness")} style={{fontSize:11,color:C.accent,fontWeight:700,padding:"3px 10px",borderRadius:8,background:"rgba(163,230,53,0.08)",border:"1px solid rgba(163,230,53,0.20)"}}>Log Food →</button>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:16}}>
+          <div style={{position:"relative",width:88,height:88,flexShrink:0}}>
+            <svg width="88" height="88" style={{transform:"rotate(-90deg)"}}>
+              <defs>
+                <linearGradient id="hpCalG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#a3e635"/><stop offset="100%" stopColor="#22d3ee"/></linearGradient>
+                <filter id="hpCalF"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="9"/>
+              <circle cx="44" cy="44" r="36" fill="none" stroke="url(#hpCalG)" strokeWidth="9" strokeLinecap="round"
+                strokeDasharray={`${2*Math.PI*36}`} strokeDashoffset={`${2*Math.PI*36*(1-Math.min(1,todayCal/(tgt.cal||2900)))}`}
+                filter="url(#hpCalF)" style={{transition:"stroke-dashoffset 1.2s cubic-bezier(0.34,1.2,0.64,1)"}}/>
+            </svg>
+            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
+              <div style={{fontSize:14,fontWeight:900,color:C.text,lineHeight:1}}>{Math.round(todayCal)}</div>
+              <div style={{fontSize:8,color:C.text3,fontWeight:600}}>{tgt.cal} kcal</div>
+            </div>
+          </div>
+          <div style={{flex:1,display:"flex",flexDirection:"column",gap:7}}>
+            {[["Protein",todayProt,tgt.prot,C.blue],["Carbs",todayCarb,tgt.carb,C.accent],["Fat",todayFat,tgt.fat,C.amber]].map(([lbl,val,target,color])=>(
+              <div key={lbl}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
+                  <span style={{fontSize:10,fontWeight:700,color:C.text3}}>{lbl}</span>
+                  <span style={{fontSize:10,fontWeight:800,color}}>{Math.round(val)}<span style={{color:C.text3,fontWeight:500}}>/{target}g</span></span>
+                </div>
+                <div style={{height:5,background:"rgba(255,255,255,0.07)",borderRadius:3,overflow:"hidden"}}>
+                  <div style={{height:"100%",width:Math.min(100,Math.round(val/(target||1)*100))+"%",background:`linear-gradient(90deg,${color},${color}bb)`,borderRadius:3,boxShadow:`0 0 8px ${color}66`,transition:"width 1.2s cubic-bezier(0.34,1.2,0.64,1)"}}/>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Water Tracker */}
-      {(()=>{
-        const today = dk();
-        const wCount = water.date===today ? water.count : 0;
-        const add = ()=>setWater({date:today,count:Math.min(8,wCount+1)});
-        const undo = ()=>setWater({date:today,count:Math.max(0,wCount-1)});
-        return(
-          <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:20,padding:"14px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-              <div>
-                <div style={{fontSize:9,color:C.text3,fontWeight:700,letterSpacing:0.6,textTransform:"uppercase",marginBottom:3}}>💧 Hydration</div>
-                <div style={{fontSize:16,fontWeight:800,color:wCount>=8?C.blue:C.text}}>{wCount}<span style={{fontSize:12,color:C.text2,fontWeight:600}}>/8 glasses</span></div>
-              </div>
-              <div style={{display:"flex",gap:6}}>
-                {wCount>0&&<button onClick={undo} style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.12)",color:C.text2,fontSize:16}}>−</button>}
-                <button onClick={add} disabled={wCount>=8} style={{width:32,height:32,borderRadius:"50%",background:wCount>=8?C.blue:"rgba(34,211,238,0.15)",border:`1px solid ${wCount>=8?"transparent":"rgba(34,211,238,0.3)"}`,color:wCount>=8?"#050508":C.blue,fontSize:16,fontWeight:700,opacity:wCount>=8?0.8:1}}>+</button>
-              </div>
-            </div>
-            <div style={{display:"flex",gap:3}}>
-              {Array.from({length:8}).map((_,i)=>(
-                <div key={i} onClick={()=>setWater({date:today,count:i+1})} style={{flex:1,height:8,borderRadius:4,background:i<wCount?C.blue:"rgba(255,255,255,0.08)",transition:"background 0.2s",cursor:"pointer",boxShadow:i<wCount?`0 0 6px rgba(34,211,238,0.4)`:undefined}}/>
-              ))}
-            </div>
+      {/* ── WEIGHT + LEAN BULK ──────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.13)",borderRadius:22,padding:"16px 16px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)",animationDelay:"0.06s"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+          <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>⚖️ Lean Bulk Progress</div>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:14,fontWeight:900,color:C.accent,letterSpacing:-0.5}}>{latestBw} lbs</span>
+            <button onClick={()=>setShowBwModal&&setShowBwModal(true)} style={{fontSize:11,color:C.text3,padding:"3px 10px",borderRadius:8,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.10)"}}>Log →</button>
           </div>
-        );
-      })()}
+        </div>
+        <WeightSparkline bwLog={bwLog||[]} onClick={()=>setShowBwModal&&setShowBwModal(true)}/>
+        <div style={{height:6,background:"rgba(255,255,255,0.07)",borderRadius:4,overflow:"hidden",marginTop:12}}>
+          <div style={{height:"100%",width:bulkPct+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:4,transition:"width 0.8s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:`0 0 10px rgba(163,230,53,0.5)`}}/>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
+          <span style={{fontSize:9,color:C.text3}}>{PROFILE.currentWeight} lbs start</span>
+          <span style={{fontSize:9,color:C.accent,fontWeight:700}}>+{(latestBw-PROFILE.currentWeight).toFixed(1)} gained · {bulkPct}%</span>
+          <span style={{fontSize:9,color:C.text3}}>goal {PROFILE.goalWeight} lbs</span>
+        </div>
+      </div>
 
-      {/* Daily Energy Check-in */}
+      {/* ── ACTIVITY CALENDAR ───────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:22,padding:"14px 14px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06)",animationDelay:"0.10s"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>📅 Activity Calendar</div>
+          <div className="num-pop" style={{fontSize:12,color:C.amber,fontWeight:900}}>🔥 {streak()} {streak()===1?"day":"days"}</div>
+        </div>
+        <div style={{display:"flex",gap:3,flexWrap:"wrap",justifyContent:"center"}}>
+          {(()=>{
+            const t=new Date();t.setHours(0,0,0,0);const out=[];
+            for(let i=-20;i<=7;i++){const d=new Date(t);d.setDate(d.getDate()+i);out.push({date:d,key:dk(d),used:!!usage[dk(d)],isToday:i===0});}
+            return out.map(d=>(
+              <div key={d.key} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+                <div style={{fontSize:7,color:C.text3,fontWeight:600}}>{DAYS_S[d.date.getDay()]}</div>
+                <div style={{width:22,height:22,borderRadius:6,background:d.isToday?C.accent:d.used?"rgba(163,230,53,0.22)":"rgba(255,255,255,0.04)",border:d.isToday?`2px solid ${C.accent}`:d.used?"1px solid rgba(163,230,53,0.40)":"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:d.isToday?"white":d.used?C.accent:C.text3,fontWeight:700,boxShadow:d.isToday?"0 0 10px rgba(163,230,53,0.5)":d.used?"0 0 4px rgba(163,230,53,0.2)":undefined,transition:"all 0.2s"}}>{d.date.getDate()}</div>
+              </div>
+            ));
+          })()}
+        </div>
+      </div>
+
+      {/* ── DAILY QUOTE ─────────────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 0",position:"relative",background:"rgba(255,255,255,0.03)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.13)",borderRadius:22,padding:"20px 20px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06)",overflow:"hidden",animationDelay:"0.14s"}}>
+        <div className="scan-overlay"/>
+        <div style={{position:"absolute",top:-12,right:-8,fontSize:88,color:"rgba(163,230,53,0.05)",lineHeight:1,pointerEvents:"none",userSelect:"none",fontFamily:"Georgia,serif",animation:"breathe 6s ease-in-out infinite"}}>❝</div>
+        <div style={{fontSize:9,color:C.accent,fontWeight:800,letterSpacing:1.4,textTransform:"uppercase",marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
+          <span style={{width:4,height:4,borderRadius:"50%",background:C.accent,display:"inline-block",animation:"liveOrb 2.5s ease-in-out infinite"}}/>
+          Daily Inspiration
+        </div>
+        <div style={{fontSize:15,color:C.text,lineHeight:1.85,fontStyle:"italic",fontFamily:"Georgia,serif"}}>{getQuote()}</div>
+      </div>
+
+      {/* ── ENERGY CHECK-IN ─────────────────────────────────────────── */}
       {(()=>{
-        const today = dk();
-        const score = energy[today];
-        const LABELS = ["😴 Low","😕 Tired","😐 Okay","😊 Good","⚡ Peak"];
-        const COLORS = [C.red, C.amber, C.text2, C.green, C.accent];
+        const today2=dk();const score=energy[today2];
+        const LABELS=["😴 Low","😕 Tired","😐 Okay","😊 Good","⚡ Peak"];
+        const COLORS=[C.red,C.amber,C.text2,C.green,C.accent];
         return(
-          <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:20,padding:"14px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}>
+          <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:20,padding:"14px 16px",animationDelay:"0.18s"}}>
             <div style={{fontSize:9,color:C.text3,fontWeight:700,letterSpacing:0.6,textTransform:"uppercase",marginBottom:10}}>⚡ Energy Level</div>
             {score?(
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                <div style={{fontSize:18,fontWeight:800,color:COLORS[score-1]}}>{LABELS[score-1]}</div>
-                <button onClick={()=>setEnergy(e=>{const n={...e};delete n[today];return n;})} style={{fontSize:11,color:C.text3,padding:"4px 10px",borderRadius:10,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.09)"}}>Reset</button>
+                <div style={{fontSize:18,fontWeight:800,color:COLORS[score-1],animation:"bounceIn 0.4s ease"}}>{LABELS[score-1]}</div>
+                <button onClick={()=>setEnergy(e=>{const n={...e};delete n[today2];return n;})} style={{fontSize:11,color:C.text3,padding:"4px 10px",borderRadius:10,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.09)"}}>Reset</button>
               </div>
             ):(
               <div>
                 <div style={{fontSize:11,color:C.text2,marginBottom:8}}>How do you feel today?</div>
                 <div style={{display:"flex",gap:6}}>
                   {[1,2,3,4,5].map(n=>(
-                    <button key={n} onClick={()=>setEnergy(e=>({...e,[today]:n}))} style={{flex:1,padding:"10px 4px",borderRadius:12,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.10)",fontSize:18,transition:"all 0.15s"}}>
-                      {["😴","😕","😐","😊","⚡"][n-1]}
-                    </button>
+                    <button key={n} onClick={()=>setEnergy(e=>({...e,[dk()]:n}))} style={{flex:1,padding:"10px 4px",borderRadius:12,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.10)",fontSize:18,transition:"all 0.15s"}}>{["😴","😕","😐","😊","⚡"][n-1]}</button>
                   ))}
                 </div>
               </div>
@@ -1496,12 +1545,41 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
         );
       })()}
 
-      <div style={{height:20}}/>
+      {/* ── AI ICON GENERATOR ───────────────────────────────────────── */}
+      <div style={{margin:"12px 16px 24px"}}>
+        <button onClick={()=>setShowIconSettings(s=>!s)} style={{width:"100%",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:14}}>✨</span>
+            <span style={{fontSize:12,fontWeight:700,color:C.text2}}>AI Icon Generator</span>
+            {Object.keys(aiIcons).length>0&&<span style={{fontSize:10,color:C.accent,fontWeight:700,background:"rgba(163,230,53,0.12)",padding:"1px 7px",borderRadius:10}}>Active</span>}
+          </div>
+          <span style={{fontSize:10,color:C.text3,transition:"transform 0.2s",transform:showIconSettings?"rotate(180deg)":"none"}}>▼</span>
+        </button>
+        {showIconSettings&&(
+          <div className="slide-up" style={{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.18)",borderRadius:"0 0 16px 16px",padding:"14px 16px",marginTop:-1}}>
+            <div style={{fontSize:10,color:C.text3,marginBottom:10,lineHeight:1.5}}>Powered by Google Imagen. Generates custom AI icons for your nav tabs. Get a free key at <span style={{color:C.accent}}>aistudio.google.com</span></div>
+            {!geminiKey?(
+              <div style={{display:"flex",gap:8,marginBottom:10}}>
+                <input value={genKeyInput} onChange={e=>setGenKeyInput(e.target.value)} placeholder="Paste Google Gemini API key…" type="password" style={{flex:1,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:12,color:C.text,outline:"none"}}/>
+              </div>
+            ):(
+              <div style={{fontSize:10,color:C.green,marginBottom:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <span>✓ Gemini key saved</span>
+                <button onClick={()=>{setGeminiKey("");localStorage.removeItem("dos_gemini_key_v1");}} style={{color:C.red,fontSize:10,fontWeight:700,background:"none",border:"none",cursor:"pointer"}}>Remove</button>
+              </div>
+            )}
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={generateAIIcons} disabled={generatingIcons||(!geminiKey&&!genKeyInput.trim())} style={{flex:1,background:generatingIcons?"rgba(163,230,53,0.10)":`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",borderRadius:10,padding:"10px 0",fontSize:13,fontWeight:700,color:generatingIcons?C.accent:"#0a0a0e",opacity:(!geminiKey&&!genKeyInput.trim())?0.4:1,cursor:(!geminiKey&&!genKeyInput.trim())?"default":"pointer"}}>
+                {generatingIcons?<><span className="spin"/>Generating 5 icons…</>:"🎨 Generate AI Icons"}
+              </button>
+              {Object.keys(aiIcons).length>0&&<button onClick={()=>{localStorage.removeItem("dos_ai_icons_v1");setAiIcons({});window.dispatchEvent(new CustomEvent("aiIconsUpdated"));}} style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,107,107,0.12)",border:"1px solid rgba(255,107,107,0.25)",color:C.red,fontSize:12,fontWeight:700}}>Reset</button>}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-
 // ── GYM HEATMAP ───────────────────────────────────────────────────────────────
 // Rendered inside HomePage. attend is the dos_attend_v7 map keyed by date string,
 // where each value is { gym: bool, kb: bool }. Uses getDayInfo() to decide
@@ -2355,12 +2433,20 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
           <div style={{fontSize:10,fontWeight:700,letterSpacing:1.2,color:C.text2,textTransform:"uppercase",marginBottom:12}}>Voice Settings</div>
           {/* Provider toggle — 3 options */}
           <div style={{display:"flex",gap:6,marginBottom:14}}>
-            {[{id:"elevenlabs",label:"ElevenLabs ✨"},{id:"google",label:"Google"},{id:"browser",label:"Offline"}].map(p=>(
-              <button key={p.id} onClick={()=>updateTtsPrefs({provider:p.id})} style={{flex:1,padding:"8px 6px",borderRadius:12,fontSize:10,fontWeight:700,background:ttsPrefs.provider===p.id?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:`1px solid ${ttsPrefs.provider===p.id?"transparent":"rgba(255,255,255,0.12)"}`,color:ttsPrefs.provider===p.id?"#0a0a0e":C.text2,transition:"all 0.2s"}}>{p.label}</button>
+            {[{id:"streamelements",label:"SE Free ⚡"},{id:"elevenlabs",label:"ElevenLabs ✨"},{id:"google",label:"Google"},{id:"browser",label:"Offline"}].map(p=>(
+              <button key={p.id} onClick={()=>updateTtsPrefs({provider:p.id})} style={{flex:1,padding:"8px 4px",borderRadius:12,fontSize:9,fontWeight:700,background:ttsPrefs.provider===p.id?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:`1px solid ${ttsPrefs.provider===p.id?"transparent":"rgba(255,255,255,0.12)"}`,color:ttsPrefs.provider===p.id?"#0a0a0e":C.text2,transition:"all 0.2s"}}>{p.label}</button>
             ))}
           </div>
           {/* Provider-specific settings */}
-          {ttsPrefs.provider==="elevenlabs"?(
+          {ttsPrefs.provider==="streamelements"?(
+            <div>
+              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>Voice</div>
+              <select value={ttsPrefs.seVoice||SE_VOICES[0].id} onChange={e=>updateTtsPrefs({seVoice:e.target.value})} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}>
+                {SE_VOICES.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}
+              </select>
+              <div style={{fontSize:10,color:C.green,marginTop:6}}>✓ Completely free · No API key · AWS Polly voices</div>
+            </div>
+          ):ttsPrefs.provider==="elevenlabs"?(
             <div>
               <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>ElevenLabs API Key</div>
               <div style={{display:"flex",gap:8,marginBottom:10}}>
@@ -2531,19 +2617,31 @@ function Nav({ page, setPage }) {
     {id:"vocab",icon:"📖",label:"Vocab"},
     {id:"supplements",icon:"💊",label:"Supps"},
   ];
+  const [aiIcons, setAiIcons] = React.useState(()=>{try{return JSON.parse(localStorage.getItem("dos_ai_icons_v1"))||{};}catch{return{};}});
+  React.useEffect(()=>{
+    const reload = ()=>{try{setAiIcons(JSON.parse(localStorage.getItem("dos_ai_icons_v1"))||{});}catch{setAiIcons({});}};
+    window.addEventListener("aiIconsUpdated", reload);
+    return ()=>window.removeEventListener("aiIconsUpdated", reload);
+  },[]);
   const idx = tabs.findIndex(t => t.id === page);
   const n = tabs.length;
   return (
     <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(5,5,8,0.88)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.10)",zIndex:100,padding:"8px 6px calc(18px + env(safe-area-inset-bottom))",boxShadow:"0 -8px 32px rgba(0,0,0,0.35)"}}>
       <div style={{position:"relative",display:"flex",gap:2,alignItems:"center"}}>
-        {/* Sliding pill indicator */}
         <div style={{position:"absolute",top:0,bottom:0,width:`calc(${100/n}% - 2.4px)`,left:`calc(${idx} * ${100/n}% + 1.2px)`,background:"rgba(163,230,53,0.12)",border:"1px solid rgba(163,230,53,0.24)",borderRadius:16,transition:"left 0.38s cubic-bezier(0.34,1.56,0.64,1)",pointerEvents:"none",boxShadow:"0 2px 12px rgba(163,230,53,0.08)"}}/>
-        {tabs.map(tab=>(
-          <button key={tab.id} onClick={()=>setPage(tab.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"7px 2px",borderRadius:16,background:"transparent",border:"1px solid transparent",position:"relative",zIndex:1,transition:"none"}}>
-            <span style={{fontSize:19,filter:page===tab.id?"drop-shadow(0 0 8px rgba(163,230,53,0.85))":"none",transition:"filter 0.28s",transform:page===tab.id?"scale(1.08)":"scale(1)",display:"block"}}>{tab.icon}</span>
-            <span style={{fontSize:8,fontWeight:800,letterSpacing:0.4,color:page===tab.id?C.accent:C.text3,transition:"color 0.28s"}}>{tab.label}</span>
-          </button>
-        ))}
+        {tabs.map(tab=>{
+          const imgSrc = aiIcons[tab.id];
+          const isActive = page===tab.id;
+          return (
+            <button key={tab.id} onClick={()=>setPage(tab.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"7px 2px",borderRadius:16,background:"transparent",border:"1px solid transparent",position:"relative",zIndex:1,transition:"none"}}>
+              {imgSrc
+                ? <img src={imgSrc} alt={tab.label} style={{width:22,height:22,objectFit:"contain",filter:isActive?"drop-shadow(0 0 8px rgba(163,230,53,0.85))":"grayscale(0.3)",transform:isActive?"scale(1.10)":"scale(1)",transition:"filter 0.28s,transform 0.28s"}}/>
+                : <span style={{fontSize:19,filter:isActive?"drop-shadow(0 0 8px rgba(163,230,53,0.85))":"none",transition:"filter 0.28s",transform:isActive?"scale(1.08)":"scale(1)",display:"block"}}>{tab.icon}</span>
+              }
+              <span style={{fontSize:8,fontWeight:800,letterSpacing:0.4,color:isActive?C.accent:C.text3,transition:"color 0.28s"}}>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
