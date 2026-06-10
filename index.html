@@ -553,7 +553,7 @@ function checkRateLimit() {
   const count = ((rl.daily || {})[today] || 0);
   if (count >= RATE.perDay) throw new Error(`Daily limit of ${RATE.perDay} AI requests reached.`);
   rl.calls.push(now); rl.last = now;
-  rl.daily = { ...(rl.daily || {}), [today]: count + 1 };
+  rl.daily = { [today]: count + 1 };
   sv("dos_rl", rl);
 }
 
@@ -700,7 +700,8 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
         setMessages(prev=>[...prev,{role:"assistant",content:parsed.message||raw,isQuestion:true}]);
       }
     } catch(e) {
-      setMessages(prev=>[...prev,{role:"assistant",content:"Try being specific — e.g. \"2 cups raw milk\" or \"1 Quest bar\".",isError:true}]);
+      const msg = /limit|key|API error|too fast/i.test(e.message) ? e.message : "Try being specific — e.g. \"2 cups raw milk\" or \"1 Quest bar\".";
+      setMessages(prev=>[...prev,{role:"assistant",content:msg,isError:true}]);
     }
     setLoading(false);
   };
@@ -714,16 +715,19 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
       setPhotoScanning(true); setPendingResult(null);
       try {
         const result = await analyzePhotoWithKey(apiKey, b64, f.type||"image/jpeg");
+        const num = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
+        const macros = {calories:num(result.calories),carbs:num(result.carbs),protein:num(result.protein),fat:num(result.fat),fiber:num(result.fiber)};
         const photoMsg = {
           role:"assistant",
-          content:`📸 I can see: ${result.items?result.items.join(", "):result.name}\n\n• ${result.calories} cal  • ${result.carbs}g carbs  • ${result.protein}g protein  • ${result.fat}g fat${result.note?"\n\nNote: "+result.note:""}`,
+          content:`📸 I can see: ${result.items?result.items.join(", "):result.name}\n\n• ${macros.calories} cal  • ${macros.carbs}g carbs  • ${macros.protein}g protein  • ${macros.fat}g fat${result.note?"\n\nNote: "+result.note:""}`,
           isResult:true, isPhoto:true,
-          result:{name:result.name,calories:result.calories||0,carbs:result.carbs||0,protein:result.protein||0,fat:result.fat||0,fiber:result.fiber||0}
+          result:{name:result.name,...macros}
         };
         setMessages(prev=>[...prev,{role:"user",content:"📸 [Meal photo]"},photoMsg]);
         setPendingResult(photoMsg.result);
       } catch(err) {
-        setMessages(prev=>[...prev,{role:"assistant",content:"Couldn't analyze that photo. Make sure food is clearly visible.",isError:true}]);
+        const msg = /limit|key|API error|too fast/i.test(err.message) ? err.message : "Couldn't analyze that photo. Make sure food is clearly visible.";
+        setMessages(prev=>[...prev,{role:"assistant",content:msg,isError:true}]);
       }
       setPhotoScanning(false);
     };
@@ -1561,7 +1565,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
   // Recalculate type after overrides
   const effType = (info.isKick && info.isGym) ? "combo" : info.isKick ? "kb" : info.isGym ? "gym" : "rest";
   const tgt = TARGETS[effType] || TARGETS[info.type];
-  const dayMeals = meals[dKey]||[];
+  const dayMeals = (meals[dKey]||[]).map((m,i)=>m.id?m:{...m,id:`legacy-${dKey}-${i}`});
   const tots = dayMeals.reduce((a,m)=>({cal:a.cal+(m.cal||0),carb:a.carb+(m.carb||0),prot:a.prot+(m.prot||0),fat:a.fat+(m.fat||0)}),{cal:0,carb:0,prot:0,fat:0});
   const pct = (v,t)=>Math.min(100,Math.round(v/t*100));
 
@@ -1577,7 +1581,8 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
     setLastAtt(val);
     setTimeout(()=>setLastAtt(null), 650);
   };
-  const delMeal = (i) => { setMeals(prev=>({...prev,[dKey]:prev[dKey].filter((_,j)=>j!==i)})); setExpandedMeal(null); setCustomServ(""); };
+  const mealId = (m,i) => m.id || `legacy-${dKey}-${i}`;
+  const delMeal = (id) => { setMeals(prev=>({...prev,[dKey]:(prev[dKey]||[]).filter((m,i)=>mealId(m,i)!==id)})); setExpandedMeal(null); setCustomServ(""); };
   const [expandedMeal, setExpandedMeal] = React.useState(null);
   const [customServ, setCustomServ] = React.useState("");
 
@@ -1588,9 +1593,11 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
   const saveMealToFavs = (m) => {
     setFavorites(prev=>prev.find(f=>f.name===m.name)?prev:[{name:m.name,cal:m.cal,carb:m.carb,prot:m.prot,fat:m.fat||0,fiber:m.fiber||0},...prev]);
   };
-  const adjustMealServing = (i, mult) => {
+  const adjustMealServing = (id, mult) => {
     setMeals(prev=>{
       const day = [...(prev[dKey]||[])];
+      const i = day.findIndex((m,j)=>mealId(m,j)===id);
+      if (i===-1) return prev;
       const base = day[i]._base || {...day[i]};
       day[i] = {
         ...day[i],
@@ -1617,7 +1624,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 
   return (
     <div>
-      {showChat&&<FoodAIChat apiKey={apiKey} onAddMeal={m=>setMeals(prev=>({...prev,[dKey]:[...(prev[dKey]||[]),m]}))} onClose={()=>setShowChat(false)} favorites={favorites} onSaveFavorite={saveFavorite}/>}
+      {showChat&&<FoodAIChat apiKey={apiKey} onAddMeal={m=>setMeals(prev=>({...prev,[dKey]:[...(prev[dKey]||[]),{...m,id:crypto.randomUUID()}]}))} onClose={()=>setShowChat(false)} favorites={favorites} onSaveFavorite={saveFavorite}/>}
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
 
       <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 48px) 20px 14px",position:"relative",overflow:"hidden"}}>
@@ -1708,13 +1715,13 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
             <div style={{fontSize:12}}>Tap "Log Food with AI" above</div>
           </div>
         ):dayMeals.map((m,i)=>{
-          const isExp = expandedMeal===i;
+          const isExp = expandedMeal===m.id;
           const curMult = m._mult || 1;
           const isFav = favorites.some(f=>f.name===(m._base||m).name||f.name===m.name.replace(/ ×[\d.]+$/,""));
           return (
-          <div key={m.name+i} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"rgba(56,189,248,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s"}}>
+          <div key={m.id} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"rgba(56,189,248,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s"}}>
             {/* Tap header to expand */}
-            <div onClick={()=>{setExpandedMeal(isExp?null:i);setCustomServ("");}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 14px",cursor:"pointer"}}>
+            <div onClick={()=>{setExpandedMeal(isExp?null:m.id);setCustomServ("");}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 14px",cursor:"pointer"}}>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:14,fontWeight:600,color:C.text,lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{m.name}</div>
                 <div style={{display:"flex",gap:10,marginTop:5,flexWrap:"wrap"}}>
@@ -1731,20 +1738,20 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
                 <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:8}}>Servings</div>
                 <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap"}}>
                   {[0.5,1,1.5,2,3].map(v=>(
-                    <button key={v} onClick={()=>{adjustMealServing(i,v);setCustomServ("");}} style={{flex:1,minWidth:40,padding:"7px 0",borderRadius:10,fontSize:12,fontWeight:700,background:curMult===v?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.07)",border:`1px solid ${curMult===v?"transparent":"rgba(255,255,255,0.12)"}`,color:curMult===v?"#fff":C.text2}}>
+                    <button key={v} onClick={()=>{adjustMealServing(m.id,v);setCustomServ("");}} style={{flex:1,minWidth:40,padding:"7px 0",borderRadius:10,fontSize:12,fontWeight:700,background:curMult===v?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.07)",border:`1px solid ${curMult===v?"transparent":"rgba(255,255,255,0.12)"}`,color:curMult===v?"#fff":C.text2}}>
                       {v}×
                     </button>
                   ))}
                 </div>
                 <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:12}}>
-                  <input type="number" min="0.1" step="0.25" value={customServ} onChange={e=>setCustomServ(e.target.value)} onBlur={()=>{const v=parseFloat(customServ);if(v>0)adjustMealServing(i,v);}} onKeyDown={e=>{if(e.key==='Enter'){const v=parseFloat(customServ);if(v>0){adjustMealServing(i,v);e.target.blur();}}}} placeholder="Custom ×" style={{flex:1,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"7px 10px",fontSize:12,color:C.text,outline:"none"}}/>
+                  <input type="number" min="0.1" step="0.25" value={customServ} onChange={e=>setCustomServ(e.target.value)} onBlur={()=>{const v=parseFloat(customServ);if(v>0)adjustMealServing(m.id,v);}} onKeyDown={e=>{if(e.key==='Enter'){const v=parseFloat(customServ);if(v>0){adjustMealServing(m.id,v);e.target.blur();}}}} placeholder="Custom ×" style={{flex:1,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"7px 10px",fontSize:12,color:C.text,outline:"none"}}/>
                   <span style={{fontSize:11,color:C.text3,flexShrink:0}}>servings</span>
                 </div>
                 <div style={{display:"flex",gap:8}}>
                   <button onClick={()=>saveMealToFavs(m._base||m)} style={{flex:1,padding:"9px 0",borderRadius:10,fontSize:12,fontWeight:700,background:isFav?"rgba(245,200,66,0.18)":"rgba(245,200,66,0.08)",border:`1px solid ${isFav?"rgba(245,200,66,0.4)":"rgba(245,200,66,0.22)"}`,color:C.amber}}>
                     {isFav?"⭐ Saved":"⭐ Save to Library"}
                   </button>
-                  <button onClick={()=>delMeal(i)} style={{padding:"9px 14px",borderRadius:10,fontSize:12,fontWeight:700,background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.22)",color:C.red}}>
+                  <button onClick={()=>delMeal(m.id)} style={{padding:"9px 14px",borderRadius:10,fontSize:12,fontWeight:700,background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.22)",color:C.red}}>
                     Delete
                   </button>
                 </div>
@@ -1765,7 +1772,16 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
             <div style={{fontSize:14,fontWeight:700,color:C.text}}>⚖️ Log Body Weight</div>
             <div style={{fontSize:11,color:C.text3,marginTop:2}}>{bwLog&&bwLog.length>0?`Last: ${bwLog[bwLog.length-1].weight} lbs on ${bwLog[bwLog.length-1].date}`:"Start tracking your lean bulk progress"}</div>
           </div>
-          <div style={{fontSize:18,color:C.accent}}>+</div>
+          {(()=>{
+            if(!bwLog||bwLog.length<2)return <div style={{fontSize:18,color:C.accent}}>+</div>;
+            const d=+(bwLog[bwLog.length-1].weight-bwLog[bwLog.length-2].weight).toFixed(1);
+            const toward=PROFILE.goalWeight>=PROFILE.currentWeight?d>0:d<0;
+            const col=d===0?C.text3:toward?C.green:C.amber;
+            return <div style={{display:"flex",alignItems:"center",gap:5,padding:"4px 9px",borderRadius:20,background:col+"1a",border:`1px solid ${col}40`,flexShrink:0,marginLeft:10}}>
+              <span style={{fontSize:12,color:col}}>{d>0?"▲":d<0?"▼":"—"}</span>
+              <span style={{fontSize:12,fontWeight:700,color:col}}>{d>0?"+":""}{d} lb</span>
+            </div>;
+          })()}
         </button>
       </div>
 
@@ -1774,23 +1790,26 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       <WeeklyHistory meals={meals}/>
 
       {/* Saved favorites */}
-      {favorites.length>0&&(
-        <div style={{padding:"0 16px",marginBottom:16}}>
-          <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>⭐ Saved Favorites</div>
-          {favorites.map((fav)=>(
+      <div style={{padding:"0 16px",marginBottom:16}}>
+        <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>⭐ Saved Favorites</div>
+        {favorites.length===0?(
+          <div style={{background:"rgba(245,200,66,0.05)",border:"1px dashed rgba(245,200,66,0.22)",borderRadius:14,padding:"16px 14px",textAlign:"center"}}>
+            <div style={{fontSize:24,marginBottom:6}}>⭐</div>
+            <div style={{fontSize:12,color:C.text2,lineHeight:1.4}}>No favorites yet. Tap a logged meal, then <strong style={{color:C.amber}}>Save to Library</strong> to quick-add it any day.</div>
+          </div>
+        ):favorites.map((fav)=>(
             <div key={fav.name} style={{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.09)`,borderRadius:14,padding:"12px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <div>
                 <div style={{fontSize:13,fontWeight:600,color:C.text}}>{fav.name}</div>
                 <div style={{fontSize:11,color:C.text3,marginTop:2}}>{fav.cal} cal · {fav.prot}g P · {fav.carb}g C · {fav.fat}g F</div>
               </div>
               <div style={{display:"flex",gap:6}}>
-                <button onClick={()=>setMeals(prev=>({...prev,[dKey]:[...(prev[dKey]||[]),fav]}))} style={{background:"rgba(52,211,153,0.12)",border:"1px solid rgba(52,211,153,0.25)",borderRadius:8,padding:"6px 10px",fontSize:13,color:C.green,fontWeight:700}}>+</button>
+                <button onClick={()=>setMeals(prev=>({...prev,[dKey]:[...(prev[dKey]||[]),{...fav,id:crypto.randomUUID()}]}))} style={{background:"rgba(52,211,153,0.12)",border:"1px solid rgba(52,211,153,0.25)",borderRadius:8,padding:"6px 10px",fontSize:13,color:C.green,fontWeight:700}}>+</button>
                 <button onClick={()=>removeFavorite(fav.name)} style={{background:"rgba(255,255,255,0.05)",border:`1px solid rgba(255,255,255,0.10)`,borderRadius:8,padding:"6px 10px",fontSize:13,color:C.text3}}>×</button>
               </div>
             </div>
           ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 }
