@@ -1,11 +1,11 @@
 // DailyOS Service Worker
 // Registered by the inline <script> in index.html <head> on every page load.
 // Strategy: network-first with cache fallback for all requests.
-// Cache name is versioned — bumping 'dailyos-v3' here forces all clients to
+// Cache name is versioned — bumping the version here forces all clients to
 // drop the old cache on next activate, which is how you push a forced update.
 // Only index.html and sw.js are deployed (see deploy.sh); nothing else is served.
 
-const CACHE = 'dailyos-v3';
+const CACHE = 'dailyos-v4';
 
 // On install: pre-cache './' so the app loads instantly from cache next visit.
 // skipWaiting() makes the new SW take control immediately instead of waiting
