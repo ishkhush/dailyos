@@ -537,6 +537,11 @@ function extractJSON(raw) {
   throw new Error("Could not parse JSON from Claude response");
 }
 
+// Coerce model-provided macro values to a finite number (Claude sometimes
+// returns strings like "~500" or omits a field), preventing NaN from
+// propagating into stored meals and the daily totals.
+const num = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
+
 // ── RATE LIMITER ──────────────────────────────────────────────────────────────
 // checkRateLimit() is called as the FIRST LINE of both callClaude() and
 // analyzePhotoWithKey(). It throws on violation — callers catch and show
@@ -715,7 +720,6 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
       setPhotoScanning(true); setPendingResult(null);
       try {
         const result = await analyzePhotoWithKey(apiKey, b64, f.type||"image/jpeg");
-        const num = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
         const macros = {calories:num(result.calories),carbs:num(result.carbs),protein:num(result.protein),fat:num(result.fat),fiber:num(result.fiber)};
         const photoMsg = {
           role:"assistant",
@@ -740,11 +744,11 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
     const label = m !== 1 ? `${pendingResult.name} ×${m}` : pendingResult.name;
     onAddMeal({
       name: label,
-      cal:  Math.round((pendingResult.calories||0)*m),
-      carb: Math.round((pendingResult.carbs||0)*m),
-      prot: Math.round((pendingResult.protein||0)*m),
-      fat:  Math.round((pendingResult.fat||0)*m),
-      fiber:Math.round((pendingResult.fiber||0)*m),
+      cal:  Math.round(num(pendingResult.calories)*m),
+      carb: Math.round(num(pendingResult.carbs)*m),
+      prot: Math.round(num(pendingResult.protein)*m),
+      fat:  Math.round(num(pendingResult.fat)*m),
+      fiber:Math.round(num(pendingResult.fiber)*m),
     });
     setServingMult(1);
     setPendingResult(null);
@@ -879,8 +883,8 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
       <div style={{padding:"10px 16px calc(16px + env(safe-area-inset-bottom))",background:"rgba(6,13,26,0.90)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderTop:`1px solid rgba(255,255,255,0.10)`,flexShrink:0,display:"flex",gap:8,alignItems:"flex-end"}}>
         <button onClick={()=>fileRef.current.click()} disabled={photoScanning} style={{width:44,height:44,borderRadius:12,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,fontSize:20,flexShrink:0}}>📸</button>
         <input ref={fileRef} type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={handlePhoto}/>
-        <input style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,borderRadius:12,padding:"12px 14px",fontSize:14,color:C.text,minHeight:44}} placeholder="Type any food…" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage(input);}}}/>
-        <button onClick={()=>sendMessage(input)} disabled={loading||!input.trim()} style={{width:44,height:44,borderRadius:12,background:input.trim()?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:"none",fontSize:20,flexShrink:0,opacity:loading?0.5:1}}>↑</button>
+        <input disabled={loading||photoScanning} style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,borderRadius:12,padding:"12px 14px",fontSize:14,color:C.text,minHeight:44,opacity:(loading||photoScanning)?0.5:1}} placeholder={(loading||photoScanning)?(photoScanning?"Analyzing photo…":"Working…"):"Type any food…"} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage(input);}}}/>
+        <button onClick={()=>sendMessage(input)} disabled={loading||photoScanning||!input.trim()} style={{width:44,height:44,borderRadius:12,background:(input.trim()&&!loading&&!photoScanning)?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:"none",fontSize:20,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",opacity:(loading||photoScanning)?0.7:1}}>{(loading||photoScanning)?<span className="spin"></span>:"↑"}</button>
       </div>
     </div>
   );
@@ -1567,6 +1571,17 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
   const tgt = TARGETS[effType] || TARGETS[info.type];
   const dayMeals = (meals[dKey]||[]).map((m,i)=>m.id?m:{...m,id:`legacy-${dKey}-${i}`});
   const tots = dayMeals.reduce((a,m)=>({cal:a.cal+(m.cal||0),carb:a.carb+(m.carb||0),prot:a.prot+(m.prot||0),fat:a.fat+(m.fat||0)}),{cal:0,carb:0,prot:0,fat:0});
+  const gymStreak = (()=>{
+    let s=0;
+    for(let i=0;i>=-365;i--){
+      const d=vd(i), k=dk(d);
+      if(!getDayInfo(d).isGym) continue;
+      if(attend[k]?.gym){ s++; }
+      else if(i===0) continue;
+      else break;
+    }
+    return s;
+  })();
   const pct = (v,t)=>Math.min(100,Math.round(v/t*100));
 
   const toggleDayOverride = (key) => setDayOverrides(prev=>({...prev,[dKey]:{...(prev[dKey]||{}),[key]:!(prev[dKey]||{})[key]}}));
@@ -1671,7 +1686,10 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       <div style={{margin:"0 16px 12px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(255,255,255,0.10)`,borderRadius:18,padding:"14px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}>
         {(info.isKick||info.isGym)&&(
           <div>
-            <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>Did you show up?</div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+              <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>Did you show up?</div>
+              {info.isGym&&gymStreak>0&&<div style={{fontSize:11,fontWeight:800,color:C.amber,background:"rgba(245,200,66,0.12)",border:"1px solid rgba(245,200,66,0.28)",borderRadius:20,padding:"2px 9px"}}>🔥 {gymStreak} gym {gymStreak===1?"day":"days"}</div>}
+            </div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
               {info.isKick&&<button onClick={()=>toggleAtt("kb")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.kb?"rgba(47,229,165,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.kb?"rgba(47,229,165,0.14)":"rgba(255,255,255,0.04)",color:attend[dKey]?.kb?C.green:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="kb"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.kb?`0 0 18px rgba(47,229,165,0.35)`:undefined}}>{attend[dKey]?.kb?"✅ Kickboxing done":"🥊 Mark Kickboxing"}</button>}
               {info.isGym&&<button onClick={()=>toggleAtt("gym")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.gym?"rgba(245,200,66,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.gym?"rgba(245,200,66,0.12)":"rgba(255,255,255,0.04)",color:attend[dKey]?.gym?C.amber:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="gym"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.gym?`0 0 18px rgba(245,200,66,0.35)`:undefined}}>{attend[dKey]?.gym?"✅ Gym done":"🏋️ Mark Gym"}</button>}
