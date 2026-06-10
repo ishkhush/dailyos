@@ -714,7 +714,15 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
   const handlePhoto = (e) => {
     const f = e.target.files[0]; if (!f) return; e.target.value="";
     if (loading || photoScanning) return;
+    if (f.size > 5 * 1024 * 1024) {
+      setMessages(prev=>[...prev,{role:"assistant",content:"That photo is over 5MB — too large to analyze. Try a smaller or lower-resolution image.",isError:true}]);
+      return;
+    }
     const reader = new FileReader();
+    reader.onerror = () => {
+      setPhotoScanning(false);
+      setMessages(prev=>[...prev,{role:"assistant",content:"Couldn't read that image file. Try another photo.",isError:true}]);
+    };
     reader.onload = async (ev) => {
       const b64 = ev.target.result.split(",")[1];
       setPhotoScanning(true); setPendingResult(null);
@@ -2185,7 +2193,13 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
 
       {vtab==="today"&&(
         <div style={{padding:"0 16px"}}>
-          {vocab.map((w,i)=>{
+          {(!vocab||vocab.length===0)?(
+            <div style={{textAlign:"center",padding:"3rem 0",color:C.text3,fontSize:14}}>
+              <div style={{fontSize:32,marginBottom:8}}>📖</div>
+              <div style={{marginBottom:16}}>Couldn't load today's words.</div>
+              <button onClick={()=>setVocab(getTodayWords())} style={{background:`linear-gradient(135deg,rgba(56,189,248,0.15),rgba(20,184,166,0.10))`,border:"1px solid rgba(56,189,248,0.25)",borderRadius:12,padding:"10px 20px",fontSize:13,fontWeight:700,color:C.accent}}>↻ Reload words</button>
+            </div>
+          ):vocab.map((w,i)=>{
             const wordColors=[[C.accent,"rgba(56,189,248,0.10)","rgba(56,189,248,0.20)"],[C.pink,"rgba(244,114,182,0.10)","rgba(244,114,182,0.20)"],[C.teal,"rgba(20,184,166,0.10)","rgba(20,184,166,0.20)"]];
             const [wc,wbg,wbdr]=wordColors[i%3];
             return(
