@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DailyOS">
-<meta name="theme-color" content="#091820">
+<meta name="theme-color" content="#050508">
 <title>DailyOS</title>
 
 <!--
@@ -25,7 +25,7 @@
       c.width = c.height = size;
       var ctx = c.getContext('2d');
       var r = size * 0.22;
-      ctx.fillStyle = '#060d1a';
+      ctx.fillStyle = '#050508';
       ctx.beginPath();
       ctx.moveTo(r,0); ctx.lineTo(size-r,0); ctx.arcTo(size,0,size,r,r);
       ctx.lineTo(size,size-r); ctx.arcTo(size,size,size-r,size,r);
@@ -33,7 +33,7 @@
       ctx.lineTo(0,r); ctx.arcTo(0,0,r,0,r);
       ctx.closePath(); ctx.fill();
       var p = size*0.06, ir = size*0.14;
-      ctx.fillStyle = '#091820';
+      ctx.fillStyle = '#0a0a0e';
       ctx.beginPath();
       ctx.moveTo(p+ir,p); ctx.lineTo(size-p-ir,p); ctx.arcTo(size-p,p,size-p,p+ir,ir);
       ctx.lineTo(size-p,size-p-ir); ctx.arcTo(size-p,size-p,size-p-ir,size-p,ir);
@@ -41,7 +41,7 @@
       ctx.lineTo(p,p+ir); ctx.arcTo(p,p,p+ir,p,ir);
       ctx.closePath(); ctx.fill();
       var g = ctx.createLinearGradient(0,0,size,size);
-      g.addColorStop(0,'#38bdf8'); g.addColorStop(1,'#14b8a6');
+      g.addColorStop(0,'#a3e635'); g.addColorStop(1,'#22d3ee');
       ctx.fillStyle = g;
       ctx.font = '900 '+Math.round(size*0.5)+'px Arial,Helvetica,sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
@@ -54,7 +54,7 @@
   }
   var icon192 = makeIcon(192), icon512 = makeIcon(512);
   if (icon192) { var al=document.createElement('link'); al.rel='apple-touch-icon'; al.href=icon192; document.head.appendChild(al); }
-  var manifest = { name:'DailyOS', short_name:'DailyOS', description:'Fitness, nutrition & vocab', start_url:'./', scope:'./', display:'standalone', orientation:'portrait', background_color:'#060d1a', theme_color:'#091820', icons:[{src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:icon512,sizes:'512x512',type:'image/png',purpose:'any maskable'}] };
+  var manifest = { name:'DailyOS', short_name:'DailyOS', description:'Fitness, nutrition & vocab', start_url:'./', scope:'./', display:'standalone', orientation:'portrait', background_color:'#050508', theme_color:'#050508', icons:[{src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:icon512,sizes:'512x512',type:'image/png',purpose:'any maskable'}] };
   var ml=document.createElement('link'); ml.rel='manifest'; ml.href='data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)); document.head.appendChild(ml);
   if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); }); }
 })();
@@ -74,9 +74,9 @@
 <script crossorigin integrity="sha384-Rv68Y7adOjMMJc1/xFMcdNvXre/HF51to4GZjBALmXr7ABnVl5V4UajJwBu7zbhN" src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
-html{background:#060d1a;-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
-body{background:linear-gradient(160deg,#060f1e 0%,#060d1a 50%,#071520 100%);color:#e8f4ff;min-height:100vh;position:relative}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(14,40,70,0.7) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(6,28,50,0.6) 0%,transparent 55%);pointer-events:none;z-index:-1}
+html{background:#050508;-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+body{background:linear-gradient(160deg,#060608 0%,#050508 50%,#070709 100%);color:#f8fafc;min-height:100vh;position:relative}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(80,140,0,0.18) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(0,130,150,0.14) 0%,transparent 55%);pointer-events:none;z-index:-1}
 #root{max-width:430px;margin:0 auto;padding-bottom:96px;min-height:100vh}
 button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit;transition:transform 0.12s,opacity 0.12s}
 button:active:not(:disabled){transform:scale(0.95)}
@@ -103,7 +103,7 @@ video,img{display:block}
 @keyframes borderGlow{0%,100%{opacity:0.5}50%{opacity:1}}
 @keyframes statSlide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
 @keyframes ripple{0%{transform:scale(0.8);opacity:1}100%{transform:scale(2.2);opacity:0}}
-.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.12);border-top-color:#38bdf8;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.12);border-top-color:#a3e635;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
 .fade-in{animation:fadeIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
 .slide-up{animation:slideUp 0.32s cubic-bezier(0.34,1.56,0.64,1)}
 .pop-in{animation:popIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
@@ -119,20 +119,20 @@ video,img{display:block}
 @keyframes attMarkDone{0%{transform:scale(1)}20%{transform:scale(1.18)}50%{transform:scale(0.94)}75%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes scanLine{0%{top:-4px}100%{top:100%}}
 @keyframes neonFlicker{0%,19%,21%,23%,100%{opacity:1}20%,22%{opacity:0.85}}
-@keyframes cyberPulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,0),inset 0 1px 0 rgba(255,255,255,0.06)}50%{box-shadow:0 0 28px 2px rgba(56,189,248,0.12),inset 0 1px 0 rgba(255,255,255,0.1)}}
+@keyframes cyberPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0),inset 0 1px 0 rgba(255,255,255,0.06)}50%{box-shadow:0 0 28px 2px rgba(163,230,53,0.12),inset 0 1px 0 rgba(255,255,255,0.1)}}
 @keyframes gridDrift{0%{background-position:0 0}100%{background-position:40px 40px}}
 @keyframes goldShimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 @keyframes bigNumPop{0%{opacity:0;transform:scale(0.5) translateY(12px)}65%{transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
-@keyframes ctaRing{0%{box-shadow:0 0 0 0 rgba(56,189,248,0.5)}70%{box-shadow:0 0 0 14px rgba(56,189,248,0)}100%{box-shadow:0 0 0 0 rgba(56,189,248,0)}}
-@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(56,189,248,0.3)}50%{box-shadow:0 0 22px rgba(56,189,248,0.7)}}
-@keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,0.5)}50%{box-shadow:0 0 12px 4px rgba(56,189,248,0.2)}}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,0)}50%{box-shadow:0 0 22px 6px rgba(56,189,248,0.14)}}
-.cyber-border{border:1px solid rgba(56,189,248,0.18)!important;box-shadow:0 0 0 0 transparent,inset 0 1px 0 rgba(255,255,255,0.06);transition:box-shadow 0.4s}
-.cyber-border:hover{box-shadow:0 0 20px rgba(56,189,248,0.14),inset 0 1px 0 rgba(255,255,255,0.09)}
-.cyber-card{background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(56,189,248,0.14);border-radius:20px;position:relative;overflow:hidden}
-.cyber-card::before{content:'';position:absolute;left:0;right:0;height:1px;top:-1px;background:linear-gradient(90deg,transparent,rgba(56,189,248,0.5),transparent);opacity:0.7}
+@keyframes ctaRing{0%{box-shadow:0 0 0 0 rgba(163,230,53,0.5)}70%{box-shadow:0 0 0 14px rgba(163,230,53,0)}100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(163,230,53,0.3)}50%{box-shadow:0 0 22px rgba(163,230,53,0.7)}}
+@keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0.5)}50%{box-shadow:0 0 12px 4px rgba(163,230,53,0.2)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}50%{box-shadow:0 0 22px 6px rgba(163,230,53,0.14)}}
+.cyber-border{border:1px solid rgba(163,230,53,0.18)!important;box-shadow:0 0 0 0 transparent,inset 0 1px 0 rgba(255,255,255,0.06);transition:box-shadow 0.4s}
+.cyber-border:hover{box-shadow:0 0 20px rgba(163,230,53,0.14),inset 0 1px 0 rgba(255,255,255,0.09)}
+.cyber-card{background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(163,230,53,0.14);border-radius:20px;position:relative;overflow:hidden}
+.cyber-card::before{content:'';position:absolute;left:0;right:0;height:1px;top:-1px;background:linear-gradient(90deg,transparent,rgba(163,230,53,0.5),transparent);opacity:0.7}
 .scan-overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
-.scan-overlay::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(56,189,248,0.18),transparent);animation:scanLine 5s linear infinite;opacity:0.6}
+.scan-overlay::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(163,230,53,0.18),transparent);animation:scanLine 5s linear infinite;opacity:0.6}
 .glass-card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.10);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)}
 .pill-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.13);border-radius:999px}
 </style>
@@ -182,14 +182,13 @@ function useCountUp(target, duration = 850) {
 
 // ── COLORS ───────────────────────────────────────────────────────────────────
 const C = {
-  accent:"#38bdf8", green:"#2fe5a5", amber:"#f5c842", gold:"#f5c842", blue:"#38bdf8", red:"#ff6b6b",
-  pink:"#f472b6", teal:"#14b8a6", orange:"#fb923c",
-  bg:"#060d1a", bg2:"#091820", bg3:"#0d2030", bg4:"#112538",
-  glass:"rgba(255,255,255,0.05)", glassMid:"rgba(255,255,255,0.07)", glassHigh:"rgba(255,255,255,0.10)",
-  border:"rgba(255,255,255,0.10)", border2:"rgba(255,255,255,0.16)",
-  text:"#e8f4ff", text2:"#7090a0", text3:"#3a5570",
-  // glow helpers
-  glowAccent:"rgba(56,189,248,0.28)", glowGreen:"rgba(47,229,165,0.25)", glowBlue:"rgba(56,189,248,0.25)", glowGold:"rgba(245,200,66,0.30)"
+  accent:"#a3e635", green:"#4ade80", amber:"#fbbf24", gold:"#fbbf24", blue:"#22d3ee", red:"#f87171",
+  pink:"#f472b6", teal:"#2dd4bf", orange:"#fb923c",
+  bg:"#050508", bg2:"#0a0a0e", bg3:"#111116", bg4:"#18181f",
+  glass:"rgba(255,255,255,0.03)", glassMid:"rgba(255,255,255,0.05)", glassHigh:"rgba(255,255,255,0.08)",
+  border:"rgba(255,255,255,0.08)", border2:"rgba(255,255,255,0.14)",
+  text:"#f8fafc", text2:"#6b7280", text3:"#374151",
+  glowAccent:"rgba(163,230,53,0.28)", glowGreen:"rgba(74,222,128,0.25)", glowBlue:"rgba(34,211,238,0.25)", glowGold:"rgba(251,191,36,0.30)"
 };
 
 
@@ -374,68 +373,94 @@ function getTodayWords() {
 }
 
 // ── SPEECH ────────────────────────────────────────────────────────────────────
-// _voice is resolved once and cached. onvoiceschanged re-resolves it when the
-// browser finishes loading premium device voices (happens after page load on
-// Chrome/Safari). Using localService voices avoids the robotic browser fallback.
+// Voice selection: prefer cloud/neural voices (non-localService) which sound
+// far more natural than device-local fallbacks. Fall back to local only if
+// no network voice is available.
 let _voice = null;
-const _PREF_NAMES = ["Samantha","Karen","Serena","Ava","Allison","Moira","Tessa","Fiona",
-                     "Google UK English Female","Google US English","Alice","Daniel","Google UK English Male"];
-// Called eagerly + on voiceschanged for non-iOS browsers.
-function _resolveVoice() {
+function _pickBestVoice() {
   const vs = window.speechSynthesis?.getVoices() || [];
-  if (!vs.length) return;
-  for (const n of _PREF_NAMES) {
-    const v = vs.find(x => x.name.includes(n) && x.lang.startsWith("en"));
-    if (v) { _voice = v; return; }
-  }
-  _voice = vs.find(x => x.localService && x.lang.startsWith("en"))
-        || vs.find(x => x.lang.startsWith("en-US"))
-        || vs.find(x => x.lang.startsWith("en"))
-        || vs[0] || null;
+  if (!vs.length) return null;
+  const en = vs.filter(x => x.lang.startsWith("en"));
+  if (!en.length) return vs[0];
+  // Prefer neural/enhanced/premium named voices (highest quality)
+  const neural = en.find(x => /neural|enhanced|premium/i.test(x.name));
+  if (neural) return neural;
+  // Prefer cloud voices (non-localService) — Google/Microsoft voices
+  const cloud = en.find(x => !x.localService && x.lang.startsWith("en-US"))
+             || en.find(x => !x.localService);
+  if (cloud) return cloud;
+  // Fall back to local English voices
+  return en.find(x => x.lang.startsWith("en-US")) || en[0];
 }
-// iOS Safari only exposes voices during a user-gesture call; call every time.
-function _pickVoice() {
-  const vs = window.speechSynthesis?.getVoices() || [];
-  if (vs.length) {
-    for (const n of _PREF_NAMES) {
-      const v = vs.find(x => x.name.includes(n) && x.lang.startsWith("en"));
-      if (v) { _voice = v; return v; }
-    }
-    const best = vs.find(x => x.localService && x.lang.startsWith("en"))
-              || vs.find(x => x.lang.startsWith("en-US"))
-              || vs.find(x => x.lang.startsWith("en"))
-              || vs[0] || null;
-    _voice = best; return best;
-  }
-  return _voice;
+function _resolveVoice() {
+  const v = _pickBestVoice();
+  if (v) _voice = v;
 }
 if (window.speechSynthesis) {
   _resolveVoice();
   window.speechSynthesis.onvoiceschanged = _resolveVoice;
 }
-function makeUtterance(text, rate, pitch) {
+function makeUtterance(text, rate, pitch, voiceName) {
   const u = new SpeechSynthesisUtterance(text);
   u.rate = rate || 0.82; u.pitch = pitch || 1.05;
-  // _pickVoice() calls getVoices() fresh — required on iOS to get device voices
-  const v = _pickVoice();
-  if (v) u.voice = v;
+  const vs = window.speechSynthesis?.getVoices() || [];
+  // If a specific voice is requested by name, find it; otherwise pick best
+  const v = voiceName
+    ? (vs.find(x => x.name === voiceName) || _pickBestVoice())
+    : (_voice || _pickBestVoice());
+  if (v) {
+    u.voice = v;
+    u.lang = v.lang.replace('_', '-'); // Android Chrome: must set both voice AND lang
+  } else {
+    u.lang = 'en-US'; // iOS fallback: set lang even when voices list is empty
+  }
   return u;
 }
 const speak = (t, r) => {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  // Tiny defer required on iOS Safari after cancel() to avoid silent failure
   setTimeout(() => window.speechSynthesis.speak(makeUtterance(t, r || 0.82)), 60);
 };
 
-// ── TTS UPGRADE — TikTok free API + persistent prefs ─────────────────────────
+// ── TTS PREFS + PROVIDERS ─────────────────────────────────────────────────────
 const TTS_KEY = "dos_tts_v1";
+const EL_KEY = "dos_el_key_v1";
 function loadTTSPrefs() {
   try { return JSON.parse(localStorage.getItem(TTS_KEY)) || {}; } catch { return {}; }
 }
 function saveTTSPrefs(p) { localStorage.setItem(TTS_KEY, JSON.stringify(p)); }
+function loadElKey() { return localStorage.getItem(EL_KEY) || ""; }
+function saveElKey(k) { localStorage.setItem(EL_KEY, k); }
 
-// Google TTS locale options — each sounds distinct, all natural quality
+// ── ELEVENLABS TTS ────────────────────────────────────────────────────────────
+// Free tier: 10,000 chars/month. Sign up at elevenlabs.io — no credit card.
+// These are stable public voice IDs from the ElevenLabs voice library.
+const ELEVENLABS_VOICES = [
+  {id:"21m00Tcm4TlvDq8ikWAM", label:"Rachel — Calm & Clear (Female)"},
+  {id:"EXAVITQu4vr4xnSDxMaL", label:"Bella — Warm & Friendly (Female)"},
+  {id:"ErXwobaYiN019PkySvjV", label:"Antoni — Smooth & Natural (Male)"},
+  {id:"TxGEqnHWrfWFTfGW9XjX", label:"Josh — Deep & Authoritative (Male)"},
+];
+
+let _elAudio = null;
+async function speakElevenLabs(text, voiceId, apiKey) {
+  const vid = voiceId || ELEVENLABS_VOICES[0].id;
+  const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${vid}`, {
+    method:"POST",
+    headers:{"Accept":"audio/mpeg","Content-Type":"application/json","xi-api-key":apiKey},
+    body:JSON.stringify({text, model_id:"eleven_turbo_v2_5", voice_settings:{stability:0.5,similarity_boost:0.75}})
+  });
+  if (!resp.ok) throw new Error(`ElevenLabs error ${resp.status}`);
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  if (_elAudio) { _elAudio.pause(); if (_elAudio._objUrl) URL.revokeObjectURL(_elAudio._objUrl); }
+  _elAudio = new Audio(url);
+  _elAudio._objUrl = url;
+  _elAudio.onended = () => { URL.revokeObjectURL(url); _elAudio = null; };
+  return _elAudio.play();
+}
+
+// Google TTS locale options
 const GT_VOICES = [
   {id:"en-US", label:"American English (Female)"},
   {id:"en-GB", label:"British English (Female)"},
@@ -459,30 +484,25 @@ function speakGoogle(text, locale) {
   }
 }
 
-// Kept at module scope — prevents V8 GC from destroying the utterance mid-speech,
-// which silently kills onend + voice assignment in Chrome.
+// Module-level ref prevents V8 GC from killing utterance mid-speech
 let _currentUtt = null;
 const _isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
 
 function speakText(text, rate) {
   const prefs = loadTTSPrefs();
-  if (prefs.provider === "google") {
+  if (prefs.provider === "elevenlabs") {
+    const apiKey = loadElKey();
+    if (!apiKey) { speak(text, rate || 0.82); return; }
+    speakElevenLabs(text, prefs.elVoice || ELEVENLABS_VOICES[0].id, apiKey)
+      .catch(() => speak(text, rate || 0.82));
+  } else if (prefs.provider === "google") {
     speakGoogle(text, prefs.gtLocale || "en-US");
   } else {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     setTimeout(() => {
-      const u = makeUtterance(text, rate || 0.82);
-      // iOS returns empty getVoices() — skip voice selection entirely
-      if (!_isIOS && prefs.browserVoice) {
-        const vs = window.speechSynthesis.getVoices();
-        const v = vs.find(x => x.name === prefs.browserVoice);
-        if (v) {
-          u.voice = v;
-          u.lang = v.lang.replace('_', '-'); // Android Chrome requires lang alongside voice
-        }
-      }
-      _currentUtt = u; // hold strong ref — prevents GC mid-utterance
+      const u = makeUtterance(text, rate || 0.82, undefined, prefs.browserVoice||null);
+      _currentUtt = u;
       window.speechSynthesis.speak(u);
     }, 60);
   }
@@ -490,12 +510,21 @@ function speakText(text, rate) {
 
 async function playSyllablesText(syls) {
   const prefs = loadTTSPrefs();
-  if (prefs.provider === "google") {
+  if (prefs.provider === "elevenlabs") {
+    const apiKey = loadElKey();
+    if (!apiKey) { playSyllables(syls); return; }
+    for (let i = 0; i < syls.length; i++) {
+      await speakElevenLabs(syls[i], prefs.elVoice || ELEVENLABS_VOICES[0].id, apiKey)
+        .then(()=>new Promise(r=>{ if(_elAudio){_elAudio.onended=r;setTimeout(r,3000);}else r(); }))
+        .catch(()=>new Promise(r=>setTimeout(r,600)));
+      if (i < syls.length - 1) await new Promise(r => setTimeout(r, 350));
+    }
+  } else if (prefs.provider === "google") {
     for (let i = 0; i < syls.length; i++) {
       await new Promise(resolve => {
         const audio = speakGoogle(syls[i], prefs.gtLocale || "en-US");
         if (audio) { audio.onended = resolve; setTimeout(resolve, 2000); }
-        else { setTimeout(resolve, 600); }
+        else setTimeout(resolve, 600);
       });
       if (i < syls.length - 1) await new Promise(r => setTimeout(r, 350));
     }
@@ -507,10 +536,11 @@ async function playSyllablesText(syls) {
 function playSyllables(syls) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
+  const prefs = loadTTSPrefs();
   let i = 0;
   const next = () => {
     if (i >= syls.length) return;
-    const u = makeUtterance(syls[i], 0.58, 1.08);
+    const u = makeUtterance(syls[i], 0.58, 1.08, prefs.browserVoice||null);
     let done = false;
     const advance = () => {
       if (done) return; done = true;
@@ -818,7 +848,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
             <div style={{fontSize:14,color:C.text,lineHeight:1.65}}>Hey Ish! 👋 Tell me what you ate:</div>
             <div style={{marginTop:10,display:"flex",flexDirection:"column",gap:6}}>
               {["2 cups Raw Farms raw milk","2 eggs with avocado toast","Chipotle chicken bowl","1 Quest protein bar"].map(s=>(
-                <button key={s} onClick={()=>sendMessage(s)} style={{background:"rgba(56,189,248,0.07)",backdropFilter:"blur(8px)",border:`1px solid rgba(56,189,248,0.18)`,borderRadius:12,padding:"8px 12px",fontSize:13,color:C.accent,textAlign:"left"}}>{s} →</button>
+                <button key={s} onClick={()=>sendMessage(s)} style={{background:"rgba(163,230,53,0.07)",backdropFilter:"blur(8px)",border:`1px solid rgba(163,230,53,0.18)`,borderRadius:12,padding:"8px 12px",fontSize:13,color:C.accent,textAlign:"left"}}>{s} →</button>
               ))}
             </div>
           </div>
@@ -830,7 +860,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
               <div style={{background:C.accent,borderRadius:"18px 18px 4px 18px",padding:"10px 14px",maxWidth:"80%",fontSize:14,color:"white"}}>{m.content}</div>
             ) : (
               <div style={{maxWidth:"90%",width:m.isResult?"90%":undefined}}>
-                <div style={{background:m.isResult?"rgba(47,229,165,0.08)":m.isError?"rgba(248,113,113,0.08)":m.isConfirm?"rgba(47,229,165,0.08)":"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${m.isResult?"rgba(47,229,165,0.22)":m.isError?"rgba(248,113,113,0.22)":m.isConfirm?"rgba(47,229,165,0.22)":"rgba(255,255,255,0.10)"}`,borderRadius:"4px 18px 18px 18px",padding:"12px 14px"}}>
+                <div style={{background:m.isResult?"rgba(74,222,128,0.08)":m.isError?"rgba(248,113,113,0.08)":m.isConfirm?"rgba(74,222,128,0.08)":"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${m.isResult?"rgba(74,222,128,0.22)":m.isError?"rgba(248,113,113,0.22)":m.isConfirm?"rgba(74,222,128,0.22)":"rgba(255,255,255,0.10)"}`,borderRadius:"4px 18px 18px 18px",padding:"12px 14px"}}>
                   <div style={{fontSize:14,color:C.text,lineHeight:1.65,whiteSpace:"pre-wrap"}}>{m.content}</div>
                   {m.isResult&&m.result&&!m.isConfirm&&(
                     <div style={{marginTop:10}}>
@@ -999,8 +1029,8 @@ function WeightSparkline({ bwLog, onClick }) {
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{overflow:"visible",animation:"sparkleIn 0.5s ease forwards"}}>
         <defs>
           <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.35"/>
-            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.02"/>
+            <stop offset="0%" stopColor="#a3e635" stopOpacity="0.35"/>
+            <stop offset="100%" stopColor="#a3e635" stopOpacity="0.02"/>
           </linearGradient>
           <filter id="sparkGlow">
             <feGaussianBlur stdDeviation="1.5" result="blur"/>
@@ -1008,10 +1038,10 @@ function WeightSparkline({ bwLog, onClick }) {
           </filter>
         </defs>
         <path d={areaPath} fill="url(#sparkGrad)"/>
-        <polyline points={polyline} fill="none" stroke="#38bdf8" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparkGlow)"/>
+        <polyline points={polyline} fill="none" stroke="#a3e635" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparkGlow)"/>
         {pts.map((p, i) => (
           <circle key={i} cx={p[0]} cy={p[1]} r={i === pts.length - 1 ? 4 : 2.5}
-            fill={i === pts.length - 1 ? "#38bdf8" : "rgba(56,189,248,0.5)"}
+            fill={i === pts.length - 1 ? "#a3e635" : "rgba(163,230,53,0.5)"}
             style={{animation:`bwPulse 2s ease infinite ${i===pts.length-1?"":`${i*0.1}s`}`}}/>
         ))}
       </svg>
@@ -1037,8 +1067,8 @@ function CalorieRing({ consumed, target }) {
       <svg width={SIZE} height={SIZE} style={{transform:"rotate(-90deg)"}}>
         <defs>
           <linearGradient id="calRingGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#38bdf8"/>
-            <stop offset="100%" stopColor="#14b8a6"/>
+            <stop offset="0%" stopColor="#a3e635"/>
+            <stop offset="100%" stopColor="#22d3ee"/>
           </linearGradient>
           <filter id="ringGlow">
             <feGaussianBlur stdDeviation="2" result="blur"/>
@@ -1124,10 +1154,10 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
           <span style={{fontSize:12}}>🎯</span>
           <span style={{fontSize:11,color:C.text,fontWeight:700,letterSpacing:0.5}}>Daily Rituals</span>
         </div>
-        <button onClick={()=>setShowAdd(s=>!s)} style={{width:28,height:28,borderRadius:"50%",background:"rgba(56,189,248,0.12)",border:"1px solid rgba(56,189,248,0.25)",color:C.accent,fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>+</button>
+        <button onClick={()=>setShowAdd(s=>!s)} style={{width:28,height:28,borderRadius:"50%",background:"rgba(163,230,53,0.12)",border:"1px solid rgba(163,230,53,0.25)",color:C.accent,fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>+</button>
       </div>
 
-      <div style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${allDone?"rgba(47,229,165,0.3)":C.border}`,borderRadius:20,overflow:"hidden",boxShadow:allDone?"0 0 24px rgba(47,229,165,0.12),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
+      <div style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${allDone?"rgba(74,222,128,0.3)":C.border}`,borderRadius:20,overflow:"hidden",boxShadow:allDone?"0 0 24px rgba(74,222,128,0.12),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
         {habits.length === 0 && (
           <div style={{padding:"20px 16px",textAlign:"center",color:C.text3,fontSize:13}}>No habits yet — tap + to add one</div>
         )}
@@ -1141,7 +1171,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
               onDragEnd={()=>{setDragIdx(null);setDragOverIdx(null);}}
               onDragOver={(e)=>{e.preventDefault();setDragOverIdx(i);}}
               onDrop={(e)=>{e.preventDefault();moveHabitAbs(dragIdx,i);setDragIdx(null);setDragOverIdx(null);}}
-              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:dragOverIdx===i&&dragIdx!==i?"rgba(56,189,248,0.07)":done?"rgba(47,229,165,0.06)":"rgba(255,255,255,0.01)",opacity:dragIdx===i?0.38:1,transition:"background 0.15s,opacity 0.15s",cursor:"grab",borderLeft:dragOverIdx===i&&dragIdx!==i?`3px solid ${C.accent}`:"3px solid transparent"}}>
+              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:dragOverIdx===i&&dragIdx!==i?"rgba(163,230,53,0.07)":done?"rgba(74,222,128,0.06)":"rgba(255,255,255,0.01)",opacity:dragIdx===i?0.38:1,transition:"background 0.15s,opacity 0.15s",cursor:"grab",borderLeft:dragOverIdx===i&&dragIdx!==i?`3px solid ${C.accent}`:"3px solid transparent"}}>
               {/* Grab handle */}
               <div style={{color:C.text3,fontSize:14,flexShrink:0,opacity:0.4,letterSpacing:-1,userSelect:"none"}}>⠿</div>
               <button onClick={()=>toggle(h.id)} style={{width:34,height:34,borderRadius:"50%",flexShrink:0,border:`2px solid ${done?h.color:C.border2}`,background:done?h.color+"22":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,transition:"all 0.25s",animation:done?"habitCheck 0.35s ease":undefined,boxShadow:done?`0 0 14px ${h.color}66`:undefined}}>
@@ -1160,7 +1190,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
           <div style={{padding:"14px 16px",borderTop:`1px solid rgba(255,255,255,0.08)`,background:"rgba(255,255,255,0.03)"}}>
             <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:10}}>
               {HABIT_EMOJIS.map(e=>(
-                <button key={e} onClick={()=>setNewEmoji(e)} style={{width:34,height:34,borderRadius:10,background:newEmoji===e?"rgba(56,189,248,0.18)":C.bg4,border:newEmoji===e?"1px solid rgba(56,189,248,0.4)":"1px solid rgba(255,255,255,0.06)",fontSize:18}}>{e}</button>
+                <button key={e} onClick={()=>setNewEmoji(e)} style={{width:34,height:34,borderRadius:10,background:newEmoji===e?"rgba(163,230,53,0.18)":C.bg4,border:newEmoji===e?"1px solid rgba(163,230,53,0.4)":"1px solid rgba(255,255,255,0.06)",fontSize:18}}>{e}</button>
               ))}
             </div>
             <div style={{display:"flex",gap:8}}>
@@ -1180,7 +1210,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
 // as the user scrolls down. setPage lets supplement and weight taps deep-link
 // to other tabs. All data props are read-only snapshots; edits happen in
 // FitnessPage and SupplementsPage, which share the same state from App.
-function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal }) {
+function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal, water, setWater, energy, setEnergy }) {
   const today = new Date();
   const info = getDayInfo(today);
   const todayCal = (meals[tdk()]||[]).reduce((a,m)=>a+(m.cal||0),0);
@@ -1217,22 +1247,22 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
   return (
     <div>
       {/* ── HERO HEADER with parallax figure ── */}
-      <div style={{position:"relative",height:"calc(390px + env(safe-area-inset-top, 0px))",overflow:"hidden",background:`linear-gradient(180deg, #050e1a 0%, #0a0a14 60%, ${C.bg} 100%)`}}>
+      <div style={{position:"relative",height:"calc(390px + env(safe-area-inset-top, 0px))",overflow:"hidden",background:`linear-gradient(180deg, #060608 0%, #050508 60%, ${C.bg} 100%)`}}>
 
         {/* Ambient glow blobs — sky-blue palette */}
-        <div style={{position:"absolute",top:-60,right:-30,width:340,height:340,borderRadius:"50%",background:"radial-gradient(circle,rgba(56,189,248,0.18) 0%,transparent 60%)",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:-60,right:-30,width:340,height:340,borderRadius:"50%",background:"radial-gradient(circle,rgba(163,230,53,0.18) 0%,transparent 60%)",pointerEvents:"none"}}/>
         <div style={{position:"absolute",bottom:20,left:-50,width:260,height:260,borderRadius:"50%",background:"radial-gradient(circle,rgba(20,184,166,0.14) 0%,transparent 60%)",pointerEvents:"none"}}/>
-        <div style={{position:"absolute",top:60,left:"50%",width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(47,229,165,0.09) 0%,transparent 65%)",pointerEvents:"none",transform:"translateX(-50%)"}}/>
+        <div style={{position:"absolute",top:60,left:"50%",width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(74,222,128,0.09) 0%,transparent 65%)",pointerEvents:"none",transform:"translateX(-50%)"}}/>
 
         {/* Spotlight under figure */}
-        <div style={{position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",width:320,height:180,background:"radial-gradient(ellipse,rgba(56,189,248,0.10) 0%,transparent 70%)",pointerEvents:"none",zIndex:1}}/>
+        <div style={{position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",width:320,height:180,background:"radial-gradient(ellipse,rgba(163,230,53,0.10) 0%,transparent 70%)",pointerEvents:"none",zIndex:1}}/>
 
         {/* Bottom fade-into-bg */}
         <div style={{position:"absolute",bottom:0,left:0,right:0,height:110,background:`linear-gradient(transparent,${C.bg})`,zIndex:4,pointerEvents:"none"}}/>
 
         {/* Floating streak badge — left of figure */}
         <div className="float" style={{position:"absolute",left:18,top:"calc(env(safe-area-inset-top, 20px) + 160px)",zIndex:6,opacity:imgOpacity,pointerEvents:"none",animationDelay:"0.7s"}}>
-          <div style={{background:"rgba(6,13,26,0.82)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(245,200,66,0.3)",borderRadius:16,padding:"10px 14px",boxShadow:"0 8px 28px rgba(0,0,0,0.4)"}}>
+          <div style={{background:"rgba(5,5,8,0.88)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(251,191,36,0.3)",borderRadius:16,padding:"10px 14px",boxShadow:"0 8px 28px rgba(0,0,0,0.4)"}}>
             <div style={{fontSize:9,color:C.amber,fontWeight:800,letterSpacing:1,textTransform:"uppercase",marginBottom:3}}>Streak</div>
             <div style={{fontSize:22,fontWeight:900,color:C.text,letterSpacing:-0.5}}>🔥 {streak()}</div>
             <div style={{fontSize:9,color:C.text3,marginTop:1}}>{streak()===1?"day":"days"}</div>
@@ -1285,10 +1315,10 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
           zIndex:5,
           opacity: Math.max(0, 1 - scrollY/160),
           transition:"opacity 0.05s linear",
-          background:"rgba(56,189,248,0.10)",
+          background:"rgba(163,230,53,0.10)",
           backdropFilter:"blur(12px)",
           WebkitBackdropFilter:"blur(12px)",
-          border:"1px solid rgba(56,189,248,0.22)",
+          border:"1px solid rgba(163,230,53,0.22)",
           borderRadius:12,
           padding:"6px 10px",
           display:"flex", alignItems:"center", gap:6,
@@ -1300,9 +1330,9 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
       </div>
 
       {/* Daily quote */}
-      <div style={{margin:"20px 16px 0",position:"relative",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(56,189,248,0.20)",borderRadius:22,padding:"20px 20px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08)",overflow:"hidden"}}>
+      <div style={{margin:"20px 16px 0",position:"relative",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.20)",borderRadius:22,padding:"20px 20px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08)",overflow:"hidden"}}>
         <div className="scan-overlay"/>
-        <div style={{position:"absolute",top:-10,right:-10,fontSize:80,color:"rgba(56,189,248,0.06)",lineHeight:1,pointerEvents:"none",userSelect:"none",fontFamily:"Georgia,serif"}}>❝</div>
+        <div style={{position:"absolute",top:-10,right:-10,fontSize:80,color:"rgba(163,230,53,0.06)",lineHeight:1,pointerEvents:"none",userSelect:"none",fontFamily:"Georgia,serif"}}>❝</div>
         <div style={{fontSize:9,color:C.accent,fontWeight:800,letterSpacing:1.4,textTransform:"uppercase",marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
           <span style={{width:4,height:4,borderRadius:"50%",background:C.accent,display:"inline-block",animation:"liveOrb 2.5s ease-in-out infinite"}}/>
           Daily Inspiration
@@ -1314,13 +1344,13 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
       <WeightSparkline bwLog={bwLog||[]} onClick={()=>setShowBwModal&&setShowBwModal(true)}/>
 
       {/* Lean bulk goal */}
-      <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(56,189,248,0.16)`,borderRadius:20,padding:"16px 16px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)"}}>
+      <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(163,230,53,0.16)`,borderRadius:20,padding:"16px 16px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
           <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.6}}>🎯 Lean Bulk Goal</div>
           <div style={{fontSize:13,color:C.accent,fontWeight:800,letterSpacing:-0.2}}>+{(latestBw - PROFILE.currentWeight).toFixed(1)} lbs gained</div>
         </div>
         <div style={{position:"relative",height:8,background:"rgba(255,255,255,0.08)",borderRadius:5,overflow:"hidden",marginBottom:8}}>
-          <div style={{height:"100%",width:bulkPct+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:5,transition:"width 0.8s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:`0 0 10px rgba(56,189,248,0.4)`}}/>
+          <div style={{height:"100%",width:bulkPct+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:5,transition:"width 0.8s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:`0 0 10px rgba(163,230,53,0.4)`}}/>
           {[25,50,75].map(p=>(
             <div key={p} style={{position:"absolute",top:0,bottom:0,left:p+"%",width:1,background:"rgba(255,255,255,0.10)",transform:"translateX(-50%)"}}/>
           ))}
@@ -1341,7 +1371,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
           <div style={{fontSize:12,color:C.text3,fontWeight:600,marginLeft:2}}>kcal</div>
         </div>
         <div style={{marginTop:16,position:"relative",height:5,background:"rgba(255,255,255,0.08)",borderRadius:3,overflow:"hidden"}}>
-          <div style={{height:"100%",width:Math.min(100,Math.round(todayCal/tgt.cal*100))+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:3,boxShadow:"0 0 10px rgba(56,189,248,0.5)",transition:"width 1s cubic-bezier(0.34,1.56,0.64,1)"}}/>
+          <div style={{height:"100%",width:Math.min(100,Math.round(todayCal/tgt.cal*100))+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:3,boxShadow:"0 0 10px rgba(163,230,53,0.5)",transition:"width 1s cubic-bezier(0.34,1.56,0.64,1)"}}/>
         </div>
         <div style={{position:"relative",height:12,marginTop:0,display:"flex",alignItems:"center"}}>
           <div style={{position:"absolute",left:`calc(${Math.min(100,Math.round(todayCal/tgt.cal*100))}% - 5px)`,width:10,height:10,borderRadius:"50%",background:C.accent,boxShadow:`0 0 8px ${C.accent}`,transition:"left 1s cubic-bezier(0.34,1.56,0.64,1)"}}/>
@@ -1350,7 +1380,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
 
       {/* Gold Featured Card — Today's Training */}
       {info.type!=="rest"?(
-        <div style={{margin:"12px 16px 0",background:"linear-gradient(135deg,#f5c842 0%,#e6a800 60%,#c98900 100%)",borderRadius:24,padding:"22px 20px",boxShadow:"0 16px 48px rgba(245,200,66,0.30), 0 4px 12px rgba(0,0,0,0.3)",position:"relative",overflow:"hidden"}}>
+        <div style={{margin:"12px 16px 0",background:"linear-gradient(135deg,#fbbf24 0%,#d97706 60%,#b45309 100%)",borderRadius:24,padding:"22px 20px",boxShadow:"0 16px 48px rgba(251,191,36,0.30), 0 4px 12px rgba(0,0,0,0.3)",position:"relative",overflow:"hidden"}}>
           <div style={{position:"absolute",right:-10,top:-20,fontSize:130,fontWeight:900,color:"rgba(0,0,0,0.07)",lineHeight:1,pointerEvents:"none",userSelect:"none",fontFamily:"system-ui"}}>{streak()}</div>
           <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%)",backgroundSize:"200% 100%",animation:"goldShimmer 3s ease-in-out infinite",borderRadius:"inherit",pointerEvents:"none"}}/>
           <div style={{position:"relative",zIndex:1}}>
@@ -1364,17 +1394,17 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
           </div>
         </div>
       ):(
-        <div style={{margin:"12px 16px 0",background:"rgba(56,189,248,0.08)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(56,189,248,0.22)",borderRadius:24,padding:"22px 20px",boxShadow:"0 12px 40px rgba(0,0,0,0.35)",position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",right:-10,top:-20,fontSize:130,fontWeight:900,color:"rgba(56,189,248,0.06)",lineHeight:1,pointerEvents:"none",userSelect:"none"}}>😴</div>
+        <div style={{margin:"12px 16px 0",background:"rgba(163,230,53,0.08)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.22)",borderRadius:24,padding:"22px 20px",boxShadow:"0 12px 40px rgba(0,0,0,0.35)",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",right:-10,top:-20,fontSize:130,fontWeight:900,color:"rgba(163,230,53,0.06)",lineHeight:1,pointerEvents:"none",userSelect:"none"}}>😴</div>
           <div style={{fontSize:9,color:C.text3,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",marginBottom:8}}>Featured · Today</div>
           <div style={{fontSize:22,fontWeight:900,color:C.text,letterSpacing:-0.5,marginBottom:4}}>Rest Day</div>
           <div style={{fontSize:13,color:C.text2,fontWeight:600,marginBottom:12}}>Recovery & Low Carb</div>
-          <span style={{fontSize:11,fontWeight:700,padding:"4px 12px",borderRadius:999,color:C.accent,background:"rgba(56,189,248,0.12)",border:"1px solid rgba(56,189,248,0.22)"}}>😴 Active Rest</span>
+          <span style={{fontSize:11,fontWeight:700,padding:"4px 12px",borderRadius:999,color:C.accent,background:"rgba(163,230,53,0.12)",border:"1px solid rgba(163,230,53,0.22)"}}>😴 Active Rest</span>
         </div>
       )}
 
       {/* Supplements status */}
-      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(47,229,165,${takenSupps===totalSupps&&totalSupps>0?"0.32":"0.10"})`,borderRadius:20,padding:"16px 16px",cursor:"pointer",transition:"border-color 0.4s,box-shadow 0.4s",boxShadow:takenSupps===totalSupps&&totalSupps>0?"0 8px 32px rgba(47,229,165,0.10),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)",animationDelay:"0.08s"}} onClick={()=>setPage("supplements")}>
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(74,222,128,${takenSupps===totalSupps&&totalSupps>0?"0.32":"0.10"})`,borderRadius:20,padding:"16px 16px",cursor:"pointer",transition:"border-color 0.4s,box-shadow 0.4s",boxShadow:takenSupps===totalSupps&&totalSupps>0?"0 8px 32px rgba(74,222,128,0.10),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)",animationDelay:"0.08s"}} onClick={()=>setPage("supplements")}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
             <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.6,marginBottom:5}}>💊 Supplements</div>
@@ -1382,7 +1412,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
               {takenSupps}/{totalSupps} taken today
             </div>
           </div>
-          <div style={{width:40,height:40,borderRadius:"50%",background:takenSupps===totalSupps&&totalSupps>0?"rgba(47,229,165,0.15)":"rgba(255,255,255,0.05)",border:`1px solid ${takenSupps===totalSupps&&totalSupps>0?"rgba(47,229,165,0.4)":"rgba(255,255,255,0.10)"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,transition:"all 0.3s"}}>{takenSupps===totalSupps&&totalSupps>0?"✅":"›"}</div>
+          <div style={{width:40,height:40,borderRadius:"50%",background:takenSupps===totalSupps&&totalSupps>0?"rgba(74,222,128,0.15)":"rgba(255,255,255,0.05)",border:`1px solid ${takenSupps===totalSupps&&totalSupps>0?"rgba(74,222,128,0.4)":"rgba(255,255,255,0.10)"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,transition:"all 0.3s"}}>{takenSupps===totalSupps&&totalSupps>0?"✅":"›"}</div>
         </div>
         {totalSupps>0&&(
           <div style={{height:4,background:"rgba(255,255,255,0.08)",borderRadius:2,marginTop:12,overflow:"hidden"}}>
@@ -1402,12 +1432,69 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
             {calDays().map(d=>(
               <div key={d.key} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
                 <div style={{fontSize:8,color:C.text3,fontWeight:600}}>{DAYS_S[d.date.getDay()]}</div>
-                <div style={{width:24,height:24,borderRadius:7,background:d.isToday?C.accent:d.used?"rgba(56,189,248,0.22)":"rgba(255,255,255,0.04)",border:d.isToday?`2px solid ${C.accent}`:d.used?"1px solid rgba(56,189,248,0.40)":`1px solid rgba(255,255,255,0.07)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:d.isToday?"white":d.used?C.accent:C.text3,fontWeight:700,boxShadow:d.isToday?`0 0 10px rgba(56,189,248,0.5)`:undefined,transition:"all 0.2s"}}>{d.date.getDate()}</div>
+                <div style={{width:24,height:24,borderRadius:7,background:d.isToday?C.accent:d.used?"rgba(163,230,53,0.22)":"rgba(255,255,255,0.04)",border:d.isToday?`2px solid ${C.accent}`:d.used?"1px solid rgba(163,230,53,0.40)":`1px solid rgba(255,255,255,0.07)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:d.isToday?"white":d.used?C.accent:C.text3,fontWeight:700,boxShadow:d.isToday?`0 0 10px rgba(163,230,53,0.5)`:undefined,transition:"all 0.2s"}}>{d.date.getDate()}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Water Tracker */}
+      {(()=>{
+        const today = dk();
+        const wCount = water.date===today ? water.count : 0;
+        const add = ()=>setWater({date:today,count:Math.min(8,wCount+1)});
+        const undo = ()=>setWater({date:today,count:Math.max(0,wCount-1)});
+        return(
+          <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:20,padding:"14px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+              <div>
+                <div style={{fontSize:9,color:C.text3,fontWeight:700,letterSpacing:0.6,textTransform:"uppercase",marginBottom:3}}>💧 Hydration</div>
+                <div style={{fontSize:16,fontWeight:800,color:wCount>=8?C.blue:C.text}}>{wCount}<span style={{fontSize:12,color:C.text2,fontWeight:600}}>/8 glasses</span></div>
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                {wCount>0&&<button onClick={undo} style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.12)",color:C.text2,fontSize:16}}>−</button>}
+                <button onClick={add} disabled={wCount>=8} style={{width:32,height:32,borderRadius:"50%",background:wCount>=8?C.blue:"rgba(34,211,238,0.15)",border:`1px solid ${wCount>=8?"transparent":"rgba(34,211,238,0.3)"}`,color:wCount>=8?"#050508":C.blue,fontSize:16,fontWeight:700,opacity:wCount>=8?0.8:1}}>+</button>
+              </div>
+            </div>
+            <div style={{display:"flex",gap:3}}>
+              {Array.from({length:8}).map((_,i)=>(
+                <div key={i} onClick={()=>setWater({date:today,count:i+1})} style={{flex:1,height:8,borderRadius:4,background:i<wCount?C.blue:"rgba(255,255,255,0.08)",transition:"background 0.2s",cursor:"pointer",boxShadow:i<wCount?`0 0 6px rgba(34,211,238,0.4)`:undefined}}/>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Daily Energy Check-in */}
+      {(()=>{
+        const today = dk();
+        const score = energy[today];
+        const LABELS = ["😴 Low","😕 Tired","😐 Okay","😊 Good","⚡ Peak"];
+        const COLORS = [C.red, C.amber, C.text2, C.green, C.accent];
+        return(
+          <div style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:20,padding:"14px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}>
+            <div style={{fontSize:9,color:C.text3,fontWeight:700,letterSpacing:0.6,textTransform:"uppercase",marginBottom:10}}>⚡ Energy Level</div>
+            {score?(
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div style={{fontSize:18,fontWeight:800,color:COLORS[score-1]}}>{LABELS[score-1]}</div>
+                <button onClick={()=>setEnergy(e=>{const n={...e};delete n[today];return n;})} style={{fontSize:11,color:C.text3,padding:"4px 10px",borderRadius:10,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.09)"}}>Reset</button>
+              </div>
+            ):(
+              <div>
+                <div style={{fontSize:11,color:C.text2,marginBottom:8}}>How do you feel today?</div>
+                <div style={{display:"flex",gap:6}}>
+                  {[1,2,3,4,5].map(n=>(
+                    <button key={n} onClick={()=>setEnergy(e=>({...e,[today]:n}))} style={{flex:1,padding:"10px 4px",borderRadius:12,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.10)",fontSize:18,transition:"all 0.15s"}}>
+                      {["😴","😕","😐","😊","⚡"][n-1]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <div style={{height:20}}/>
     </div>
@@ -1439,9 +1526,9 @@ function GymHeatmap({ attend }) {
   for (let i = 0; i < 4; i++) weeks.push(cells.slice(i * 7, i * 7 + 7));
 
   const getCellStyle = (cell) => {
-    if (cell.didGym && cell.didKb) return { bg: "#38bdf8", glow: "0 0 8px rgba(56,189,248,0.7)", opacity: 1 };
-    if (cell.didGym) return { bg: "#f5c842", glow: "0 0 6px rgba(245,200,66,0.5)", opacity: 1 };
-    if (cell.didKb) return { bg: "#2fe5a5", glow: "0 0 6px rgba(47,229,165,0.5)", opacity: 1 };
+    if (cell.didGym && cell.didKb) return { bg: "#a3e635", glow: "0 0 8px rgba(163,230,53,0.7)", opacity: 1 };
+    if (cell.didGym) return { bg: "#fbbf24", glow: "0 0 6px rgba(251,191,36,0.5)", opacity: 1 };
+    if (cell.didKb) return { bg: "#4ade80", glow: "0 0 6px rgba(74,222,128,0.5)", opacity: 1 };
     if (!cell.wasWorkoutDay) return { bg: "rgba(255,255,255,0.04)", glow: "none", opacity: 0.6 }; // rest day
     return { bg: "rgba(255,255,255,0.02)", glow: "none", opacity: 1 }; // missed workout day
   };
@@ -1466,7 +1553,7 @@ ${cell.didGym?"Gym ":""}${cell.didKb?"KB":""}`}
                   aspectRatio:"1",
                   borderRadius:4,
                   background:cs.bg,
-                  boxShadow:cell.isToday?`0 0 0 2px #38bdf8, ${cs.glow}`:cs.glow,
+                  boxShadow:cell.isToday?`0 0 0 2px #a3e635, ${cs.glow}`:cs.glow,
                   opacity:cs.opacity,
                   animation:cell.didGym||cell.didKb?`heatPop 0.3s ${wi*0.05+ci*0.02}s both`:undefined,
                   transition:"background 0.3s"
@@ -1477,7 +1564,7 @@ ${cell.didGym?"Gym ":""}${cell.didKb?"KB":""}`}
       ))}
       {/* Legend */}
       <div style={{display:"flex",gap:10,marginTop:10,flexWrap:"wrap"}}>
-        {[["#38bdf8","Gym + KB"],["#f5c842","Gym"],["#2fe5a5","Kickboxing"],["rgba(255,255,255,0.06)","Missed"]].map(([c,l])=>(
+        {[["#a3e635","Gym + KB"],["#fbbf24","Gym"],["#4ade80","Kickboxing"],["rgba(255,255,255,0.06)","Missed"]].map(([c,l])=>(
           <div key={l} style={{display:"flex",alignItems:"center",gap:4}}>
             <div style={{width:8,height:8,borderRadius:2,background:c}}/>
             <span style={{fontSize:9,color:C.text3}}>{l}</span>
@@ -1515,7 +1602,7 @@ function WeightLogModal({ bwLog, setBwLog, onClose }) {
 
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",zIndex:250,display:"flex",alignItems:"flex-end",justifyContent:"center"}} onClick={onClose}>
-      <div onClick={e=>e.stopPropagation()} className="slide-up" style={{background:"rgba(9,24,32,0.96)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"24px 24px 0 0",padding:"24px 20px calc(24px + env(safe-area-inset-bottom))",width:"100%",maxWidth:430,boxShadow:"0 -12px 48px rgba(0,0,0,0.5)"}}>
+      <div onClick={e=>e.stopPropagation()} className="slide-up" style={{background:"rgba(5,5,8,0.97)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"24px 24px 0 0",padding:"24px 20px calc(24px + env(safe-area-inset-bottom))",width:"100%",maxWidth:430,boxShadow:"0 -12px 48px rgba(0,0,0,0.5)"}}>
         <div style={{fontSize:18,fontWeight:800,marginBottom:4}}>⚖️ Log Weight</div>
         <div style={{fontSize:12,color:C.text2,marginBottom:20}}>Goal: {PROFILE.currentWeight} → {PROFILE.goalWeight} lbs (lean bulk)</div>
         <div style={{display:"flex",gap:10,marginBottom:20}}>
@@ -1575,7 +1662,81 @@ function MacroCard({ m, pct }) {
 // and attendance for past days. All edits write directly into App's meals/attend
 // state via setMeals/setAttend, which triggers the useEffect → sv() persistence.
 // FoodAIChat opens as a fixed overlay (z-index 200).
-function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, setFavorites, bwLog, setBwLog, dayOverrides, setDayOverrides }) {
+// ── PR TRACKER ────────────────────────────────────────────────────────────────
+// Shows on gym days only. prLog shape: { exerciseName: [{date, weight, reps}] }
+function PRTracker({ prLog, setPrLog, gymSplit }) {
+  const [showForm, setShowForm] = useState(false);
+  const [ex, setEx] = useState("");
+  const [weight, setWeight] = useState("");
+  const [reps, setReps] = useState("");
+  const today = dk();
+
+  const logPR = () => {
+    if (!ex.trim() || !weight) return;
+    const entry = {date:today, weight:Number(weight), reps:Number(reps)||0};
+    setPrLog(prev => {
+      const list = [...(prev[ex.trim()]||[])];
+      // Remove existing entry for today, add new one
+      const filtered = list.filter(e=>e.date!==today);
+      return {...prev, [ex.trim()]: [...filtered, entry].slice(-30)};
+    });
+    setEx(""); setWeight(""); setReps(""); setShowForm(false);
+  };
+
+  const allExercises = Object.keys(prLog);
+  // Best weight per exercise
+  const getBest = name => {
+    const entries = prLog[name]||[];
+    return entries.reduce((b,e)=>e.weight>b?e.weight:b, 0);
+  };
+  const getTodayEntry = name => (prLog[name]||[]).find(e=>e.date===today);
+  const isNewPR = (name, w) => w > getBest(name);
+
+  return (
+    <div style={{margin:"0 16px 12px",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:18,padding:"14px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:allExercises.length?12:0}}>
+        <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>🏆 PR Tracker</div>
+        <button onClick={()=>setShowForm(s=>!s)} style={{padding:"5px 12px",borderRadius:10,background:showForm?"rgba(255,255,255,0.07)":"rgba(163,230,53,0.14)",border:`1px solid ${showForm?"rgba(255,255,255,0.12)":"rgba(163,230,53,0.28)"}`,color:showForm?C.text2:C.accent,fontSize:11,fontWeight:700}}>
+          {showForm?"Cancel":"+ Log PR"}
+        </button>
+      </div>
+      {showForm&&(
+        <div style={{marginBottom:12}} className="slide-up">
+          <input value={ex} onChange={e=>setEx(e.target.value)} placeholder="Exercise (e.g. Bench Press)" style={{width:"100%",background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none",marginBottom:8}}/>
+          <div style={{display:"flex",gap:8,marginBottom:8}}>
+            <input value={weight} onChange={e=>setWeight(e.target.value)} placeholder="Weight (lbs)" type="number" inputMode="decimal" style={{flex:1,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}/>
+            <input value={reps} onChange={e=>setReps(e.target.value)} placeholder="Reps" type="number" inputMode="numeric" style={{width:80,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}/>
+          </div>
+          <button onClick={logPR} disabled={!ex.trim()||!weight} style={{width:"100%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",borderRadius:10,padding:"11px 0",fontSize:13,fontWeight:800,color:"#050508",opacity:!ex.trim()||!weight?0.4:1}}>Save PR</button>
+        </div>
+      )}
+      {allExercises.length>0&&(
+        <div style={{display:"flex",flexDirection:"column",gap:6}}>
+          {allExercises.map(name=>{
+            const best = getBest(name);
+            const todayE = getTodayEntry(name);
+            const isNew = todayE && todayE.weight >= best;
+            return(
+              <div key={name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",background:"rgba(255,255,255,0.04)",borderRadius:10,border:`1px solid ${isNew?"rgba(163,230,53,0.25)":"rgba(255,255,255,0.07)"}`}}>
+                <div>
+                  <div style={{fontSize:13,fontWeight:700,color:C.text}}>{name}</div>
+                  {todayE&&<div style={{fontSize:11,color:C.text2}}>Today: {todayE.weight}lbs{todayE.reps?` × ${todayE.reps}`:""}</div>}
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:14,fontWeight:800,color:isNew?C.accent:C.text2}}>{best}lbs</div>
+                  {isNew&&<div style={{fontSize:9,color:C.accent,fontWeight:700,animation:"numPop 0.4s ease"}}>🏆 NEW PR!</div>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {allExercises.length===0&&!showForm&&<div style={{fontSize:12,color:C.text3,textAlign:"center",padding:"8px 0"}}>No PRs logged yet. Tap + Log PR to start.</div>}
+    </div>
+  );
+}
+
+function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, setFavorites, bwLog, setBwLog, dayOverrides, setDayOverrides, prLog, setPrLog }) {
   const [off, setOff] = useState(0);
   const [showChat, setShowChat] = useState(false);
   const [showBwModal, setShowBwModal] = useState(false);
@@ -1662,7 +1823,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
 
       <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 48px) 20px 14px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-20,right:-10,width:120,height:120,borderRadius:"50%",background:"radial-gradient(circle,rgba(56,189,248,0.10) 0%,transparent 70%)",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:-20,right:-10,width:120,height:120,borderRadius:"50%",background:"radial-gradient(circle,rgba(163,230,53,0.10) 0%,transparent 70%)",pointerEvents:"none"}}/>
         <div className="pill-badge" style={{marginBottom:10}}>
           <span style={{fontSize:11}}>💪</span>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Fitness</span>
@@ -1677,11 +1838,11 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
           {off===0?"Today · ":""}{DAYS_L[vdate.getDay()]}, {MONTHS_S[vdate.getMonth()]} {vdate.getDate()}
         </div>
         <button aria-label="Next day" onClick={()=>setOff(o=>o+1)} style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.12)`,color:C.text2,width:36,height:36,borderRadius:"50%",fontSize:18}}>›</button>
-        {off!==0&&<button onClick={()=>setOff(0)} style={{background:"rgba(56,189,248,0.12)",color:C.accent,borderRadius:20,padding:"4px 12px",fontSize:11,fontWeight:700}}>Today</button>}
+        {off!==0&&<button onClick={()=>setOff(0)} style={{background:"rgba(163,230,53,0.12)",color:C.accent,borderRadius:20,padding:"4px 12px",fontSize:11,fontWeight:700}}>Today</button>}
       </div>
 
       {/* Day banner */}
-      <div style={{margin:"0 16px 12px",borderRadius:20,padding:"16px 18px",background:`rgba(${effType==="combo"?"167,139,250":effType==="kb"?"47,229,165":effType==="gym"?"245,200,66":"56,189,248"},0.07)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${effType==="combo"?"167,139,250":effType==="kb"?"47,229,165":effType==="gym"?"245,200,66":"56,189,248"},0.22)`}}>
+      <div style={{margin:"0 16px 12px",borderRadius:20,padding:"16px 18px",background:`rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.07)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.22)`}}>
         <div style={{fontSize:18,fontWeight:700,color:col,marginBottom:8}}>{banLbl[effType]}</div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
           {info.isKick&&<span style={{fontSize:11,fontWeight:600,padding:"3px 10px",borderRadius:20,color:C.green,background:"rgba(52,211,153,0.12)",border:"1px solid rgba(52,211,153,0.25)"}}>🥊 Kickboxing</span>}
@@ -1707,11 +1868,11 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
           <div>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
               <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>Did you show up?</div>
-              {info.isGym&&gymStreak>0&&<div style={{fontSize:11,fontWeight:800,color:C.amber,background:"rgba(245,200,66,0.12)",border:"1px solid rgba(245,200,66,0.28)",borderRadius:20,padding:"2px 9px"}}>🔥 {gymStreak} gym {gymStreak===1?"day":"days"}</div>}
+              {info.isGym&&gymStreak>0&&<div style={{fontSize:11,fontWeight:800,color:C.amber,background:"rgba(251,191,36,0.12)",border:"1px solid rgba(251,191,36,0.28)",borderRadius:20,padding:"2px 9px"}}>🔥 {gymStreak} gym {gymStreak===1?"day":"days"}</div>}
             </div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
-              {info.isKick&&<button onClick={()=>toggleAtt("kb")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.kb?"rgba(47,229,165,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.kb?"rgba(47,229,165,0.14)":"rgba(255,255,255,0.04)",color:attend[dKey]?.kb?C.green:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="kb"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.kb?`0 0 18px rgba(47,229,165,0.35)`:undefined}}>{attend[dKey]?.kb?"✅ Kickboxing done":"🥊 Mark Kickboxing"}</button>}
-              {info.isGym&&<button onClick={()=>toggleAtt("gym")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.gym?"rgba(245,200,66,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.gym?"rgba(245,200,66,0.12)":"rgba(255,255,255,0.04)",color:attend[dKey]?.gym?C.amber:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="gym"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.gym?`0 0 18px rgba(245,200,66,0.35)`:undefined}}>{attend[dKey]?.gym?"✅ Gym done":"🏋️ Mark Gym"}</button>}
+              {info.isKick&&<button onClick={()=>toggleAtt("kb")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.kb?"rgba(74,222,128,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.kb?"rgba(74,222,128,0.14)":"rgba(255,255,255,0.04)",color:attend[dKey]?.kb?C.green:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="kb"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.kb?`0 0 18px rgba(74,222,128,0.35)`:undefined}}>{attend[dKey]?.kb?"✅ Kickboxing done":"🥊 Mark Kickboxing"}</button>}
+              {info.isGym&&<button onClick={()=>toggleAtt("gym")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.gym?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.gym?"rgba(251,191,36,0.12)":"rgba(255,255,255,0.04)",color:attend[dKey]?.gym?C.amber:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="gym"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.gym?`0 0 18px rgba(251,191,36,0.35)`:undefined}}>{attend[dKey]?.gym?"✅ Gym done":"🏋️ Mark Gym"}</button>}
             </div>
           </div>
         )}
@@ -1726,6 +1887,9 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
         </div>
       </div>
 
+      {/* PR Tracker — shown on gym days only */}
+      {info.isGym&&off===0&&<PRTracker prLog={prLog} setPrLog={setPrLog} gymSplit={info.gymSplit}/>}
+
       {/* Macro cards — useCountUp must live in a component, not inside .map() */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,margin:"0 16px 14px"}}>
         {macros.map(m=><MacroCard key={m.label} m={m} pct={pct}/>)}
@@ -1733,12 +1897,12 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 
       {/* Log food */}
       <div style={{padding:"0 16px"}}>
-        <button onClick={()=>setShowChat(true)} style={{width:"100%",background:`linear-gradient(135deg,rgba(56,189,248,0.14),rgba(20,184,166,0.08))`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(56,189,248,0.28)",borderRadius:20,padding:"20px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,boxShadow:"0 4px 24px rgba(56,189,248,0.1)",animation:"glow 3s ease infinite"}}>
+        <button onClick={()=>setShowChat(true)} style={{width:"100%",background:`linear-gradient(135deg,rgba(163,230,53,0.14),rgba(20,184,166,0.08))`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(163,230,53,0.28)",borderRadius:20,padding:"20px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,boxShadow:"0 4px 24px rgba(163,230,53,0.1)",animation:"glow 3s ease infinite"}}>
           <div style={{textAlign:"left"}}>
             <div style={{fontSize:17,fontWeight:800,color:C.text,marginBottom:4}}>🤖 Log Food with AI</div>
             <div style={{fontSize:12,color:C.text2}}>Type any food · snap a photo · instant macros</div>
           </div>
-          <div style={{width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginLeft:12,boxShadow:"0 4px 16px rgba(56,189,248,0.35)"}}>→</div>
+          <div style={{width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginLeft:12,boxShadow:"0 4px 16px rgba(163,230,53,0.35)"}}>→</div>
         </button>
 
         {/* Meal list */}
@@ -1756,7 +1920,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
           const curMult = m._mult || 1;
           const isFav = favorites.some(f=>f.name===(m._base||m).name||f.name===m.name.replace(/ ×[\d.]+$/,""));
           return (
-          <div key={m.id} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"rgba(56,189,248,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s"}}>
+          <div key={m.id} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"rgba(163,230,53,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s"}}>
             {/* Tap header to expand */}
             <div onClick={()=>{setExpandedMeal(isExp?null:m.id);setCustomServ("");}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 14px",cursor:"pointer"}}>
               <div style={{flex:1,minWidth:0}}>
@@ -1785,7 +1949,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
                   <span style={{fontSize:11,color:C.text3,flexShrink:0}}>servings</span>
                 </div>
                 <div style={{display:"flex",gap:8}}>
-                  <button onClick={()=>saveMealToFavs(m._base||m)} style={{flex:1,padding:"9px 0",borderRadius:10,fontSize:12,fontWeight:700,background:isFav?"rgba(245,200,66,0.18)":"rgba(245,200,66,0.08)",border:`1px solid ${isFav?"rgba(245,200,66,0.4)":"rgba(245,200,66,0.22)"}`,color:C.amber}}>
+                  <button onClick={()=>saveMealToFavs(m._base||m)} style={{flex:1,padding:"9px 0",borderRadius:10,fontSize:12,fontWeight:700,background:isFav?"rgba(251,191,36,0.18)":"rgba(251,191,36,0.08)",border:`1px solid ${isFav?"rgba(251,191,36,0.4)":"rgba(251,191,36,0.22)"}`,color:C.amber}}>
                     {isFav?"⭐ Saved":"⭐ Save to Library"}
                   </button>
                   <button onClick={()=>delMeal(m.id)} style={{padding:"9px 14px",borderRadius:10,fontSize:12,fontWeight:700,background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.22)",color:C.red}}>
@@ -1804,7 +1968,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 
       {/* Weight log shortcut */}
       <div style={{margin:"12px 16px 0"}}>
-        <button onClick={()=>setShowBwModal(true)} style={{width:"100%",background:"rgba(56,189,248,0.07)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(56,189,248,0.18)",borderRadius:16,padding:"13px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <button onClick={()=>setShowBwModal(true)} style={{width:"100%",background:"rgba(163,230,53,0.07)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(163,230,53,0.18)",borderRadius:16,padding:"13px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{textAlign:"left"}}>
             <div style={{fontSize:14,fontWeight:700,color:C.text}}>⚖️ Log Body Weight</div>
             <div style={{fontSize:11,color:C.text3,marginTop:2}}>{bwLog&&bwLog.length>0?`Last: ${bwLog[bwLog.length-1].weight} lbs on ${bwLog[bwLog.length-1].date}`:"Start tracking your lean bulk progress"}</div>
@@ -1853,7 +2017,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       <div style={{padding:"0 16px",marginBottom:16}}>
         <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>⭐ Saved Favorites</div>
         {favorites.length===0?(
-          <div style={{background:"rgba(245,200,66,0.05)",border:"1px dashed rgba(245,200,66,0.22)",borderRadius:14,padding:"16px 14px",textAlign:"center"}}>
+          <div style={{background:"rgba(251,191,36,0.05)",border:"1px dashed rgba(251,191,36,0.22)",borderRadius:14,padding:"16px 14px",textAlign:"center"}}>
             <div style={{fontSize:24,marginBottom:6}}>⭐</div>
             <div style={{fontSize:12,color:C.text2,lineHeight:1.4}}>No favorites yet. Tap a logged meal, then <strong style={{color:C.amber}}>Save to Library</strong> to quick-add it any day.</div>
           </div>
@@ -1933,8 +2097,8 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
       onDragEnd={()=>{ suppDragId.current=null; setSuppDragOver(null); }}
       onDragOver={e=>{ e.preventDefault(); setSuppDragOver(s.id); }}
       onDrop={e=>{ e.preventDefault(); if(suppDragId.current&&suppDragId.current!==s.id) moveSupp(suppDragId.current,s.id); setSuppDragOver(null); }}
-      style={{display:"flex",alignItems:"center",gap:12,padding:"13px 14px",background:todayChecked[s.id]?"rgba(47,229,165,0.08)":"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${suppDragOver===s.id?"rgba(56,189,248,0.5)":todayChecked[s.id]?"rgba(47,229,165,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,transition:"background 0.3s,border 0.3s,box-shadow 0.3s",boxShadow:todayChecked[s.id]?"0 2px 16px rgba(47,229,165,0.12)":undefined,cursor:"grab",borderLeft:suppDragOver===s.id?`3px solid ${C.accent}`:"3px solid transparent"}}>
-      <button onClick={()=>toggle(s.id)} style={{width:30,height:30,borderRadius:"50%",border:`2px solid ${todayChecked[s.id]?C.green:C.border2}`,background:todayChecked[s.id]?`linear-gradient(135deg,${C.green},${C.teal})`:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:todayChecked[s.id]?"#0a0a0c":"transparent",transition:"all 0.25s",boxShadow:todayChecked[s.id]?`0 0 10px rgba(47,229,165,0.4)`:undefined}}>
+      style={{display:"flex",alignItems:"center",gap:12,padding:"13px 14px",background:todayChecked[s.id]?"rgba(74,222,128,0.08)":"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${suppDragOver===s.id?"rgba(163,230,53,0.5)":todayChecked[s.id]?"rgba(74,222,128,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,transition:"background 0.3s,border 0.3s,box-shadow 0.3s",boxShadow:todayChecked[s.id]?"0 2px 16px rgba(74,222,128,0.12)":undefined,cursor:"grab",borderLeft:suppDragOver===s.id?`3px solid ${C.accent}`:"3px solid transparent"}}>
+      <button onClick={()=>toggle(s.id)} style={{width:30,height:30,borderRadius:"50%",border:`2px solid ${todayChecked[s.id]?C.green:C.border2}`,background:todayChecked[s.id]?`linear-gradient(135deg,${C.green},${C.teal})`:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:todayChecked[s.id]?"#0a0a0c":"transparent",transition:"all 0.25s",boxShadow:todayChecked[s.id]?`0 0 10px rgba(74,222,128,0.4)`:undefined}}>
         {todayChecked[s.id]?"✓":""}
       </button>
       <div style={{flex:1}}>
@@ -1954,7 +2118,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
       </div>
 
       {/* Progress */}
-      <div style={{margin:"0 16px 16px",background:taken===total&&total>0?"rgba(245,200,66,0.08)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${taken===total&&total>0?"rgba(245,200,66,0.35)":"rgba(255,255,255,0.12)"}`,borderRadius:20,padding:"16px 18px",boxShadow:taken===total&&total>0?"0 8px 32px rgba(245,200,66,0.15),inset 0 1px 0 rgba(255,255,255,0.08)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
+      <div style={{margin:"0 16px 16px",background:taken===total&&total>0?"rgba(251,191,36,0.08)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${taken===total&&total>0?"rgba(251,191,36,0.35)":"rgba(255,255,255,0.12)"}`,borderRadius:20,padding:"16px 18px",boxShadow:taken===total&&total>0?"0 8px 32px rgba(251,191,36,0.15),inset 0 1px 0 rgba(255,255,255,0.08)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
           <div style={{fontSize:15,fontWeight:800,color:taken===total&&total>0?C.amber:C.text}}>
             {taken===total&&total>0?"✨ All done today!":taken+"/"+total+" taken"}
@@ -1962,7 +2126,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
           <div className="num-pop" style={{fontSize:26,fontWeight:900,color:taken===total&&total>0?C.amber:C.accent,letterSpacing:-1}}>{animPct}%</div>
         </div>
         <div style={{height:6,background:"rgba(255,255,255,0.08)",borderRadius:4,overflow:"hidden"}}>
-          <div style={{height:"100%",width:suppPct+"%",background:taken===total&&total>0?`linear-gradient(90deg,${C.amber},${C.orange})`:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:4,transition:"width 0.6s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:taken===total&&total>0?`0 0 12px rgba(245,200,66,0.5)`:undefined}}/>
+          <div style={{height:"100%",width:suppPct+"%",background:taken===total&&total>0?`linear-gradient(90deg,${C.amber},${C.orange})`:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:4,transition:"width 0.6s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:taken===total&&total>0?`0 0 12px rgba(251,191,36,0.5)`:undefined}}/>
         </div>
       </div>
 
@@ -1997,7 +2161,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
       {/* Add supplement */}
       <div style={{padding:"0 16px",marginBottom:16}}>
         {!showAdd?(
-          <button onClick={()=>setShowAdd(true)} style={{width:"100%",background:"rgba(56,189,248,0.08)",backdropFilter:"blur(8px)",border:"1px solid rgba(56,189,248,0.2)",borderRadius:16,padding:"14px 0",fontSize:14,fontWeight:700,color:C.accent}}>
+          <button onClick={()=>setShowAdd(true)} style={{width:"100%",background:"rgba(163,230,53,0.08)",backdropFilter:"blur(8px)",border:"1px solid rgba(163,230,53,0.2)",borderRadius:16,padding:"14px 0",fontSize:14,fontWeight:700,color:C.accent}}>
             + Add Supplement
           </button>
         ):(
@@ -2007,7 +2171,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
             <input placeholder="Dose (e.g. 5g)" value={newDose} onChange={e=>setNewDose(e.target.value)} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(255,255,255,0.14)`,borderRadius:12,padding:"10px 12px",fontSize:14,color:C.text,marginBottom:10}}/>
             <div style={{display:"flex",gap:8,marginBottom:12}}>
               {["morning","evening"].map(t=>(
-                <button key={t} onClick={()=>setNewTime(t)} style={{flex:1,padding:"8px 0",borderRadius:12,border:`1px solid ${newTime===t?"rgba(56,189,248,0.4)":"rgba(255,255,255,0.10)"}`,background:newTime===t?"rgba(56,189,248,0.12)":"rgba(255,255,255,0.04)",color:newTime===t?C.accent:C.text2,fontSize:13,fontWeight:700}}>
+                <button key={t} onClick={()=>setNewTime(t)} style={{flex:1,padding:"8px 0",borderRadius:12,border:`1px solid ${newTime===t?"rgba(163,230,53,0.4)":"rgba(255,255,255,0.10)"}`,background:newTime===t?"rgba(163,230,53,0.12)":"rgba(255,255,255,0.04)",color:newTime===t?C.accent:C.text2,fontSize:13,fontWeight:700}}>
                   {t==="morning"?"🌅 Morning":"🌙 Evening"}
                 </button>
               ))}
@@ -2054,6 +2218,8 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [ttsPrefs, setTtsPrefs] = useState(()=>loadTTSPrefs());
   const [browserVoices, setBrowserVoices] = useState([]);
+  const [elApiKey, setElApiKey] = useState(()=>loadElKey());
+  const [elKeyDirty, setElKeyDirty] = useState(false);
 
   useEffect(()=>{ return ()=>{ if(streamRef.current) streamRef.current.getTracks().forEach(t=>t.stop()); if(prevVidRef.current) URL.revokeObjectURL(prevVidRef.current); }; },[]);
 
@@ -2155,7 +2321,7 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
       {/* ── PREVIEW / SAVE MODAL ── */}
       {(recState==="preview"||recState==="saving")&&prevVid&&(
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.94)",zIndex:300,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20}} className="pop-in">
-          <div style={{background:"rgba(6,13,26,0.95)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1px solid rgba(56,189,248,0.22)`,borderRadius:24,padding:20,width:"100%",maxWidth:380,boxShadow:"0 24px 60px rgba(0,0,0,0.7)"}}>
+          <div style={{background:"rgba(5,5,8,0.97)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1px solid rgba(163,230,53,0.22)`,borderRadius:24,padding:20,width:"100%",maxWidth:380,boxShadow:"0 24px 60px rgba(0,0,0,0.7)"}}>
             <div style={{fontSize:16,fontWeight:800,marginBottom:14,textAlign:"center",color:C.text}}>
               {recState==="saving"?"⏳ Saving…":"🎬 Review Recording"}
             </div>
@@ -2163,7 +2329,7 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
             {vidError&&<div style={{fontSize:12,color:C.red,marginBottom:10,textAlign:"center"}}>{vidError}</div>}
             {recState!=="saving"&&(
               <div style={{display:"flex",gap:10}}>
-                <button onClick={saveVid} style={{flex:1,background:`linear-gradient(135deg,rgba(47,229,165,0.25),rgba(47,229,165,0.1))`,border:"1px solid rgba(47,229,165,0.4)",borderRadius:14,padding:"14px 0",color:C.green,fontWeight:800,fontSize:15}}>✓ Save</button>
+                <button onClick={saveVid} style={{flex:1,background:`linear-gradient(135deg,rgba(74,222,128,0.25),rgba(74,222,128,0.1))`,border:"1px solid rgba(74,222,128,0.4)",borderRadius:14,padding:"14px 0",color:C.green,fontWeight:800,fontSize:15}}>✓ Save</button>
                 <button onClick={discardVid} style={{flex:1,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.12)`,borderRadius:14,padding:"14px 0",color:C.text2,fontSize:15}}>Re-try</button>
               </div>
             )}
@@ -2179,28 +2345,42 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
             <div style={{fontSize:32,fontWeight:900,letterSpacing:-1,background:`linear-gradient(90deg,${C.text},${C.pink})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Vocabulary</div>
             <div style={{fontSize:13,color:C.text2,marginTop:4}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
           </div>
-          <button onClick={()=>setShowVoiceSettings(s=>!s)} style={{marginTop:8,width:36,height:36,borderRadius:"50%",background:showVoiceSettings?"rgba(56,189,248,0.18)":"rgba(255,255,255,0.07)",border:`1px solid ${showVoiceSettings?"rgba(56,189,248,0.4)":"rgba(255,255,255,0.13)"}`,color:showVoiceSettings?C.accent:C.text2,fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>⚙️</button>
+          <button onClick={()=>setShowVoiceSettings(s=>!s)} style={{marginTop:8,width:36,height:36,borderRadius:"50%",background:showVoiceSettings?"rgba(163,230,53,0.18)":"rgba(255,255,255,0.07)",border:`1px solid ${showVoiceSettings?"rgba(163,230,53,0.4)":"rgba(255,255,255,0.13)"}`,color:showVoiceSettings?C.accent:C.text2,fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>⚙️</button>
         </div>
       </div>
 
       {/* Voice Settings Panel */}
       {showVoiceSettings&&(
-        <div style={{margin:"0 16px 16px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(56,189,248,0.20)",borderRadius:20,padding:"16px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.4)"}} className="slide-up">
+        <div style={{margin:"0 16px 16px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.20)",borderRadius:20,padding:"16px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.4)"}} className="slide-up">
           <div style={{fontSize:10,fontWeight:700,letterSpacing:1.2,color:C.text2,textTransform:"uppercase",marginBottom:12}}>Voice Settings</div>
-          {/* Provider toggle */}
-          <div style={{display:"flex",gap:8,marginBottom:14}}>
-            {[{id:"google",label:"Google (Natural)"},{id:"browser",label:"Browser (Offline)"}].map(p=>(
-              <button key={p.id} onClick={()=>updateTtsPrefs({provider:p.id})} style={{flex:1,padding:"8px 10px",borderRadius:12,fontSize:11,fontWeight:700,background:ttsPrefs.provider===p.id?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:`1px solid ${ttsPrefs.provider===p.id?"transparent":"rgba(255,255,255,0.12)"}`,color:ttsPrefs.provider===p.id?"#fff":C.text2,transition:"all 0.2s"}}>{p.label}</button>
+          {/* Provider toggle — 3 options */}
+          <div style={{display:"flex",gap:6,marginBottom:14}}>
+            {[{id:"elevenlabs",label:"ElevenLabs ✨"},{id:"google",label:"Google"},{id:"browser",label:"Offline"}].map(p=>(
+              <button key={p.id} onClick={()=>updateTtsPrefs({provider:p.id})} style={{flex:1,padding:"8px 6px",borderRadius:12,fontSize:10,fontWeight:700,background:ttsPrefs.provider===p.id?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:`1px solid ${ttsPrefs.provider===p.id?"transparent":"rgba(255,255,255,0.12)"}`,color:ttsPrefs.provider===p.id?"#0a0a0e":C.text2,transition:"all 0.2s"}}>{p.label}</button>
             ))}
           </div>
-          {/* Voice selector */}
-          {ttsPrefs.provider==="google"?(
+          {/* Provider-specific settings */}
+          {ttsPrefs.provider==="elevenlabs"?(
+            <div>
+              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>ElevenLabs API Key</div>
+              <div style={{display:"flex",gap:8,marginBottom:10}}>
+                <input value={elApiKey} onChange={e=>{setElApiKey(e.target.value);setElKeyDirty(true);}} placeholder="Paste your ElevenLabs API key…" type="password" style={{flex:1,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:12,color:C.text,outline:"none"}}/>
+                {elKeyDirty&&<button onClick={()=>{saveElKey(elApiKey);setElKeyDirty(false);}} style={{padding:"9px 14px",borderRadius:10,background:C.accent,color:"#0a0a0e",fontWeight:800,fontSize:12}}>Save</button>}
+              </div>
+              <div style={{fontSize:10,color:C.text3,marginBottom:10}}>Free 10k chars/month · <span style={{color:C.accent,textDecoration:"underline",cursor:"pointer"}} onClick={()=>window.open("https://elevenlabs.io","_blank")}>Get free key →</span></div>
+              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>Voice</div>
+              <select value={ttsPrefs.elVoice||ELEVENLABS_VOICES[0].id} onChange={e=>updateTtsPrefs({elVoice:e.target.value})} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}>
+                {ELEVENLABS_VOICES.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}
+              </select>
+              <div style={{fontSize:10,color:C.text3,marginTop:6}}>Most natural voices — requires internet & API key.</div>
+            </div>
+          ):ttsPrefs.provider==="google"?(
             <div>
               <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>Accent / Voice</div>
               <select value={ttsPrefs.gtLocale||"en-US"} onChange={e=>updateTtsPrefs({gtLocale:e.target.value})} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}>
                 {GT_VOICES.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}
               </select>
-              <div style={{fontSize:10,color:C.text3,marginTop:6}}>Uses Google's TTS — requires internet connection.</div>
+              <div style={{fontSize:10,color:C.text3,marginTop:6}}>Google TTS — no API key needed, requires internet.</div>
             </div>
           ):(
             <div>
@@ -2209,9 +2389,10 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
                 <option value="">Auto (best available)</option>
                 {browserVoices.map(v=><option key={v.name} value={v.name}>{v.name} ({v.lang})</option>)}
               </select>
+              <div style={{fontSize:10,color:C.text3,marginTop:6}}>Works offline — voice quality varies by device.</div>
             </div>
           )}
-          <button onClick={()=>speakText("Hello, this is a test of the selected voice.",0.85)} style={{marginTop:12,width:"100%",background:`linear-gradient(135deg,rgba(56,189,248,0.15),rgba(20,184,166,0.10))`,border:"1px solid rgba(56,189,248,0.25)",borderRadius:12,padding:"10px 0",fontSize:13,fontWeight:700,color:C.accent}}>▶ Test Voice</button>
+          <button onClick={()=>speakText("Hello, this is a test of the selected voice.",0.85)} style={{marginTop:12,width:"100%",background:`linear-gradient(135deg,rgba(163,230,53,0.15),rgba(20,184,166,0.10))`,border:"1px solid rgba(163,230,53,0.25)",borderRadius:12,padding:"10px 0",fontSize:13,fontWeight:700,color:C.accent}}>▶ Test Voice</button>
         </div>
       )}
 
@@ -2232,10 +2413,10 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
             <div style={{textAlign:"center",padding:"3rem 0",color:C.text3,fontSize:14}}>
               <div style={{fontSize:32,marginBottom:8}}>📖</div>
               <div style={{marginBottom:16}}>Couldn't load today's words.</div>
-              <button onClick={()=>setVocab(getTodayWords())} style={{background:`linear-gradient(135deg,rgba(56,189,248,0.15),rgba(20,184,166,0.10))`,border:"1px solid rgba(56,189,248,0.25)",borderRadius:12,padding:"10px 20px",fontSize:13,fontWeight:700,color:C.accent}}>↻ Reload words</button>
+              <button onClick={()=>setVocab(getTodayWords())} style={{background:`linear-gradient(135deg,rgba(163,230,53,0.15),rgba(20,184,166,0.10))`,border:"1px solid rgba(163,230,53,0.25)",borderRadius:12,padding:"10px 20px",fontSize:13,fontWeight:700,color:C.accent}}>↻ Reload words</button>
             </div>
           ):vocab.map((w,i)=>{
-            const wordColors=[[C.accent,"rgba(56,189,248,0.10)","rgba(56,189,248,0.20)"],[C.pink,"rgba(244,114,182,0.10)","rgba(244,114,182,0.20)"],[C.teal,"rgba(20,184,166,0.10)","rgba(20,184,166,0.20)"]];
+            const wordColors=[[C.accent,"rgba(163,230,53,0.10)","rgba(163,230,53,0.20)"],[C.pink,"rgba(244,114,182,0.10)","rgba(244,114,182,0.20)"],[C.teal,"rgba(20,184,166,0.10)","rgba(20,184,166,0.20)"]];
             const [wc,wbg,wbdr]=wordColors[i%3];
             return(
             <div key={w.word} className="slide-up" style={{background:w.learned?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${w.learned?"rgba(255,255,255,0.06)":wbdr}`,borderRadius:24,padding:20,marginBottom:16,opacity:w.learned?0.45:1,transition:"opacity 0.3s",boxShadow:w.learned?undefined:`0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.04) inset`}}>
@@ -2247,7 +2428,7 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
                 <div style={{display:"flex",gap:6}}>
                   <button aria-label="Play syllables" onClick={()=>playSyllablesText(w.syllables)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>▶</button>
                   <button aria-label="Speak word" onClick={()=>speakText(w.word,0.8)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>🔊</button>
-                  <button aria-label={w.learned?"Unmark learned":"Mark learned"} onClick={()=>markLearned(i)} style={{width:34,height:34,borderRadius:"50%",background:w.learned?"rgba(47,229,165,0.18)":C.bg4,border:`1px solid ${w.learned?"rgba(47,229,165,0.4)":C.border2}`,color:w.learned?C.green:C.text2,fontSize:14,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:w.learned?`0 0 10px rgba(47,229,165,0.3)`:undefined}}>✓</button>
+                  <button aria-label={w.learned?"Unmark learned":"Mark learned"} onClick={()=>markLearned(i)} style={{width:34,height:34,borderRadius:"50%",background:w.learned?"rgba(74,222,128,0.18)":C.bg4,border:`1px solid ${w.learned?"rgba(74,222,128,0.4)":C.border2}`,color:w.learned?C.green:C.text2,fontSize:14,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:w.learned?`0 0 10px rgba(74,222,128,0.3)`:undefined}}>✓</button>
                 </div>
               </div>
               <button onClick={()=>playSyllablesText(w.syllables)} style={{display:"flex",alignItems:"center",gap:6,border:`1px solid ${wbdr}`,background:wbg,backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",borderRadius:20,padding:"5px 14px",color:wc,fontSize:11,fontWeight:700,marginBottom:12}}>▶ Syllable by syllable</button>
@@ -2268,7 +2449,7 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
                   <button onClick={()=>startRec(i)} style={{fontSize:12,color:C.text2,border:`1px solid rgba(255,255,255,0.12)`,borderRadius:10,padding:"7px 14px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(8px)"}}>🔄 Re-record</button>
                 </div>
               ):(
-                <button onClick={()=>startRec(i)} disabled={recState==="recording"} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,background:`linear-gradient(135deg,rgba(56,189,248,0.10),rgba(20,184,166,0.06))`,backdropFilter:"blur(8px)",border:"1px solid rgba(56,189,248,0.22)",borderRadius:14,padding:"13px 14px",color:C.accent,fontSize:14,fontWeight:700,width:"100%",opacity:recState==="recording"?0.3:1,boxShadow:"0 2px 12px rgba(56,189,248,0.08)"}}>
+                <button onClick={()=>startRec(i)} disabled={recState==="recording"} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,background:`linear-gradient(135deg,rgba(163,230,53,0.10),rgba(20,184,166,0.06))`,backdropFilter:"blur(8px)",border:"1px solid rgba(163,230,53,0.22)",borderRadius:14,padding:"13px 14px",color:C.accent,fontSize:14,fontWeight:700,width:"100%",opacity:recState==="recording"?0.3:1,boxShadow:"0 2px 12px rgba(163,230,53,0.08)"}}>
                   📹 Record yourself using this word
                 </button>
               )}
@@ -2319,7 +2500,7 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked }) {
   return (
     <div style={{paddingBottom:110}}>
       {/* Header */}
-      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 22px) 20px 0",background:`linear-gradient(180deg,#050e1a 0%,${C.bg} 100%)`,position:"relative",overflow:"hidden"}}>
+      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 22px) 20px 0",background:`linear-gradient(180deg,#060608 0%,${C.bg} 100%)`,position:"relative",overflow:"hidden"}}>
         <div className="scan-overlay"/>
         <div style={{position:"relative",zIndex:1}}>
           <div style={{fontSize:10,color:C.accent,fontWeight:700,letterSpacing:2,textTransform:"uppercase",marginBottom:6}}>Daily Rituals</div>
@@ -2353,13 +2534,13 @@ function Nav({ page, setPage }) {
   const idx = tabs.findIndex(t => t.id === page);
   const n = tabs.length;
   return (
-    <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(6,13,26,0.82)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.10)",zIndex:100,padding:"8px 6px calc(18px + env(safe-area-inset-bottom))",boxShadow:"0 -8px 32px rgba(0,0,0,0.35)"}}>
+    <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(5,5,8,0.88)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.10)",zIndex:100,padding:"8px 6px calc(18px + env(safe-area-inset-bottom))",boxShadow:"0 -8px 32px rgba(0,0,0,0.35)"}}>
       <div style={{position:"relative",display:"flex",gap:2,alignItems:"center"}}>
         {/* Sliding pill indicator */}
-        <div style={{position:"absolute",top:0,bottom:0,width:`calc(${100/n}% - 2.4px)`,left:`calc(${idx} * ${100/n}% + 1.2px)`,background:"rgba(56,189,248,0.12)",border:"1px solid rgba(56,189,248,0.24)",borderRadius:16,transition:"left 0.38s cubic-bezier(0.34,1.56,0.64,1)",pointerEvents:"none",boxShadow:"0 2px 12px rgba(56,189,248,0.08)"}}/>
+        <div style={{position:"absolute",top:0,bottom:0,width:`calc(${100/n}% - 2.4px)`,left:`calc(${idx} * ${100/n}% + 1.2px)`,background:"rgba(163,230,53,0.12)",border:"1px solid rgba(163,230,53,0.24)",borderRadius:16,transition:"left 0.38s cubic-bezier(0.34,1.56,0.64,1)",pointerEvents:"none",boxShadow:"0 2px 12px rgba(163,230,53,0.08)"}}/>
         {tabs.map(tab=>(
           <button key={tab.id} onClick={()=>setPage(tab.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"7px 2px",borderRadius:16,background:"transparent",border:"1px solid transparent",position:"relative",zIndex:1,transition:"none"}}>
-            <span style={{fontSize:19,filter:page===tab.id?"drop-shadow(0 0 8px rgba(56,189,248,0.85))":"none",transition:"filter 0.28s",transform:page===tab.id?"scale(1.08)":"scale(1)",display:"block"}}>{tab.icon}</span>
+            <span style={{fontSize:19,filter:page===tab.id?"drop-shadow(0 0 8px rgba(163,230,53,0.85))":"none",transition:"filter 0.28s",transform:page===tab.id?"scale(1.08)":"scale(1)",display:"block"}}>{tab.icon}</span>
             <span style={{fontSize:8,fontWeight:800,letterSpacing:0.4,color:page===tab.id?C.accent:C.text3,transition:"color 0.28s"}}>{tab.label}</span>
           </button>
         ))}
@@ -2391,6 +2572,9 @@ function App() {
   const [habits, setHabits] = useState(()=>ld("dos_habits_v1", DEFAULT_HABITS));
   const [habitChecked, setHabitChecked] = useState(()=>ld("dos_habit_checked_v1",{}));
   const [dayOverrides, setDayOverrides] = useState(()=>ld("dos_day_overrides_v1",{}));
+  const [water, setWater] = useState(()=>ld("dos_water_v1",{date:"",count:0}));
+  const [energy, setEnergy] = useState(()=>ld("dos_energy_v1",{}));
+  const [prLog, setPrLog] = useState(()=>ld("dos_pr_v1",{}));
   const [showBwModal, setShowBwModal] = useState(false);
 
   useEffect(()=>{ const k=tdk(); setUsage(prev=>{const u={...prev,[k]:(prev[k]||0)+1};sv("dos_usage_v7",u);return u;}); },[]);
@@ -2405,6 +2589,9 @@ function App() {
   useEffect(()=>{ sv("dos_habits_v1",habits); },[habits]);
   useEffect(()=>{ sv("dos_habit_checked_v1",habitChecked); },[habitChecked]);
   useEffect(()=>{ sv("dos_day_overrides_v1",dayOverrides); },[dayOverrides]);
+  useEffect(()=>{ sv("dos_water_v1",water); },[water]);
+  useEffect(()=>{ sv("dos_energy_v1",energy); },[energy]);
+  useEffect(()=>{ sv("dos_pr_v1",prLog); },[prLog]);
 
   // Track scroll for hero parallax (only on home page)
   useEffect(()=>{
@@ -2423,8 +2610,8 @@ function App() {
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
       {/* key=page triggers page-enter animation on every tab switch */}
       <div key={page} className="page-enter">
-        {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal}/>}
-        {page==="fitness"     && <FitnessPage   meals={meals} setMeals={setMeals} attend={attend} setAttend={setAttend} apiKey={apiKey} favorites={favorites} setFavorites={setFavorites} bwLog={bwLog} setBwLog={setBwLog} dayOverrides={dayOverrides} setDayOverrides={setDayOverrides}/>}
+        {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal} water={water} setWater={setWater} energy={energy} setEnergy={setEnergy}/>}
+        {page==="fitness"     && <FitnessPage   meals={meals} setMeals={setMeals} attend={attend} setAttend={setAttend} apiKey={apiKey} favorites={favorites} setFavorites={setFavorites} bwLog={bwLog} setBwLog={setBwLog} dayOverrides={dayOverrides} setDayOverrides={setDayOverrides} prLog={prLog} setPrLog={setPrLog}/>}
         {page==="habits"      && <HabitsPage    habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked}/>}
         {page==="vocab"       && <VocabPage     vocab={vocab} setVocab={setVocab} learned={learned} setLearned={setLearned}/>}
         {page==="supplements" && <SupplementsPage supps={supps} setSupps={setSupps} checked={suppChecked} setChecked={setSuppChecked}/>}
