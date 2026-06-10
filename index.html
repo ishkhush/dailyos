@@ -353,7 +353,7 @@ function getDayInfo(date) {
 // All state keys follow the pattern "dos_<name>_v<N>" — bump N when the
 // shape of the stored data changes to avoid reading stale/incompatible data.
 // dk() produces "YYYY-MM-DD" keys used as object keys inside meals/attend/usage.
-function dk(d) { const x = new Date(d); x.setHours(0,0,0,0); return x.toISOString().slice(0,10); }
+function dk(d) { const x = new Date(d); x.setHours(0,0,0,0); const p = n => String(n).padStart(2,"0"); return `${x.getFullYear()}-${p(x.getMonth()+1)}-${p(x.getDate())}`; }
 const tdk = () => dk(new Date());
 const vd = (o) => { const d = new Date(); d.setDate(d.getDate()+o); d.setHours(0,0,0,0); return d; };
 const ld = (k, f) => { try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : f; } catch { return f; } };
