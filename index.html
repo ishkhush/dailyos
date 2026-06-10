@@ -521,6 +521,7 @@ function playSyllables(syls) {
     u.addEventListener('end', advance);
     u.addEventListener('error', advance);
     const t = setTimeout(advance, 3000);
+    _currentUtt = u;
     window.speechSynthesis.speak(u);
   };
   setTimeout(next, 80);
@@ -615,7 +616,8 @@ function ApiKeyScreen({ onSave }) {
     const t = key.trim();
     if (!t.startsWith("sk-ant-")) { setError("API key should start with 'sk-ant-'"); return; }
     setTesting(true); setError("");
-    try { await callClaude(t, [{role:"user",content:"Say OK"}], null, 10); sv("dos_api_key", t); onSave(t); }
+    const timeout = new Promise((_,rej)=>setTimeout(()=>rej(new Error("Request timed out.")),10000));
+    try { await Promise.race([callClaude(t, [{role:"user",content:"Say OK"}], null, 10), timeout]); sv("dos_api_key", t); onSave(t); }
     catch(e) { setError("Key invalid or error: " + e.message); }
     setTesting(false);
   };
@@ -682,6 +684,8 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
   const [photoScanning, setPhotoScanning] = useState(false);
   const fileRef = useRef();
   const bottomRef = useRef();
+  const mountedRef = useRef(true);
+  useEffect(() => () => { mountedRef.current = false; }, []);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [messages, loading]);
 
@@ -705,10 +709,11 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
         setMessages(prev=>[...prev,{role:"assistant",content:parsed.message||raw,isQuestion:true}]);
       }
     } catch(e) {
+      if (!mountedRef.current) return;
       const msg = /limit|key|API error|too fast/i.test(e.message) ? e.message : "Try being specific — e.g. \"2 cups raw milk\" or \"1 Quest bar\".";
       setMessages(prev=>[...prev,{role:"assistant",content:msg,isError:true}]);
     }
-    setLoading(false);
+    if (mountedRef.current) setLoading(false);
   };
 
   const handlePhoto = (e) => {
@@ -728,6 +733,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
       setPhotoScanning(true); setPendingResult(null);
       try {
         const result = await analyzePhotoWithKey(apiKey, b64, f.type||"image/jpeg");
+        if (!mountedRef.current) return;
         const macros = {calories:num(result.calories),carbs:num(result.carbs),protein:num(result.protein),fat:num(result.fat),fiber:num(result.fiber)};
         const photoMsg = {
           role:"assistant",
@@ -738,10 +744,11 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
         setMessages(prev=>[...prev,{role:"user",content:"📸 [Meal photo]"},photoMsg]);
         setPendingResult(photoMsg.result);
       } catch(err) {
+        if (!mountedRef.current) return;
         const msg = /limit|key|API error|too fast/i.test(err.message) ? err.message : "Couldn't analyze that photo. Make sure food is clearly visible.";
         setMessages(prev=>[...prev,{role:"assistant",content:msg,isError:true}]);
       }
-      setPhotoScanning(false);
+      if (mountedRef.current) setPhotoScanning(false);
     };
     reader.readAsDataURL(f);
   };
@@ -777,7 +784,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
             <div style={{fontSize:18,fontWeight:800}}>AI Food Logger</div>
             <div style={{fontSize:12,color:C.text2,marginTop:2}}>Powered by Claude · Type food or scan a photo</div>
           </div>
-          <button onClick={onClose} style={{width:34,height:34,borderRadius:"50%",background:"rgba(255,255,255,0.08)",backdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.15)`,color:C.text2,fontSize:20}}>×</button>
+          <button aria-label="Close" onClick={onClose} style={{width:34,height:34,borderRadius:"50%",background:"rgba(255,255,255,0.08)",backdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.15)`,color:C.text2,fontSize:20}}>×</button>
         </div>
       </div>
 
@@ -889,10 +896,10 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
 
       {/* Input bar */}
       <div style={{padding:"10px 16px calc(16px + env(safe-area-inset-bottom))",background:"rgba(6,13,26,0.90)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderTop:`1px solid rgba(255,255,255,0.10)`,flexShrink:0,display:"flex",gap:8,alignItems:"flex-end"}}>
-        <button onClick={()=>fileRef.current.click()} disabled={loading||photoScanning} style={{width:44,height:44,borderRadius:12,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,fontSize:20,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",opacity:(loading||photoScanning)?0.6:1}}>{photoScanning?<span className="spin"></span>:"📸"}</button>
+        <button aria-label="Scan photo" onClick={()=>fileRef.current.click()} disabled={loading||photoScanning} style={{width:44,height:44,borderRadius:12,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,fontSize:20,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",opacity:(loading||photoScanning)?0.6:1}}>{photoScanning?<span className="spin"></span>:"📸"}</button>
         <input ref={fileRef} type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={handlePhoto}/>
-        <input disabled={loading||photoScanning} style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,borderRadius:12,padding:"12px 14px",fontSize:14,color:C.text,minHeight:44,opacity:(loading||photoScanning)?0.5:1}} placeholder={(loading||photoScanning)?(photoScanning?"Analyzing photo…":"Working…"):"Type any food…"} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage(input);}}}/>
-        <button onClick={()=>sendMessage(input)} disabled={loading||photoScanning||!input.trim()} style={{width:44,height:44,borderRadius:12,background:(input.trim()&&!loading&&!photoScanning)?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:"none",fontSize:20,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",opacity:(loading||photoScanning)?0.7:1}}>{(loading||photoScanning)?<span className="spin"></span>:"↑"}</button>
+        <input aria-label="Food description" disabled={loading||photoScanning} style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,borderRadius:12,padding:"12px 14px",fontSize:14,color:C.text,minHeight:44,opacity:(loading||photoScanning)?0.5:1}} placeholder={(loading||photoScanning)?(photoScanning?"Analyzing photo…":"Working…"):"Type any food…"} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage(input);}}}/>
+        <button aria-label="Send" onClick={()=>sendMessage(input)} disabled={loading||photoScanning||!input.trim()} style={{width:44,height:44,borderRadius:12,background:(input.trim()&&!loading&&!photoScanning)?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:"none",fontSize:20,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",opacity:(loading||photoScanning)?0.7:1}}>{(loading||photoScanning)?<span className="spin"></span>:"↑"}</button>
       </div>
     </div>
   );
@@ -1489,10 +1496,12 @@ ${cell.didGym?"Gym ":""}${cell.didKb?"KB":""}`}
 function WeightLogModal({ bwLog, setBwLog, onClose }) {
   const [inputVal, setInputVal] = useState("");
   const [saved, setSaved] = useState(false);
+  const [inputErr, setInputErr] = useState("");
 
   const handleSave = () => {
     const w = parseFloat(inputVal);
-    if (!w || w < 50 || w > 400) return;
+    if (!w || w < 50 || w > 400) { setInputErr("Enter a weight between 50–400 lbs."); return; }
+    setInputErr("");
     const today = tdk();
     const newLog = bwLog.filter(e => e.date !== today);
     newLog.push({ date: today, weight: w });
@@ -1511,18 +1520,20 @@ function WeightLogModal({ bwLog, setBwLog, onClose }) {
         <div style={{fontSize:12,color:C.text2,marginBottom:20}}>Goal: {PROFILE.currentWeight} → {PROFILE.goalWeight} lbs (lean bulk)</div>
         <div style={{display:"flex",gap:10,marginBottom:20}}>
           <input
+            aria-label="Body weight in pounds"
             type="number" step="0.1" min="80" max="400"
             placeholder={`e.g. ${PROFILE.currentWeight}`}
             value={inputVal}
-            onChange={e=>setInputVal(e.target.value)}
+            onChange={e=>{setInputVal(e.target.value);setInputErr("");}}
             onKeyDown={e=>e.key==="Enter"&&handleSave()}
-            style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.15)`,borderRadius:14,padding:"14px 16px",fontSize:18,fontWeight:700,color:C.text}}
+            style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",border:`1px solid ${inputErr?"rgba(248,113,113,0.5)":"rgba(255,255,255,0.15)"}`,borderRadius:14,padding:"14px 16px",fontSize:18,fontWeight:700,color:C.text}}
             autoFocus
           />
           <button onClick={handleSave} style={{background:saved?C.green:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",borderRadius:14,padding:"14px 20px",fontSize:15,fontWeight:800,color:"white",minWidth:80,transition:"background 0.3s"}}>
             {saved?"✓ Saved":"Save"}
           </button>
         </div>
+        {inputErr&&<div style={{fontSize:12,color:C.red,marginBottom:12,marginTop:-12}}>{inputErr}</div>}
         {last5.length > 0 && (
           <div>
             <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.5,marginBottom:10}}>Recent Entries</div>
@@ -1661,11 +1672,11 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 
       {/* Date nav */}
       <div style={{display:"flex",alignItems:"center",gap:10,padding:"0 16px 12px"}}>
-        <button onClick={()=>setOff(o=>o-1)} style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.12)`,color:C.text2,width:36,height:36,borderRadius:"50%",fontSize:18}}>‹</button>
+        <button aria-label="Previous day" onClick={()=>setOff(o=>o-1)} style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.12)`,color:C.text2,width:36,height:36,borderRadius:"50%",fontSize:18}}>‹</button>
         <div style={{flex:1,textAlign:"center",fontSize:14,fontWeight:600,color:C.text}}>
           {off===0?"Today · ":""}{DAYS_L[vdate.getDay()]}, {MONTHS_S[vdate.getMonth()]} {vdate.getDate()}
         </div>
-        <button onClick={()=>setOff(o=>o+1)} style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.12)`,color:C.text2,width:36,height:36,borderRadius:"50%",fontSize:18}}>›</button>
+        <button aria-label="Next day" onClick={()=>setOff(o=>o+1)} style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.12)`,color:C.text2,width:36,height:36,borderRadius:"50%",fontSize:18}}>›</button>
         {off!==0&&<button onClick={()=>setOff(0)} style={{background:"rgba(56,189,248,0.12)",color:C.accent,borderRadius:20,padding:"4px 12px",fontSize:11,fontWeight:700}}>Today</button>}
       </div>
 
@@ -1809,6 +1820,29 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
             </div>;
           })()}
         </button>
+        {bwLog&&bwLog.length>0&&(()=>{
+          const latestBw=bwLog[bwLog.length-1].weight;
+          const span=PROFILE.goalWeight-PROFILE.currentWeight;
+          const bulkPct=Math.min(100,Math.max(0,Math.round(((latestBw-PROFILE.currentWeight)/span)*100)));
+          const onTrack=span>=0?latestBw>=PROFILE.currentWeight:latestBw<=PROFILE.currentWeight;
+          const barCol=onTrack?C.green:C.amber;
+          const reached=bulkPct>=100;
+          return (
+            <div style={{marginTop:8,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:16,padding:"12px 14px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
+                <span style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>Goal Progress</span>
+                <span style={{fontSize:11,color:C.text2,fontWeight:700}}>{PROFILE.currentWeight} → {PROFILE.goalWeight} lbs</span>
+              </div>
+              <div style={{height:8,background:"rgba(255,255,255,0.07)",borderRadius:5,overflow:"hidden"}}>
+                <div style={{height:"100%",width:bulkPct+"%",background:`linear-gradient(90deg,${C.teal},${barCol})`,borderRadius:5,transition:"width 0.8s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:`0 0 10px ${barCol}66`}}/>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginTop:7}}>
+                <span style={{fontSize:11,color:C.text2}}>Now <strong style={{color:C.text}}>{latestBw} lbs</strong></span>
+                <span style={{fontSize:11,color:reached?C.green:C.text3}}>{reached?"🎯 Goal reached!":`${(PROFILE.goalWeight-latestBw).toFixed(1)} lbs to go`} · <strong style={{color:barCol}}>{bulkPct}%</strong></span>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Weekly history */}
@@ -2016,11 +2050,12 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
   const chunksRef = useRef([]);
   const streamRef = useRef(null);
   const liveVideoRef = useRef(null);
+  const prevVidRef = useRef(null);
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [ttsPrefs, setTtsPrefs] = useState(()=>loadTTSPrefs());
   const [browserVoices, setBrowserVoices] = useState([]);
 
-  useEffect(()=>{ return ()=>{ if(streamRef.current) streamRef.current.getTracks().forEach(t=>t.stop()); }; },[]);
+  useEffect(()=>{ return ()=>{ if(streamRef.current) streamRef.current.getTracks().forEach(t=>t.stop()); if(prevVidRef.current) URL.revokeObjectURL(prevVidRef.current); }; },[]);
 
   useEffect(()=>{
     const load = ()=>{
@@ -2059,7 +2094,7 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
       mr.ondataavailable = e=>{ if(e.data&&e.data.size>0) chunksRef.current.push(e.data); };
       mr.onstop = ()=>{
         const blob = new Blob(chunksRef.current,{type:mr.mimeType||"video/webm"});
-        setPrevVid(URL.createObjectURL(blob)); setPrevIdx(i); setRecState("preview");
+        const vidUrl = URL.createObjectURL(blob); prevVidRef.current = vidUrl; setPrevVid(vidUrl); setPrevIdx(i); setRecState("preview");
         stream.getTracks().forEach(t=>t.stop()); streamRef.current=null;
         if (liveVideoRef.current) { liveVideoRef.current.srcObject = null; }
       };
@@ -2082,7 +2117,7 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
         const w = vocab[prevIdx];
         setVocab(prev=>prev.map((x,i)=>i===prevIdx?{...x,videoUrl:dataUrl}:x));
         setLearned(prev=>{ const ex=prev.find(l=>l.word===w.word); if(ex) return prev.map(l=>l.word===w.word?{...l,videoUrl:dataUrl}:l); return [{word:w.word,pos:w.pos,definition:w.definition,date:tdk(),videoUrl:dataUrl},...prev]; });
-        URL.revokeObjectURL(prevVid);
+        URL.revokeObjectURL(prevVid); prevVidRef.current=null;
         setPrevVid(null); setPrevIdx(null); setRecState("idle"); setRecIdx(null);
       };
       reader.onerror=()=>{ setVidError("Failed to save. Try a shorter recording."); setRecState("preview"); };
@@ -2090,7 +2125,7 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
     } catch(err){ setVidError("Save failed: "+err.message); setRecState("preview"); }
   };
 
-  const discardVid = ()=>{ if(prevVid) URL.revokeObjectURL(prevVid); setPrevVid(null); setPrevIdx(null); setRecState("idle"); setRecIdx(null); };
+  const discardVid = ()=>{ if(prevVid) URL.revokeObjectURL(prevVid); prevVidRef.current=null; setPrevVid(null); setPrevIdx(null); setRecState("idle"); setRecIdx(null); };
 
   return (
     <div>
@@ -2210,9 +2245,9 @@ function VocabPage({ vocab, setVocab, learned, setLearned }) {
                   <span style={{display:"inline-block",fontSize:10,fontWeight:800,color:wc,background:wbg,backdropFilter:"blur(8px)",border:`1px solid ${wbdr}`,borderRadius:20,padding:"3px 12px",marginTop:5,letterSpacing:0.3}}>{w.pos}</span>
                 </div>
                 <div style={{display:"flex",gap:6}}>
-                  <button onClick={()=>playSyllablesText(w.syllables)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>▶</button>
-                  <button onClick={()=>speakText(w.word,0.8)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>🔊</button>
-                  <button onClick={()=>markLearned(i)} style={{width:34,height:34,borderRadius:"50%",background:w.learned?"rgba(47,229,165,0.18)":C.bg4,border:`1px solid ${w.learned?"rgba(47,229,165,0.4)":C.border2}`,color:w.learned?C.green:C.text2,fontSize:14,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:w.learned?`0 0 10px rgba(47,229,165,0.3)`:undefined}}>✓</button>
+                  <button aria-label="Play syllables" onClick={()=>playSyllablesText(w.syllables)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>▶</button>
+                  <button aria-label="Speak word" onClick={()=>speakText(w.word,0.8)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>🔊</button>
+                  <button aria-label={w.learned?"Unmark learned":"Mark learned"} onClick={()=>markLearned(i)} style={{width:34,height:34,borderRadius:"50%",background:w.learned?"rgba(47,229,165,0.18)":C.bg4,border:`1px solid ${w.learned?"rgba(47,229,165,0.4)":C.border2}`,color:w.learned?C.green:C.text2,fontSize:14,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:w.learned?`0 0 10px rgba(47,229,165,0.3)`:undefined}}>✓</button>
                 </div>
               </div>
               <button onClick={()=>playSyllablesText(w.syllables)} style={{display:"flex",alignItems:"center",gap:6,border:`1px solid ${wbdr}`,background:wbg,backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",borderRadius:20,padding:"5px 14px",color:wc,fontSize:11,fontWeight:700,marginBottom:12}}>▶ Syllable by syllable</button>
