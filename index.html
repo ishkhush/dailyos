@@ -1602,11 +1602,11 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
   const [customServ, setCustomServ] = React.useState("");
 
   const saveFavorite = (result) => {
-    const meal = {name:result.name,cal:result.calories||0,carb:result.carbs||0,prot:result.protein||0,fat:result.fat||0,fiber:result.fiber||0};
+    const meal = {name:result.name,cal:num(result.calories),carb:num(result.carbs),prot:num(result.protein),fat:num(result.fat),fiber:num(result.fiber)};
     setFavorites(prev=>prev.find(f=>f.name===meal.name)?prev:[meal,...prev]);
   };
   const saveMealToFavs = (m) => {
-    setFavorites(prev=>prev.find(f=>f.name===m.name)?prev:[{name:m.name,cal:m.cal,carb:m.carb,prot:m.prot,fat:m.fat||0,fiber:m.fiber||0},...prev]);
+    setFavorites(prev=>prev.find(f=>f.name===m.name)?prev:[{name:m.name,cal:num(m.cal),carb:num(m.carb),prot:num(m.prot),fat:num(m.fat),fiber:num(m.fiber)},...prev]);
   };
   const adjustMealServing = (id, mult) => {
     setMeals(prev=>{
