@@ -1,5 +1,9 @@
 #!/bin/bash
 # DailyOS → Netlify deploy
+# Packages index.html + sw.js into an in-memory zip and POSTs it to the
+# Netlify deploy API. Only these two files are deployed — nothing else.
+# Site ID and token are hardcoded here; token is a Netlify personal access token.
+# Run: bash deploy.sh
 SITE_ID="c6c49e17-7395-4d93-89d8-35d8732cc282"
 TOKEN="nfp_s1CVq1HBGQjNehC61VFCM1SPtme2xTaj3e9e"
 DIR="$(cd "$(dirname "$0")" && pwd)"
