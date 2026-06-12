@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DailyOS">
-<meta name="theme-color" content="#050508">
+<meta name="theme-color" content="#060810">
 <title>DailyOS</title>
 
 <!--
@@ -54,7 +54,7 @@
   }
   var icon192 = makeIcon(192), icon512 = makeIcon(512);
   if (icon192) { var al=document.createElement('link'); al.rel='apple-touch-icon'; al.href=icon192; document.head.appendChild(al); }
-  var manifest = { name:'DailyOS', short_name:'DailyOS', description:'Fitness, nutrition & vocab', start_url:'./', scope:'./', display:'standalone', orientation:'portrait', background_color:'#050508', theme_color:'#050508', icons:[{src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:icon512,sizes:'512x512',type:'image/png',purpose:'any maskable'}] };
+  var manifest = { name:'DailyOS', short_name:'DailyOS', description:'Fitness, nutrition & daily OS', start_url:'./', scope:'./', display:'standalone', orientation:'portrait', background_color:'#060810', theme_color:'#060810', icons:[{src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:icon512,sizes:'512x512',type:'image/png',purpose:'any maskable'}] };
   var ml=document.createElement('link'); ml.rel='manifest'; ml.href='data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)); document.head.appendChild(ml);
   if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); }); }
 })();
@@ -73,100 +73,74 @@
 <script crossorigin integrity="sha512-aKni+N2bgewoe8CGZlB9c0IDLU5LQaMEZFNjP6FbDK8gZhdTdNKhYKgZaY/EYL9GKJeJigN/wA7WDAOJShgMAQ==" src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js"></script>
 <script crossorigin integrity="sha384-Rv68Y7adOjMMJc1/xFMcdNvXre/HF51to4GZjBALmXr7ABnVl5V4UajJwBu7zbhN" src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
-html{background:#050508;-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
-body{background:linear-gradient(160deg,#060608 0%,#050508 50%,#070709 100%);color:#f8fafc;min-height:100vh;position:relative}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(80,140,0,0.18) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(0,130,150,0.14) 0%,transparent 55%);pointer-events:none;z-index:-1}
-#root{max-width:430px;margin:0 auto;padding-bottom:96px;min-height:100vh}
-button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit;transition:transform 0.12s,opacity 0.12s}
-button:active:not(:disabled){transform:scale(0.95)}
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Space Grotesk","Barlow",-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+html{background:#060810;-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+body{background:#060810;color:#EEF0F7;min-height:100vh;position:relative}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(139,92,246,0.09) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 85% 95%,rgba(245,158,11,0.07) 0%,transparent 50%),radial-gradient(ellipse 40% 30% at 60% 45%,rgba(6,182,212,0.04) 0%,transparent 40%);pointer-events:none;z-index:-1}
+#root{max-width:430px;margin:0 auto;padding-bottom:100px;min-height:100vh}
+button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit;transition:transform 0.13s cubic-bezier(0.34,1.56,0.64,1),opacity 0.13s}
+button:active:not(:disabled){transform:scale(0.93)}
 input,textarea{font-family:inherit;outline:none;border:none}
 video,img{display:block}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes popIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(167,139,250,0.3)}50%{box-shadow:0 0 22px rgba(167,139,250,0.7)}}
 @keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,0.6)}70%{box-shadow:0 0 0 12px rgba(248,113,113,0)}}
-@keyframes shimmer{0%{background-position:-300px 0}100%{background-position:300px 0}}
 @keyframes sweepRing{from{stroke-dashoffset:var(--ring-full)}to{stroke-dashoffset:var(--ring-offset)}}
-@keyframes restDone{0%,100%{color:#ff6b6b;transform:scale(1)}50%{color:#fb923c;transform:scale(1.15)}}
-@keyframes flashRest{0%{opacity:0;transform:translate(-50%,-50%) scale(0.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.1)}}
 @keyframes heatPop{from{transform:scale(0.4);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes sparkleIn{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
-@keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 rgba(167,139,250,0.5)}50%{box-shadow:0 0 12px 4px rgba(167,139,250,0.2)}}
-@keyframes pageEnter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes floatBob{0%,100%{transform:translateY(0px)}50%{transform:translateY(-7px)}}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(179,157,250,0)}50%{box-shadow:0 0 22px 6px rgba(179,157,250,0.14)}}
+@keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.5)}50%{box-shadow:0 0 12px 4px rgba(245,158,11,0.2)}}
+@keyframes pageEnter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes floatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes numPop{0%{opacity:0;transform:scale(0.6) translateY(6px)}70%{transform:scale(1.06) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
-@keyframes borderGlow{0%,100%{opacity:0.5}50%{opacity:1}}
-@keyframes statSlide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
-@keyframes ripple{0%{transform:scale(0.8);opacity:1}100%{transform:scale(2.2);opacity:0}}
-.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.12);border-top-color:#a3e635;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
-.fade-in{animation:fadeIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
-.slide-up{animation:slideUp 0.32s cubic-bezier(0.34,1.56,0.64,1)}
-.pop-in{animation:popIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
-.page-enter{animation:pageEnter 0.32s cubic-bezier(0.22,1,0.36,1)}
-.float{animation:floatBob 3.5s ease-in-out infinite}
-.num-pop{animation:numPop 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards}
-.glow-pulse{animation:glowPulse 4s ease-in-out infinite}
-.card-elevated{border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)}
-::-webkit-scrollbar{width:0;height:0}
-@keyframes liveOrb{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
-@keyframes shimmerBar{0%{background-position:200% center}100%{background-position:-200% center}}
-@keyframes habitCheck{0%{transform:scale(1)}40%{transform:scale(1.22)}70%{transform:scale(0.92)}100%{transform:scale(1)}}
 @keyframes attMarkDone{0%{transform:scale(1)}20%{transform:scale(1.18)}50%{transform:scale(0.94)}75%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes scanLine{0%{top:-4px}100%{top:100%}}
-@keyframes neonFlicker{0%,19%,21%,23%,100%{opacity:1}20%,22%{opacity:0.85}}
-@keyframes cyberPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0),inset 0 1px 0 rgba(255,255,255,0.06)}50%{box-shadow:0 0 28px 2px rgba(163,230,53,0.12),inset 0 1px 0 rgba(255,255,255,0.1)}}
-@keyframes gridDrift{0%{background-position:0 0}100%{background-position:40px 40px}}
-@keyframes goldShimmer{0%{background-position:-200% center}100%{background-position:200% center}}
-@keyframes bigNumPop{0%{opacity:0;transform:scale(0.5) translateY(12px)}65%{transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
-@keyframes ctaRing{0%{box-shadow:0 0 0 0 rgba(163,230,53,0.5)}70%{box-shadow:0 0 0 14px rgba(163,230,53,0)}100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}}
-@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(163,230,53,0.3)}50%{box-shadow:0 0 22px rgba(163,230,53,0.7)}}
-@keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0.5)}50%{box-shadow:0 0 12px 4px rgba(163,230,53,0.2)}}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}50%{box-shadow:0 0 22px 6px rgba(163,230,53,0.14)}}
-@keyframes orbDrift{0%{transform:translate(0,0)}25%{transform:translate(14px,-10px)}50%{transform:translate(5px,14px)}75%{transform:translate(-10px,5px)}100%{transform:translate(0,0)}}
-@keyframes breathe{0%,100%{transform:scale(1);opacity:0.7}50%{transform:scale(1.22);opacity:1}}
-@keyframes neonText{0%,100%{filter:drop-shadow(0 0 6px rgba(163,230,53,0.8)) drop-shadow(0 0 12px rgba(163,230,53,0.5))}50%{filter:drop-shadow(0 0 18px rgba(163,230,53,1)) drop-shadow(0 0 36px rgba(20,184,166,0.7)) drop-shadow(0 0 54px rgba(163,230,53,0.3))}}
-@keyframes streakFire{0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(22deg) brightness(1.18)}}
-@keyframes waveBar{0%,100%{transform:scaleY(0.25)}50%{transform:scaleY(1)}}
+@keyframes orbDrift{0%{transform:translate(0,0)}25%{transform:translate(18px,-12px)}50%{transform:translate(6px,18px)}75%{transform:translate(-12px,6px)}100%{transform:translate(0,0)}}
 @keyframes cardRise{0%{opacity:0;transform:translateY(22px) scale(0.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes gradientPan{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@keyframes ringExpand{0%{transform:scale(1);opacity:0.7}100%{transform:scale(1.9);opacity:0}}
-@keyframes sparkPop{0%{transform:scale(0) rotate(0deg);opacity:1}100%{transform:scale(1.6) rotate(90deg);opacity:0}}
-@keyframes energyPulse{0%,100%{box-shadow:0 0 0 0 rgba(163,230,53,0.6)}40%{box-shadow:0 0 0 8px rgba(163,230,53,0.2)}80%{box-shadow:0 0 0 18px rgba(163,230,53,0)}}
-@keyframes slideInLeft{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:translateX(0)}}
-@keyframes slideInRight{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:translateX(0)}}
-@keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.12)}70%{transform:scale(0.96)}100%{transform:scale(1);opacity:1}}
-@keyframes floatOrb{0%,100%{transform:translateY(0) scale(1);opacity:0.5}50%{transform:translateY(-22px) scale(1.12);opacity:0.9}}
-@keyframes shimmerMove{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
-@keyframes iconHover{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.18) rotate(-6deg)}}
-@keyframes glowBorder{0%,100%{box-shadow:0 0 0 1px rgba(163,230,53,0.18)}50%{box-shadow:0 0 0 2px rgba(163,230,53,0.55),0 0 24px rgba(163,230,53,0.16)}}
-@keyframes heroGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes missionPulse{0%,100%{box-shadow:0 0 20px rgba(163,230,53,0.12),0 12px 40px rgba(0,0,0,0.5)}50%{box-shadow:0 0 40px rgba(163,230,53,0.22),0 12px 40px rgba(0,0,0,0.5)}}
-@keyframes dotDance{0%,100%{transform:translateY(0)}33%{transform:translateY(-5px)}66%{transform:translateY(2px)}}
+@keyframes habitCheck{0%{transform:scale(1)}40%{transform:scale(1.22)}70%{transform:scale(0.92)}100%{transform:scale(1)}}
+@keyframes liveOrb{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+@keyframes shimmerMove{0%{left:-60%}100%{left:110%}}
+@keyframes borderGlow{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes bounceIn{0%{transform:scale(0.85)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes restDone{0%,100%{color:#ff6b6b;transform:scale(1)}50%{color:#fb923c;transform:scale(1.15)}}
+@keyframes glowBorder{0%,100%{opacity:0.6}50%{opacity:1}}
+@keyframes streakFire{0%,100%{text-shadow:0 0 8px rgba(245,158,11,0.8)}50%{text-shadow:0 0 20px rgba(245,158,11,1),0 0 40px rgba(245,158,11,0.5)}}
+@keyframes prayerNext{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,0.4)}50%{box-shadow:0 0 18px 4px rgba(139,92,246,0.15)}}
+@keyframes cosmicOrb{0%{transform:translate(0,0) scale(1) rotate(0deg)}33%{transform:translate(22px,-16px) scale(1.08) rotate(120deg)}66%{transform:translate(-12px,22px) scale(0.94) rotate(240deg)}100%{transform:translate(0,0) scale(1) rotate(360deg)}}
+@keyframes shimmerBar{0%{background-position:200% center}100%{background-position:-200% center}}
 @keyframes statCountUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes colorCycle{0%{border-color:rgba(163,230,53,0.3)}33%{border-color:rgba(20,184,166,0.3)}66%{border-color:rgba(244,114,182,0.3)}100%{border-color:rgba(163,230,53,0.3)}}
-@keyframes tiltIn{0%{transform:perspective(500px) rotateY(-18deg);opacity:0}100%{transform:perspective(500px) rotateY(0deg);opacity:1}}
-.orb-drift{animation:orbDrift 9s ease-in-out infinite}
-.breathe{animation:breathe 3s ease-in-out infinite}
-.card-rise{animation:cardRise 0.42s cubic-bezier(0.34,1.56,0.64,1) both}
-.glow-border{animation:glowBorder 4s ease-in-out infinite}
-.hero-gradient{background-size:300% 300%;animation:heroGradient 8s ease infinite}
-.wave-bar{animation:waveBar 1.2s ease-in-out infinite}
-.neon-text{animation:neonText 4s ease-in-out infinite}
-.mission-pulse{animation:missionPulse 3s ease-in-out infinite}
+@keyframes navIndicatorAnim{from{opacity:0.4;transform:scaleX(0.5)}to{opacity:1;transform:scaleX(1)}}
+@keyframes bigNumPop{0%{opacity:0;transform:scale(0.5) translateY(12px)}65%{transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes dotDance{0%,100%{transform:translateY(0)}33%{transform:translateY(-5px)}66%{transform:translateY(2px)}}
+@keyframes ambientPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.18)}50%{box-shadow:0 0 32px 4px rgba(245,158,11,0.08)}}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.10);border-top-color:#F59E0B;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
+.fade-in{animation:fadeIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
+.slide-up{animation:slideUp 0.34s cubic-bezier(0.22,1,0.36,1)}
+.pop-in{animation:popIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
+.page-enter{animation:pageEnter 0.36s cubic-bezier(0.22,1,0.36,1)}
+.float{animation:floatBob 4s ease-in-out infinite}
+.num-pop{animation:numPop 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards}
+.card-rise{animation:cardRise 0.44s cubic-bezier(0.22,1,0.36,1) both}
 .stat-count-up{animation:statCountUp 0.5s cubic-bezier(0.34,1.56,0.64,1) both}
-.cyber-border{border:1px solid rgba(163,230,53,0.18)!important;box-shadow:0 0 0 0 transparent,inset 0 1px 0 rgba(255,255,255,0.06);transition:box-shadow 0.4s}
-.cyber-border:hover{box-shadow:0 0 20px rgba(163,230,53,0.14),inset 0 1px 0 rgba(255,255,255,0.09)}
-.cyber-card{background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(163,230,53,0.14);border-radius:20px;position:relative;overflow:hidden}
-.cyber-card::before{content:'';position:absolute;left:0;right:0;height:1px;top:-1px;background:linear-gradient(90deg,transparent,rgba(163,230,53,0.5),transparent);opacity:0.7}
+.cell-today{animation:bwPulse 2.5s ease-in-out infinite}
+::-webkit-scrollbar{width:0;height:0}
+.bc{font-family:"Barlow Condensed",sans-serif}
+.syne{font-family:"Syne",sans-serif}
+.sg{font-family:"Space Grotesk",sans-serif}
+.glass-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);box-shadow:0 4px 24px rgba(0,0,0,0.4)}
+.pill-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18);border-radius:999px}
 .scan-overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
-.scan-overlay::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(163,230,53,0.18),transparent);animation:scanLine 5s linear infinite;opacity:0.6}
-.glass-card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.10);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)}
-.pill-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.13);border-radius:999px}
+.scan-overlay::after{content:'';position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.30),transparent);animation:scanLine 8s linear infinite;opacity:0.5}
+.ambient-pulse{animation:ambientPulse 5s ease-in-out infinite}
+.orb-drift{animation:orbDrift 22s ease-in-out infinite}
+.section-rule{display:flex;align-items:center;gap:12px;margin:20px 16px 12px}
+.section-rule::before,.section-rule::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06)}
+.section-rule span{font-family:"Space Grotesk",sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;color:#2A3050;text-transform:uppercase;white-space:nowrap}
+.cyber-card{background:rgba(255,255,255,0.03);border:1px solid rgba(245,158,11,0.12);border-radius:16px;position:relative;overflow:hidden}
+.prayer-active{animation:prayerNext 3s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -214,13 +188,14 @@ function useCountUp(target, duration = 850) {
 
 // ── COLORS ───────────────────────────────────────────────────────────────────
 const C = {
-  accent:"#a3e635", green:"#4ade80", amber:"#fbbf24", gold:"#fbbf24", blue:"#22d3ee", red:"#f87171",
-  pink:"#f472b6", teal:"#2dd4bf", orange:"#fb923c",
-  bg:"#050508", bg2:"#0a0a0e", bg3:"#111116", bg4:"#18181f",
-  glass:"rgba(255,255,255,0.03)", glassMid:"rgba(255,255,255,0.05)", glassHigh:"rgba(255,255,255,0.08)",
-  border:"rgba(255,255,255,0.08)", border2:"rgba(255,255,255,0.14)",
-  text:"#f8fafc", text2:"#6b7280", text3:"#374151",
-  glowAccent:"rgba(163,230,53,0.28)", glowGreen:"rgba(74,222,128,0.25)", glowBlue:"rgba(34,211,238,0.25)", glowGold:"rgba(251,191,36,0.30)"
+  accent:"#F59E0B", green:"#10B981", amber:"#F59E0B", gold:"#F59E0B", blue:"#3B82F6", red:"#F43F5E",
+  pink:"#F472B6", teal:"#06B6D4", steel:"#06B6D4", orange:"#FB923C", violet:"#8B5CF6", lime:"#A3E635",
+  bg:"#060810", bg2:"#0C0F1B", bg3:"#111727", bg4:"#171E30",
+  glass:"rgba(255,255,255,0.02)", glassMid:"rgba(255,255,255,0.04)", glassHigh:"rgba(255,255,255,0.07)",
+  border:"rgba(255,255,255,0.06)", border2:"rgba(255,255,255,0.10)",
+  text:"#EEF0F7", text2:"#6B7280", text3:"#2C3050",
+  glowAccent:"rgba(245,158,11,0.28)", glowGreen:"rgba(16,185,129,0.25)", glowBlue:"rgba(59,130,246,0.25)", glowGold:"rgba(245,158,11,0.30)",
+  glowViolet:"rgba(139,92,246,0.30)", glowCyan:"rgba(6,182,212,0.28)"
 };
 
 
@@ -263,49 +238,6 @@ const QUOTES = [
   "Believe in yourself and all that you are."
 ];
 
-// ── WORD BANK ─────────────────────────────────────────────────────────────────
-const WORDS = [
-  {word:"Ephemeral",pos:"adjective",syllables:["e","phem","er","al"],definition:"Lasting for only a short time; transitory.",example:"The ephemeral beauty of cherry blossoms makes them all the more precious."},
-  {word:"Sanguine",pos:"adjective",syllables:["san","guine"],definition:"Optimistic or positive, especially in a difficult situation.",example:"Despite the setbacks, she remained sanguine about the team's chances."},
-  {word:"Tenacious",pos:"adjective",syllables:["te","na","cious"],definition:"Holding firmly to something; not easily giving up.",example:"His tenacious training regimen led him to the championship."},
-  {word:"Equanimity",pos:"noun",syllables:["e","qua","nim","i","ty"],definition:"Mental calmness and composure in difficult situations.",example:"She handled the chaos with remarkable equanimity."},
-  {word:"Alacrity",pos:"noun",syllables:["a","lac","ri","ty"],definition:"Brisk and cheerful readiness; eager willingness.",example:"He tackled the morning workout with great alacrity."},
-  {word:"Propitious",pos:"adjective",syllables:["pro","pi","tious"],definition:"Giving or indicating a good chance of success; favorable.",example:"The cool weather was propitious for the long training run."},
-  {word:"Luminous",pos:"adjective",syllables:["lu","mi","nous"],definition:"Full of or shedding light; bright or shining.",example:"Her luminous performance left the audience breathless."},
-  {word:"Inexorable",pos:"adjective",syllables:["in","ex","o","ra","ble"],definition:"Impossible to stop or prevent; relentless.",example:"The inexorable march of progress changed the fitness industry entirely."},
-  {word:"Magnanimous",pos:"adjective",syllables:["mag","nan","i","mous"],definition:"Generous or forgiving, especially toward a rival.",example:"The champion was magnanimous in victory."},
-  {word:"Visceral",pos:"adjective",syllables:["vis","cer","al"],definition:"Relating to deep inward feelings; instinctive.",example:"The visceral rush of a perfect training session is hard to describe."},
-  {word:"Ebullient",pos:"adjective",syllables:["e","bul","lient"],definition:"Cheerful and full of energy; exuberant.",example:"His ebullient spirit lifted the whole team."},
-  {word:"Intrepid",pos:"adjective",syllables:["in","trep","id"],definition:"Fearless; adventurous.",example:"The intrepid climber scaled the summit."},
-  {word:"Redoubtable",pos:"adjective",syllables:["re","doubt","a","ble"],definition:"Formidable, especially as an opponent.",example:"She was a redoubtable competitor known for her relentless pace."},
-  {word:"Candor",pos:"noun",syllables:["can","dor"],definition:"The quality of being open and honest; frankness.",example:"His candor about his weaknesses made him a better athlete."},
-  {word:"Fortitude",pos:"noun",syllables:["for","ti","tude"],definition:"Courage in pain or adversity; mental strength.",example:"She showed extraordinary fortitude recovering from injury."},
-  {word:"Perspicacious",pos:"adjective",syllables:["per","spi","ca","cious"],definition:"Having a ready insight; shrewd.",example:"The perspicacious coach saw potential in the overlooked athlete."},
-  {word:"Sagacious",pos:"adjective",syllables:["sa","ga","cious"],definition:"Having keen mental discernment and good judgment.",example:"A sagacious athlete learns from defeats as well as victories."},
-  {word:"Trepidation",pos:"noun",syllables:["trep","i","da","tion"],definition:"A feeling of fear or agitation.",example:"He stepped into the ring with controlled trepidation."},
-  {word:"Resilient",pos:"adjective",syllables:["re","sil","ient"],definition:"Able to withstand or recover quickly from difficult conditions.",example:"Resilient athletes bounce back stronger after every setback."},
-  {word:"Stoic",pos:"adjective",syllables:["sto","ic"],definition:"Enduring pain and hardship without complaint.",example:"The stoic champion showed no reaction to the crowd."},
-  {word:"Ubiquitous",pos:"adjective",syllables:["u","biq","ui","tous"],definition:"Present, appearing, or found everywhere.",example:"Protein shakes have become ubiquitous in modern gym culture."},
-  {word:"Zealous",pos:"adjective",syllables:["zeal","ous"],definition:"Having great energy in pursuit of a cause.",example:"Her zealous dedication inspired everyone around her."},
-  {word:"Acumen",pos:"noun",syllables:["a","cu","men"],definition:"The ability to make good judgments and quick decisions.",example:"His financial acumen helped him manage his earnings wisely."},
-  {word:"Erudite",pos:"adjective",syllables:["er","u","dite"],definition:"Having or showing great knowledge or learning.",example:"The erudite trainer incorporated sports science into every session."},
-  {word:"Nascent",pos:"adjective",syllables:["nas","cent"],definition:"Just beginning to exist and develop; emerging.",example:"Her nascent kickboxing career already showed signs of greatness."},
-  {word:"Pragmatic",pos:"adjective",syllables:["prag","mat","ic"],definition:"Dealing with things sensibly and realistically.",example:"A pragmatic athlete adjusts the game plan when needed."},
-  {word:"Taciturn",pos:"adjective",syllables:["tac","i","turn"],definition:"Reserved or uncommunicative.",example:"The taciturn fighter let his performances speak for him."},
-  {word:"Harbinger",pos:"noun",syllables:["har","bin","ger"],definition:"A person or thing that signals the approach of another.",example:"Sore muscles are the harbinger of meaningful adaptation."},
-  {word:"Mercurial",pos:"adjective",syllables:["mer","cu","ri","al"],definition:"Subject to sudden changes of mood; volatile.",example:"His mercurial fighting style kept opponents off balance."},
-  {word:"Gregarious",pos:"adjective",syllables:["gre","gar","i","ous"],definition:"Fond of company; sociable.",example:"Her gregarious nature made her the natural team captain."},
-  {word:"Fastidious",pos:"adjective",syllables:["fas","tid","i","ous"],definition:"Very attentive to accuracy and detail.",example:"His fastidious attention to form prevented injury."},
-  {word:"Laconic",pos:"adjective",syllables:["la","con","ic"],definition:"Using very few words; brief and concise.",example:"The laconic champion simply said, 'I prepared.'"},
-  {word:"Resolute",pos:"adjective",syllables:["res","o","lute"],definition:"Admirably purposeful, determined, and unwavering.",example:"Her resolute commitment to clean eating transformed her."},
-  {word:"Languid",pos:"adjective",syllables:["lan","guid"],definition:"Slow and relaxed; disinclined to physical exertion.",example:"His languid warm-up hid the explosive power beneath."},
-  {word:"Implacable",pos:"adjective",syllables:["im","pla","ca","ble"],definition:"Unable to be appeased; relentless.",example:"She was an implacable rival who never gave an inch."},
-  {word:"Daunting",pos:"adjective",syllables:["daunt","ing"],definition:"Seeming difficult to deal with; intimidating.",example:"The program looked daunting at first but became manageable."},
-  {word:"Wistful",pos:"adjective",syllables:["wist","ful"],definition:"Having a feeling of vague or regretful longing.",example:"She felt wistful watching old footage of her younger self."},
-  {word:"Enervate",pos:"verb",syllables:["e","ner","vate"],definition:"To cause to feel drained of energy; to weaken.",example:"Overtraining will enervate even the most motivated athlete."},
-  {word:"Circumspect",pos:"adjective",syllables:["cir","cum","spect"],definition:"Wary; careful and cautious.",example:"A circumspect approach to heavy lifting prevents injury."},
-  {word:"Juggernaut",pos:"noun",syllables:["jug","ger","naut"],definition:"A huge, powerful, overwhelming force.",example:"The defending champion was an unstoppable juggernaut."}
-];
 
 // ── SCHEDULE ──────────────────────────────────────────────────────────────────
 const GYM_ANCHOR = new Date(2026, 5, 9);
@@ -391,18 +323,6 @@ const ld = (k, f) => { try { const v = localStorage.getItem(k); return v !== nul
 const sv = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 const getQuote = () => { const d = new Date(); return QUOTES[(d.getFullYear()*366+d.getMonth()*31+d.getDate())%QUOTES.length]; };
 
-function getTodayWords() {
-  const d = new Date();
-  const seed = d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
-  const rand = s => { const x = Math.sin(s)*10000; return x - Math.floor(x); };
-  const seen = new Set(), out = []; let i = 0;
-  while (out.length < 3) {
-    const idx = Math.floor(rand(seed+i) * WORDS.length);
-    if (!seen.has(idx)) { seen.add(idx); out.push({...WORDS[idx], learned:false, videoUrl:null}); }
-    i++;
-  }
-  return out;
-}
 
 // ── SPEECH ────────────────────────────────────────────────────────────────────
 // Voice selection: prefer cloud/neural voices (non-localService) which sound
@@ -1278,12 +1198,117 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
   );
 }
 
-// ── HOME PAGE ─────────────────────────────────────────────────────────────────
-// Dashboard view. scrollY is tracked in App (scroll event on #root) and passed
-// here to drive the hero parallax — the ISH_IMG translates, scales, and fades
-// as the user scrolls down. setPage lets supplement and weight taps deep-link
-// to other tabs. All data props are read-only snapshots; edits happen in
-// FitnessPage and SupplementsPage, which share the same state from App.
+// ── WEATHER & UV (Open-Meteo, no key) ────────────────────────────────────────
+const WX_LABEL = c => c===0?"Clear":c<=3?"Partly Cloudy":c<=48?"Foggy":c<=57?"Drizzle":c<=67?"Rain":c<=77?"Snow":c<=82?"Showers":c===95?"Thunderstorm":"Cloudy";
+const UV_LABEL = v => v<=2?"Low":v<=5?"Moderate":v<=7?"High":v<=10?"Very High":"Extreme";
+const UV_COLOR = v => v<=2?"#10B981":v<=5?"#F59E0B":v<=7?"#FB923C":v<=10?"#F43F5E":"#8B5CF6";
+
+function useWeatherData() {
+  const [wx, setWx] = React.useState(null);
+  React.useEffect(()=>{
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=33.6846&longitude=-117.8265&current=temperature_2m,apparent_temperature,weathercode,uv_index&daily=uv_index_max&timezone=America%2FLos_Angeles&forecast_days=1&temperature_unit=fahrenheit")
+      .then(r=>r.json())
+      .then(d=>{
+        if(d?.current) setWx({
+          temp: Math.round(d.current.temperature_2m),
+          feels: Math.round(d.current.apparent_temperature),
+          code: d.current.weathercode,
+          uvNow: Math.round(d.current.uv_index||0),
+          uvMax: Math.round(d.daily?.uv_index_max?.[0]||0),
+        });
+      })
+      .catch(()=>{});
+  },[]);
+  return wx;
+}
+
+// ── PRAYER TIMES (Aladhan API, no key) ───────────────────────────────────────
+const PRAYER_NAMES = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+const PRAYER_KEYS  = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+
+function usePrayerTimes() {
+  const [prayers, setPrayers] = React.useState(null);
+  React.useEffect(()=>{
+    const now = new Date();
+    const d = now.getDate(), m = now.getMonth()+1, y = now.getFullYear();
+    fetch(`https://api.aladhan.com/v1/timings/${d}-${m}-${y}?latitude=33.6846&longitude=-117.8265&method=2`)
+      .then(r=>r.json())
+      .then(data=>{
+        if(data?.data?.timings) {
+          const t = data.data.timings;
+          setPrayers({fajr:t.Fajr,dhuhr:t.Dhuhr,asr:t.Asr,maghrib:t.Maghrib,isha:t.Isha,sunrise:t.Sunrise});
+        }
+      })
+      .catch(()=>{});
+  },[]);
+  return prayers;
+}
+
+function getNextPrayer(prayers) {
+  if (!prayers) return null;
+  const now = new Date();
+  const nowMins = now.getHours()*60+now.getMinutes();
+  const parseTime = s => { const [h,m] = (s||"0:0").split(":").map(Number); return h*60+m; };
+  const list = PRAYER_KEYS.map((k,i)=>({name:PRAYER_NAMES[i],key:k,mins:parseTime(prayers[k.toLowerCase()]||prayers[k])}));
+  return list.find(p=>p.mins>nowMins) || list[0];
+}
+
+// ── WEATHER SVG ICONS ─────────────────────────────────────────────────────────
+function WxIcon({code,size=28,color="#EEF0F7"}) {
+  const isClear = code===0;
+  const isCloud = code>=1&&code<=3;
+  const isFog   = code>=45&&code<=48;
+  const isRain  = (code>=51&&code<=67)||(code>=80&&code<=82);
+  const isSnow  = (code>=71&&code<=77)||(code>=85&&code<=86);
+  const isThund = code>=95;
+  const s = size;
+  if (isClear) return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="7" fill={color} opacity="0.95"/>
+      {[0,45,90,135,180,225,270,315].map((deg,i)=>{
+        const rad=deg*Math.PI/180, x1=16+10.5*Math.cos(rad), y1=16+10.5*Math.sin(rad), x2=16+13.5*Math.cos(rad), y2=16+13.5*Math.sin(rad);
+        return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="1.8" strokeLinecap="round"/>;
+      })}
+    </svg>
+  );
+  if (isCloud||isFog) return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <ellipse cx="18" cy="18" rx="10" ry="7" fill={color} opacity="0.8"/>
+      <circle cx="12" cy="18" r="6" fill={color} opacity="0.8"/>
+      <circle cx="20" cy="14" r="5" fill={color} opacity="0.7"/>
+    </svg>
+  );
+  if (isRain) return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <ellipse cx="17" cy="13" rx="9" ry="6" fill={color} opacity="0.7"/>
+      <circle cx="11" cy="14" r="5" fill={color} opacity="0.7"/>
+      {[[11,22,13,27],[16,23,14,28],[21,21,19,26]].map(([x1,y1,x2,y2],i)=>(
+        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#60A5FA" strokeWidth="1.8" strokeLinecap="round"/>
+      ))}
+    </svg>
+  );
+  if (isSnow) return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <ellipse cx="17" cy="13" rx="9" ry="6" fill={color} opacity="0.7"/>
+      {[[11,24],[16,26],[21,24]].map(([cx,cy],i)=>(
+        <circle key={i} cx={cx} cy={cy} r="2" fill="#A5F3FC"/>
+      ))}
+    </svg>
+  );
+  if (isThund) return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <ellipse cx="17" cy="11" rx="10" ry="7" fill={color} opacity="0.6"/>
+      <polygon points="18,20 14,20 12,26 15,26 13,32 21,22 17,22" fill="#FDE047"/>
+    </svg>
+  );
+  return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <ellipse cx="17" cy="14" rx="10" ry="7" fill={color} opacity="0.7"/>
+      <circle cx="11" cy="15" r="6" fill={color} opacity="0.7"/>
+    </svg>
+  );
+}
+
 function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal, water, setWater, energy, setEnergy }) {
   const today = new Date(); today.setHours(0,0,0,0);
   const dKey = tdk();
@@ -1291,10 +1316,10 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
   const type = info.type;
 
   const todayMeals = meals[dKey] || [];
-  const todayCal  = todayMeals.reduce((a,m)=>a+(m.cal||0),0);
-  const todayProt = todayMeals.reduce((a,m)=>a+(m.prot||0),0);
-  const todayCarb = todayMeals.reduce((a,m)=>a+(m.carb||0),0);
-  const todayFat  = todayMeals.reduce((a,m)=>a+(m.fat||0),0);
+  const todayCal   = todayMeals.reduce((a,m)=>a+(m.cal||0),0);
+  const todayProt  = todayMeals.reduce((a,m)=>a+(m.prot||0),0);
+  const todayCarb  = todayMeals.reduce((a,m)=>a+(m.carb||0),0);
+  const todayFat   = todayMeals.reduce((a,m)=>a+(m.fat||0),0);
   const tgt = TARGETS[type] || TARGETS.gym;
 
   const streak = () => {
@@ -1304,162 +1329,224 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
   };
 
   const todayChecked = suppChecked[dKey] || {};
-  const totalSupps = supps.length;
-  const takenSupps = supps.filter(s=>todayChecked[s.id]).length;
-
-  const latestBw = bwLog && bwLog.length > 0 ? bwLog[bwLog.length-1].weight : PROFILE.currentWeight;
-  const bulkPct = Math.min(100,Math.max(0,Math.round(((latestBw-PROFILE.currentWeight)/(PROFILE.goalWeight-PROFILE.currentWeight))*100)));
-
+  const totalSupps   = supps.length;
+  const takenSupps   = supps.filter(s=>todayChecked[s.id]).length;
+  const latestBw     = bwLog && bwLog.length > 0 ? bwLog[bwLog.length-1].weight : PROFILE.currentWeight;
   const wCount = water.date===dKey ? water.count : 0;
   const addWater = ()=>setWater({date:dKey,count:Math.min(8,wCount+1)});
-
   const eScore = energy[dKey];
-  const E_LABELS = ["😴 Low","😕 Tired","😐 Okay","😊 Good","⚡ Peak"];
+  const E_LABELS = ["Low","Tired","Okay","Good","Peak"];
   const E_COLORS = [C.red,C.amber,C.text2,C.green,C.accent];
 
-  const [aiIcons, setAiIcons] = useState(()=>{try{return JSON.parse(localStorage.getItem("dos_ai_icons_v1"))||{};}catch{return {};}});
-  const [geminiKey, setGeminiKey] = useState(()=>localStorage.getItem("dos_gemini_key_v1")||"");
-  const [genKeyInput, setGenKeyInput] = useState("");
-  const [generatingIcons, setGeneratingIcons] = useState(false);
-  const [showIconSettings, setShowIconSettings] = useState(false);
-
-  const DS = {
-    combo:{grad:"linear-gradient(135deg,rgba(163,230,53,0.18) 0%,rgba(251,191,36,0.14) 60%,rgba(20,184,166,0.12) 100%)",glow:"rgba(163,230,53,0.45)",glowOrb:"rgba(163,230,53,0.18)",glowCard:"rgba(163,230,53,0.12)",border:"rgba(163,230,53,0.40)",label:"Kickboxing + Gym",icons:"🥊🏋️",heroBg:"#090e09"},
-    kb:   {grad:"linear-gradient(135deg,rgba(74,222,128,0.18) 0%,rgba(163,230,53,0.20) 60%,rgba(20,184,166,0.10) 100%)",glow:"rgba(74,222,128,0.45)",glowOrb:"rgba(74,222,128,0.18)",glowCard:"rgba(74,222,128,0.10)",border:"rgba(74,222,128,0.45)",label:"Kickboxing Day",icons:"🥊",heroBg:"#080d08"},
-    gym:  {grad:"linear-gradient(135deg,rgba(251,191,36,0.16) 0%,rgba(245,158,11,0.12) 60%,rgba(163,230,53,0.08) 100%)",glow:"rgba(251,191,36,0.4)",glowOrb:"rgba(251,191,36,0.16)",glowCard:"rgba(251,191,36,0.08)",border:"rgba(251,191,36,0.40)",label:"Gym Day",icons:"🏋️",heroBg:"#0d0b06"},
-    rest: {grad:"linear-gradient(135deg,rgba(20,184,166,0.14) 0%,rgba(34,211,238,0.10) 60%,rgba(163,230,53,0.06) 100%)",glow:"rgba(20,184,166,0.35)",glowOrb:"rgba(20,184,166,0.14)",glowCard:"rgba(20,184,166,0.08)",border:"rgba(20,184,166,0.35)",label:"Rest & Recovery",icons:"😴",heroBg:"#070d0d"},
+  const TYPE_CONFIG = {
+    combo:{label:"Kickboxing + Gym", color:C.accent,  border:"rgba(245,158,11,0.35)",  bg:"rgba(245,158,11,0.10)",  glow:"rgba(245,158,11,0.20)"},
+    kb:   {label:"Kickboxing",       color:C.green,   border:"rgba(16,185,129,0.35)",  bg:"rgba(16,185,129,0.10)",  glow:"rgba(16,185,129,0.20)"},
+    gym:  {label:"Gym Day",          color:C.amber,   border:"rgba(245,158,11,0.35)",  bg:"rgba(245,158,11,0.10)",  glow:"rgba(245,158,11,0.20)"},
+    rest: {label:"Rest & Recover",   color:C.teal,    border:"rgba(6,182,212,0.30)",   bg:"rgba(6,182,212,0.08)",   glow:"rgba(6,182,212,0.15)"},
   };
-  const ds = DS[type] || DS.gym;
+  const tc = TYPE_CONFIG[type] || TYPE_CONFIG.gym;
 
-  const generateAIIcons = async () => {
-    const key = geminiKey || genKeyInput.trim();
-    if (!key) return;
-    if (genKeyInput.trim()) { setGeminiKey(genKeyInput.trim()); localStorage.setItem("dos_gemini_key_v1",genKeyInput.trim()); }
-    setGeneratingIcons(true);
-    const tabs = [
-      {id:"home",    prompt:"Minimalist neon lime-green glowing house icon on pure black background, cyberpunk sports app, pixel-perfect tiny icon, no text, no background except black"},
-      {id:"fitness", prompt:"Neon gold glowing dumbbell barbell icon on pure black background, cyberpunk sports, minimal icon, bold, no text"},
-      {id:"habits",  prompt:"Neon lime-green glowing bullseye target with arrow on pure black background, cyberpunk style, minimal icon, no text"},
-      {id:"vocab",   prompt:"Neon teal glowing open book with pages on pure black background, cyberpunk aesthetic, minimal clean icon, no text"},
-      {id:"supplements",prompt:"Neon cyan glowing capsule pill icon on pure black background, sports supplement, cyberpunk minimal icon, no text"},
-    ];
-    const newIcons = {...(aiIcons||{})};
-    for (const tab of tabs) {
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${key}`,{
-          method:"POST", headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({contents:[{parts:[{text:tab.prompt}]}],generationConfig:{responseModalities:["image","text"]}})
-        });
-        const data = await res.json();
-        const part = data?.candidates?.[0]?.content?.parts?.find(p=>p.inlineData);
-        if (part?.inlineData?.data) newIcons[tab.id]=`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-      } catch(e){ console.warn("Icon gen failed",tab.id,e); }
-    }
-    localStorage.setItem("dos_ai_icons_v1",JSON.stringify(newIcons));
-    setAiIcons(newIcons);
-    window.dispatchEvent(new CustomEvent("aiIconsUpdated"));
-    setGeneratingIcons(false);
-    setShowIconSettings(false);
+  const wx = useWeatherData();
+  const prayers = usePrayerTimes();
+  const nextPrayer = getNextPrayer(prayers);
+  const [nowTime, setNowTime] = React.useState(new Date());
+  React.useEffect(()=>{
+    const id = setInterval(()=>setNowTime(new Date()),30000);
+    return ()=>clearInterval(id);
+  },[]);
+
+  const formatTime12 = s => {
+    if(!s) return "--:--";
+    const [h,m] = s.split(":").map(Number);
+    const ampm = h>=12?"PM":"AM";
+    const h12 = h%12||12;
+    return `${h12}:${String(m).padStart(2,"0")} ${ampm}`;
   };
+
+  const parseTimeMins = s => { if(!s) return 0; const [h,m]=(s||"0:0").split(":").map(Number); return h*60+m; };
+  const nowMins = nowTime.getHours()*60+nowTime.getMinutes();
 
   return (
-    <div>
+    <div style={{fontFamily:"'Space Grotesk',sans-serif",background:C.bg,minHeight:"100vh"}}>
 
-      {/* ── COMMAND STRIP ───────────────────────────────────────────── */}
-      <div style={{position:"relative",height:"calc(210px + env(safe-area-inset-top,0px))",overflow:"hidden",background:ds.heroBg}}>
-        <div style={{position:"absolute",inset:0,backgroundImage:"radial-gradient(rgba(255,255,255,0.055) 1px,transparent 1px)",backgroundSize:"24px 24px",pointerEvents:"none"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:260,height:260,borderRadius:"50%",background:`radial-gradient(circle,${ds.glowOrb} 0%,transparent 65%)`,pointerEvents:"none"}}/>
-        <div className="orb-drift" style={{position:"absolute",bottom:-40,left:-20,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(20,184,166,0.12) 0%,transparent 65%)",pointerEvents:"none",animationDelay:"4s"}}/>
-        <div className="scan-overlay"/>
-        <div style={{position:"absolute",bottom:0,left:0,right:0,height:70,background:`linear-gradient(transparent,${C.bg})`,zIndex:3,pointerEvents:"none"}}/>
-        <div style={{position:"relative",zIndex:4,padding:"calc(env(safe-area-inset-top,18px) + 18px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+      {/* ── COSMIC HERO HEADER ─────────────────────────────────────────── */}
+      <div style={{position:"relative",overflow:"hidden",background:`linear-gradient(160deg,${C.bg} 0%,rgba(12,15,27,0.98) 100%)`,paddingBottom:24,borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+        <div className="orb-drift" style={{position:"absolute",top:-60,right:-40,width:280,height:280,borderRadius:"50%",background:`radial-gradient(circle,${tc.glow} 0%,transparent 65%)`,pointerEvents:"none",animationDuration:"26s"}}/>
+        <div className="orb-drift" style={{position:"absolute",bottom:-50,left:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.10) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"30s",animationDelay:"8s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:"30%",left:"40%",width:140,height:140,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.06) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"35s",animationDelay:"15s"}}/>
+
+        <div style={{position:"relative",padding:"calc(env(safe-area-inset-top,20px) + 20px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
           <div>
-            <div className="pill-badge" style={{marginBottom:10,background:"rgba(4,8,18,0.85)"}}>
-              <span style={{fontSize:10}}>📅</span>
-              <span style={{fontSize:11,fontWeight:700,color:C.text2,letterSpacing:0.3}}>{DAYS_L[today.getDay()]}, {MONTHS_L[today.getMonth()]} {today.getDate()}</span>
-            </div>
-            <div style={{fontSize:13,fontWeight:600,color:C.text3,letterSpacing:0.4,marginBottom:1}}>Welcome back,</div>
-            <div style={{fontSize:38,fontWeight:900,letterSpacing:-2,lineHeight:1}}>
-              <span className="neon-text" style={{background:`linear-gradient(90deg,${C.accent},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",display:"inline-block"}}>Ish</span>
-              <span style={{fontSize:28,marginLeft:6}}>👋</span>
-            </div>
-            <div style={{marginTop:8}}>
-              <span style={{fontSize:10,fontWeight:800,padding:"3px 10px",borderRadius:999,background:ds.grad,border:`1px solid ${ds.border}`,color:C.text,backdropFilter:"blur(8px)",display:"inline-block",animation:"glowBorder 4s ease-in-out infinite"}}>{ds.icons} {ds.label}</span>
+            <div style={{fontSize:12,fontWeight:500,color:C.text3,letterSpacing:0.3,marginBottom:4,fontFamily:"'Space Grotesk',sans-serif"}}>{DAYS_L[today.getDay()]} · {MONTHS_L[today.getMonth()]} {today.getDate()}</div>
+            <div style={{fontFamily:"'Syne',sans-serif",fontSize:44,fontWeight:900,letterSpacing:-2,lineHeight:0.92,color:C.text}}>DAILY<br/>BRIEF</div>
+            <div style={{marginTop:12,display:"flex",gap:6,flexWrap:"wrap"}}>
+              <div style={{display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px",borderRadius:999,background:tc.bg,border:`1px solid ${tc.border}`}}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:tc.color,animation:"liveOrb 2.5s ease-in-out infinite"}}/>
+                <span style={{fontSize:11,fontWeight:700,color:tc.color,letterSpacing:0.3}}>{tc.label}</span>
+              </div>
+              {info.gymSplit&&<div style={{display:"inline-flex",alignItems:"center",padding:"4px 10px",borderRadius:999,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.10)"}}><span style={{fontSize:11,color:C.text2,fontWeight:500}}>{info.gymSplit}</span></div>}
             </div>
           </div>
-          <div className="float" style={{background:"rgba(5,5,8,0.92)",backdropFilter:"blur(18px)",WebkitBackdropFilter:"blur(18px)",border:"1px solid rgba(251,191,36,0.35)",borderRadius:16,padding:"10px 14px",boxShadow:"0 8px 28px rgba(0,0,0,0.5)",textAlign:"center",animationDelay:"0.6s",minWidth:72}}>
-            <div style={{fontSize:8,color:C.amber,fontWeight:800,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Streak</div>
-            <div style={{fontSize:24,fontWeight:900,color:C.text,letterSpacing:-1,lineHeight:1,animation:"streakFire 3s ease-in-out infinite"}}>🔥{streak()}</div>
-            <div style={{fontSize:9,color:C.text3,marginTop:2}}>{streak()===1?"day":"days"}</div>
+          <div className="float" style={{textAlign:"center",animationDelay:"0.6s"}}>
+            <div style={{background:"rgba(6,8,16,0.90)",border:`1px solid ${tc.border}`,borderRadius:16,padding:"10px 14px",minWidth:68,boxShadow:`0 8px 28px rgba(0,0,0,0.5),0 0 0 1px ${tc.glow}`}}>
+              <div style={{fontFamily:"'Syne',sans-serif",fontSize:9,color:tc.color,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",marginBottom:2}}>Streak</div>
+              <div style={{fontFamily:"'Syne',sans-serif",fontSize:26,fontWeight:900,color:C.text,letterSpacing:-1,lineHeight:1,animation:"streakFire 3s ease-in-out infinite"}}>{streak()}</div>
+              <div style={{fontSize:9,color:C.text3,marginTop:1,fontWeight:500}}>{streak()===1?"day":"days"}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── TIME + WEATHER STRIP ──────────────────────────────────── */}
+        <div style={{padding:"16px 18px 0",display:"flex",gap:8}}>
+          {/* Clock */}
+          <div style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"12px 14px",minWidth:90,textAlign:"center",flexShrink:0}}>
+            <div style={{fontFamily:"'Syne',sans-serif",fontSize:22,fontWeight:800,color:C.text,letterSpacing:-0.5,lineHeight:1}}>{nowTime.getHours()%12||12}<span style={{fontSize:14,opacity:0.6}}>:{String(nowTime.getMinutes()).padStart(2,"0")}</span></div>
+            <div style={{fontSize:10,fontWeight:600,color:C.text3,marginTop:2}}>{nowTime.getHours()>=12?"PM":"AM"} · Irvine</div>
+          </div>
+          {/* Weather */}
+          {wx ? (
+            <div style={{flex:1,background:"rgba(6,182,212,0.07)",border:"1px solid rgba(6,182,212,0.18)",borderRadius:16,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
+              <div style={{position:"absolute",top:-10,right:-8,opacity:0.15,pointerEvents:"none"}}>
+                <WxIcon code={wx.code} size={56} color="#06B6D4"/>
+              </div>
+              <div style={{display:"flex",alignItems:"flex-end",gap:6,marginBottom:4}}>
+                <span style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:900,color:C.text,lineHeight:1}}>{wx.temp}°</span>
+                <span style={{fontSize:11,color:C.teal,fontWeight:600,paddingBottom:2}}>{WX_LABEL(wx.code)}</span>
+              </div>
+              <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                <span style={{fontSize:10,color:C.text3}}>Feels {wx.feels}°</span>
+                <span style={{fontSize:10,color:UV_COLOR(wx.uvMax),fontWeight:700,background:`${UV_COLOR(wx.uvMax)}18`,padding:"1px 7px",borderRadius:8}}>UV {wx.uvMax} · {UV_LABEL(wx.uvMax)}</span>
+              </div>
+            </div>
+          ) : (
+            <div style={{flex:1,background:"rgba(6,182,212,0.05)",border:"1px solid rgba(6,182,212,0.12)",borderRadius:16,padding:"12px 14px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <span style={{fontSize:11,color:C.text3}}>Loading weather…</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── PRAYER TIMES ──────────────────────────────────────────────── */}
+      <div style={{margin:"14px 16px 0",background:"rgba(139,92,246,0.08)",border:"1px solid rgba(139,92,246,0.20)",borderRadius:20,padding:"14px 16px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-20,right:-16,width:100,height:100,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.15) 0%,transparent 70%)",pointerEvents:"none"}}/>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.violet} strokeWidth="2" strokeLinecap="round">
+              <path d="M12 2C7 2 3 7 3 12S7 22 12 22 21 17 21 12 17 2 12 2Z"/>
+              <path d="M12 6V12L16 14"/>
+            </svg>
+            <span style={{fontFamily:"'Space Grotesk',sans-serif",fontSize:11,fontWeight:700,color:C.violet,letterSpacing:0.5,textTransform:"uppercase"}}>Prayer Times</span>
+          </div>
+          {nextPrayer&&<div style={{fontSize:10,color:C.text3,fontWeight:500}}>Next: <span style={{color:C.violet,fontWeight:700}}>{nextPrayer.name}</span></div>}
+        </div>
+        <div style={{display:"flex",gap:4,justifyContent:"space-between"}}>
+          {prayers ? PRAYER_KEYS.map((key,i)=>{
+            const timeStr = prayers[key.toLowerCase()]||prayers[key];
+            const tMins = parseTimeMins(timeStr);
+            const isPast = tMins < nowMins;
+            const isNext = nextPrayer?.key===key;
+            return (
+              <div key={key} style={{flex:1,textAlign:"center",padding:"8px 4px",borderRadius:12,background:isNext?"rgba(139,92,246,0.20)":isPast?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.04)",border:isNext?"1px solid rgba(139,92,246,0.45)":"1px solid rgba(255,255,255,0.07)",animation:isNext?"prayerNext 3s ease-in-out infinite":undefined}}>
+                <div style={{fontSize:9,fontWeight:700,color:isNext?C.violet:isPast?C.text3:C.text2,letterSpacing:0.3,marginBottom:3,textTransform:"uppercase"}}>{PRAYER_NAMES[i]}</div>
+                <div style={{fontFamily:"'Syne',sans-serif",fontSize:11,fontWeight:800,color:isNext?C.violet:isPast?"rgba(255,255,255,0.25)":C.text,letterSpacing:-0.3}}>{formatTime12(timeStr)}</div>
+              </div>
+            );
+          }) : (
+            <div style={{width:"100%",textAlign:"center",padding:"8px 0",fontSize:11,color:C.text3}}>Loading prayer times…</div>
+          )}
+        </div>
+      </div>
+
+      {/* ── TODAY'S MISSION ────────────────────────────────────────────── */}
+      <div onClick={()=>setPage("fitness")} style={{margin:"12px 16px 0",borderRadius:22,padding:"18px 20px",background:tc.bg,border:`1px solid ${tc.border}`,cursor:"pointer",position:"relative",overflow:"hidden",boxShadow:`0 0 28px ${tc.glow},0 12px 36px rgba(0,0,0,0.4)`}}>
+        <div style={{position:"absolute",inset:0,overflow:"hidden",borderRadius:"inherit",pointerEvents:"none"}}>
+          <div style={{position:"absolute",top:0,bottom:0,width:"55%",background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent)",animation:"shimmerMove 4s ease-in-out infinite"}}/>
+        </div>
+        <div style={{position:"relative",display:"flex",alignItems:"center",gap:14}}>
+          <div style={{width:52,height:52,borderRadius:14,background:"rgba(0,0,0,0.3)",border:`1px solid ${tc.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            {type==="rest"?(
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={tc.color} strokeWidth="1.8" strokeLinecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            ):type==="kb"||(type==="combo")?(
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={tc.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 17.5L3 6 3 3h3l11.5 11.5"/><path d="M13 19l6-6 2 2-6 6-2-2z"/><path d="M7.5 4L15 11.5"/></svg>
+            ):(
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={tc.color} strokeWidth="1.8" strokeLinecap="round"><rect x="2" y="9" width="4" height="6" rx="1.5"/><rect x="18" y="9" width="4" height="6" rx="1.5"/><rect x="6" y="10" width="3" height="4" rx="0.5"/><rect x="15" y="10" width="3" height="4" rx="0.5"/><line x1="9" y1="12" x2="15" y2="12" strokeWidth="2.2"/></svg>
+            )}
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:9,color:C.text3,fontWeight:600,letterSpacing:2,textTransform:"uppercase",marginBottom:3}}>Today's Mission</div>
+            <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,color:C.text,letterSpacing:-0.5,lineHeight:1.1}}>{tc.label}</div>
+            {info.gymSplit&&<div style={{fontSize:12,color:C.text2,fontWeight:500,marginTop:4}}>{info.gymSplit}</div>}
+          </div>
+          <div style={{width:32,height:32,borderRadius:"50%",background:"rgba(0,0,0,0.25)",border:`1px solid ${tc.border}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={tc.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9,18 15,12 9,6"/></svg>
           </div>
         </div>
       </div>
 
-      {/* ── TODAY'S MISSION ─────────────────────────────────────────── */}
-      <div onClick={()=>setPage("fitness")} className="mission-pulse" style={{margin:"12px 16px 0",position:"relative",borderRadius:24,overflow:"hidden",background:"rgba(0,0,0,0.45)",border:`1px solid ${ds.border}`,boxShadow:`0 0 30px ${ds.glowCard},0 12px 40px rgba(0,0,0,0.5)`,cursor:"pointer"}}>
-        <div style={{position:"absolute",inset:0,background:ds.grad,pointerEvents:"none"}}/>
-        {type!=="rest"&&<div style={{position:"absolute",inset:0,overflow:"hidden",borderRadius:"inherit",pointerEvents:"none"}}><div style={{position:"absolute",top:0,bottom:0,width:"60%",background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent)",animation:"shimmerMove 4s ease infinite"}}/></div>}
-        <div style={{position:"relative",zIndex:1,padding:"20px 20px 18px"}}>
-          <div style={{fontSize:9,color:C.text3,fontWeight:800,letterSpacing:2,textTransform:"uppercase",marginBottom:10}}>Today's Mission · Tap to log</div>
-          <div style={{display:"flex",alignItems:"center",gap:14}}>
-            <div style={{fontSize:46,lineHeight:1,filter:`drop-shadow(0 0 14px ${ds.glow})`,animation:"breathe 2.8s ease-in-out infinite"}}>{ds.icons}</div>
-            <div style={{flex:1}}>
-              <div style={{fontSize:22,fontWeight:900,color:C.text,letterSpacing:-0.5,lineHeight:1.15}}>{ds.label}</div>
-              {info.gymSplit&&<div style={{fontSize:13,color:C.text2,fontWeight:600,marginTop:4,opacity:0.85}}>{info.gymSplit}</div>}
-            </div>
-            <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(0,0,0,0.28)",border:`1px solid ${ds.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.text2}}>→</div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── BODY METRICS STRIP ──────────────────────────────────────── */}
-      <div style={{margin:"12px 16px 0",display:"flex",gap:8}}>
+      {/* ── METRICS STRIP ──────────────────────────────────────────────── */}
+      <div style={{padding:"12px 16px 0",display:"flex",gap:8}}>
         {[
-          {icon:"🔥",val:streak(),sub:"day streak",color:C.amber,border:"rgba(251,191,36,0.20)",anim:"streakFire 3s ease-in-out infinite",delay:"0s",click:null},
-          {icon:"💧",val:`${wCount}/8`,sub:"tap + water",color:C.blue,border:"rgba(34,211,238,0.20)",anim:undefined,delay:"0.06s",click:addWater},
-          {icon:eScore?E_LABELS[eScore-1].split(" ")[0]:"⚡",val:eScore?E_LABELS[eScore-1].split(" ")[1]:"—",sub:"energy",color:eScore?E_COLORS[eScore-1]:C.text3,border:"rgba(255,255,255,0.10)",anim:undefined,delay:"0.12s",click:null},
-          {icon:"💊",val:`${takenSupps}/${totalSupps}`,sub:"supps",color:takenSupps===totalSupps&&totalSupps>0?C.green:C.text,border:takenSupps===totalSupps&&totalSupps>0?"rgba(74,222,128,0.25)":"rgba(255,255,255,0.10)",anim:undefined,delay:"0.18s",click:()=>setPage("supplements")},
-        ].map((m,idx2)=>(
-          <div key={idx2} className="card-rise" onClick={m.click||undefined} style={{flex:1,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${m.border}`,borderRadius:14,padding:"10px 6px",textAlign:"center",cursor:m.click?"pointer":undefined,animationDelay:m.delay,animation:m.anim}}>
-            <div style={{fontSize:16,marginBottom:3}}>{m.icon}</div>
-            <div style={{fontSize:14,fontWeight:900,color:m.color,letterSpacing:-0.5,lineHeight:1}}>{m.val}</div>
-            <div style={{fontSize:8,color:C.text3,fontWeight:600,letterSpacing:0.4,marginTop:2}}>{m.sub}</div>
+          {icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2" strokeLinecap="round"><path d="M12 2c-4.4 8-4 12 0 16 4-4 4.4-8 0-16z"/></svg>, val:streak(), sub:"streak", color:C.amber, click:null},
+          {icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.blue} strokeWidth="2" strokeLinecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>, val:`${wCount}/8`, sub:"water", color:C.blue, click:addWater},
+          {icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={eScore?E_COLORS[eScore-1]:C.text3} strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>, val:eScore?E_LABELS[eScore-1]:"—", sub:"energy", color:eScore?E_COLORS[eScore-1]:C.text3, click:null},
+          {icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={takenSupps===totalSupps&&totalSupps>0?C.green:C.text2} strokeWidth="2" strokeLinecap="round"><path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 6 8 3Z"/><line x1="4" y1="12" x2="20" y2="12"/></svg>, val:`${takenSupps}/${totalSupps}`, sub:"supps", color:takenSupps===totalSupps&&totalSupps>0?C.green:C.text2, click:()=>setPage("supplements")},
+        ].map((m,i)=>(
+          <div key={i} onClick={m.click||undefined} className="card-rise" style={{flex:1,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:14,padding:"10px 4px",textAlign:"center",cursor:m.click?"pointer":undefined,animationDelay:`${i*0.06}s`}}>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:4}}>{m.icon}</div>
+            <div style={{fontFamily:"'Syne',sans-serif",fontSize:13,fontWeight:800,color:m.color,letterSpacing:-0.3,lineHeight:1}}>{m.val}</div>
+            <div style={{fontSize:9,color:C.text3,fontWeight:500,marginTop:2}}>{m.sub}</div>
           </div>
         ))}
       </div>
 
-      {/* ── CALORIE RING + MACROS ────────────────────────────────────── */}
-      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.16)",borderRadius:22,padding:"18px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)"}}>
+      {/* ── ENERGY CHECK-IN ──────────────────────────────────────────────── */}
+      {!eScore && (
+        <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:18,padding:"14px 16px",animationDelay:"0.08s"}}>
+          <div style={{fontSize:11,color:C.text2,fontWeight:600,marginBottom:10,letterSpacing:0.2}}>Energy level today?</div>
+          <div style={{display:"flex",gap:6}}>
+            {[1,2,3,4,5].map(n=>{
+              const cols=[C.red,C.amber,C.text2,C.green,C.accent];
+              return <button key={n} onClick={()=>setEnergy(e=>({...e,[dKey]:n}))} style={{flex:1,padding:"10px 4px",borderRadius:12,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(255,255,255,0.09)`,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
+                <div style={{width:6,height:6,borderRadius:"50%",background:cols[n-1]}}/>
+                <span style={{fontSize:9,color:C.text3,fontWeight:600}}>{E_LABELS[n-1]}</span>
+              </button>;
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── NUTRITION CARD ──────────────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(245,158,11,0.06)",border:"1px solid rgba(245,158,11,0.16)",borderRadius:22,padding:"18px",boxShadow:"0 8px 32px rgba(0,0,0,0.35)",animationDelay:"0.04s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-          <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>🍽️ Nutrition Today</div>
-          <button onClick={()=>setPage("fitness")} style={{fontSize:11,color:C.accent,fontWeight:700,padding:"3px 10px",borderRadius:8,background:"rgba(163,230,53,0.08)",border:"1px solid rgba(163,230,53,0.20)"}}>Log Food →</button>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round"><path d="M12 2C8 2 5 6 5 10c0 5 7 12 7 12s7-7 7-12c0-4-3-8-7-8z"/></svg>
+            <span style={{fontSize:11,fontWeight:700,color:C.accent,textTransform:"uppercase",letterSpacing:1}}>Nutrition</span>
+          </div>
+          <button onClick={()=>setPage("fitness")} style={{fontSize:11,color:C.accent,fontWeight:700,padding:"3px 12px",borderRadius:8,background:"rgba(245,158,11,0.10)",border:"1px solid rgba(245,158,11,0.22)"}}>Log Food</button>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
-          <div style={{position:"relative",width:88,height:88,flexShrink:0}}>
-            <svg width="88" height="88" style={{transform:"rotate(-90deg)"}}>
-              <defs>
-                <linearGradient id="hpCalG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#a3e635"/><stop offset="100%" stopColor="#22d3ee"/></linearGradient>
-                <filter id="hpCalF"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-              </defs>
-              <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="9"/>
-              <circle cx="44" cy="44" r="36" fill="none" stroke="url(#hpCalG)" strokeWidth="9" strokeLinecap="round"
-                strokeDasharray={`${2*Math.PI*36}`} strokeDashoffset={`${2*Math.PI*36*(1-Math.min(1,todayCal/(tgt.cal||2900)))}`}
-                filter="url(#hpCalF)" style={{transition:"stroke-dashoffset 1.2s cubic-bezier(0.34,1.2,0.64,1)"}}/>
+          <div style={{position:"relative",width:84,height:84,flexShrink:0}}>
+            <svg width="84" height="84" style={{transform:"rotate(-90deg)"}}>
+              <defs><linearGradient id="calGradHP" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#F59E0B"/><stop offset="100%" stopColor="#06B6D4"/></linearGradient></defs>
+              <circle cx="42" cy="42" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8"/>
+              <circle cx="42" cy="42" r="34" fill="none" stroke="url(#calGradHP)" strokeWidth="8" strokeLinecap="round"
+                strokeDasharray={`${2*Math.PI*34}`} strokeDashoffset={`${2*Math.PI*34*(1-Math.min(1,todayCal/(tgt.cal||2900)))}`}
+                style={{transition:"stroke-dashoffset 1.2s cubic-bezier(0.34,1.2,0.64,1)",filter:"drop-shadow(0 0 4px rgba(245,158,11,0.5))"}}/>
             </svg>
-            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
-              <div style={{fontSize:14,fontWeight:900,color:C.text,lineHeight:1}}>{Math.round(todayCal)}</div>
-              <div style={{fontSize:8,color:C.text3,fontWeight:600}}>{tgt.cal} kcal</div>
+            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+              <div style={{fontFamily:"'Syne',sans-serif",fontSize:15,fontWeight:900,color:C.text,lineHeight:1}}>{Math.round(todayCal)}</div>
+              <div style={{fontSize:8,color:C.text3,fontWeight:500,marginTop:1}}>{tgt.cal} kcal</div>
             </div>
           </div>
-          <div style={{flex:1,display:"flex",flexDirection:"column",gap:7}}>
-            {[["Protein",todayProt,tgt.prot,C.blue],["Carbs",todayCarb,tgt.carb,C.accent],["Fat",todayFat,tgt.fat,C.amber]].map(([lbl,val,target,color])=>(
+          <div style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
+            {[["Protein",todayProt,tgt.prot,C.blue],["Carbs",todayCarb,tgt.carb,C.accent],["Fat",todayFat,tgt.fat,C.amber]].map(([lbl,val,target,col])=>(
               <div key={lbl}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                  <span style={{fontSize:10,fontWeight:700,color:C.text3}}>{lbl}</span>
-                  <span style={{fontSize:10,fontWeight:800,color}}>{Math.round(val)}<span style={{color:C.text3,fontWeight:500}}>/{target}g</span></span>
+                  <span style={{fontSize:10,fontWeight:600,color:C.text3}}>{lbl}</span>
+                  <span style={{fontSize:10,fontWeight:700,color:col}}>{Math.round(val)}<span style={{color:C.text3,fontWeight:400}}>/{target}g</span></span>
                 </div>
-                <div style={{height:5,background:"rgba(255,255,255,0.07)",borderRadius:3,overflow:"hidden"}}>
-                  <div style={{height:"100%",width:Math.min(100,Math.round(val/(target||1)*100))+"%",background:`linear-gradient(90deg,${color},${color}bb)`,borderRadius:3,boxShadow:`0 0 8px ${color}66`,transition:"width 1.2s cubic-bezier(0.34,1.2,0.64,1)"}}/>
+                <div style={{height:4,background:"rgba(255,255,255,0.07)",borderRadius:2,overflow:"hidden"}}>
+                  <div style={{height:"100%",width:Math.min(100,Math.round(val/(target||1)*100))+"%",background:col,borderRadius:2,boxShadow:`0 0 6px ${col}66`,transition:"width 1.2s cubic-bezier(0.34,1.2,0.64,1)"}}/>
                 </div>
               </div>
             ))}
@@ -1467,119 +1554,53 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
         </div>
       </div>
 
-      {/* ── WEIGHT + LEAN BULK ──────────────────────────────────────── */}
-      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.13)",borderRadius:22,padding:"16px 16px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07)",animationDelay:"0.06s"}}>
+      {/* ── WEIGHT LOG ──────────────────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(16,185,129,0.06)",border:"1px solid rgba(16,185,129,0.16)",borderRadius:20,padding:"16px",animationDelay:"0.08s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-          <div style={{fontSize:9,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>⚖️ Lean Bulk Progress</div>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:14,fontWeight:900,color:C.accent,letterSpacing:-0.5}}>{latestBw} lbs</span>
-            <button onClick={()=>setShowBwModal&&setShowBwModal(true)} style={{fontSize:11,color:C.text3,padding:"3px 10px",borderRadius:8,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.10)"}}>Log →</button>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.green} strokeWidth="2" strokeLinecap="round"><path d="M3 6l3 1 2-4 2 4 3-1 1 3h4l-2 4 2 3-3 1-1 4-3-2-3 2-1-4-3-1 2-3-2-4h4z"/></svg>
+            <span style={{fontSize:11,fontWeight:700,color:C.green,textTransform:"uppercase",letterSpacing:1}}>Body</span>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontFamily:"'Syne',sans-serif",fontSize:18,fontWeight:900,color:C.text}}>{latestBw} <span style={{fontSize:12,fontWeight:500,color:C.text3}}>lbs</span></span>
+            <button onClick={()=>setShowBwModal&&setShowBwModal(true)} style={{fontSize:10,color:C.text3,padding:"3px 10px",borderRadius:8,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.09)"}}>Log</button>
           </div>
         </div>
         <WeightSparkline bwLog={bwLog||[]} onClick={()=>setShowBwModal&&setShowBwModal(true)}/>
-        <div style={{height:6,background:"rgba(255,255,255,0.07)",borderRadius:4,overflow:"hidden",marginTop:12}}>
-          <div style={{height:"100%",width:bulkPct+"%",background:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:4,transition:"width 0.8s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:`0 0 10px rgba(163,230,53,0.5)`}}/>
-        </div>
-        <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
-          <span style={{fontSize:9,color:C.text3}}>{PROFILE.currentWeight} lbs start</span>
-          <span style={{fontSize:9,color:C.accent,fontWeight:700}}>+{(latestBw-PROFILE.currentWeight).toFixed(1)} gained · {bulkPct}%</span>
-          <span style={{fontSize:9,color:C.text3}}>goal {PROFILE.goalWeight} lbs</span>
-        </div>
       </div>
 
-      {/* ── ACTIVITY CALENDAR ───────────────────────────────────────── */}
-      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:22,padding:"14px 14px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06)",animationDelay:"0.10s"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>📅 Activity Calendar</div>
-          <div className="num-pop" style={{fontSize:12,color:C.amber,fontWeight:900}}>🔥 {streak()} {streak()===1?"day":"days"}</div>
+      {/* ── WATER TRACKER ──────────────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(59,130,246,0.06)",border:"1px solid rgba(59,130,246,0.15)",borderRadius:20,padding:"14px 16px",animationDelay:"0.10s"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:7}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.blue} strokeWidth="2" strokeLinecap="round"><path d="M12 2C8 8 4 12.5 4 16a8 8 0 0016 0c0-3.5-4-8-8-14z"/></svg>
+            <span style={{fontSize:11,fontWeight:700,color:C.blue,textTransform:"uppercase",letterSpacing:1}}>Hydration</span>
+          </div>
+          <span style={{fontFamily:"'Syne',sans-serif",fontSize:16,fontWeight:800,color:wCount>=8?C.blue:C.text}}>{wCount}<span style={{fontSize:10,color:C.text3,fontWeight:500}}>/8</span></span>
         </div>
-        <div style={{display:"flex",gap:3,flexWrap:"wrap",justifyContent:"center"}}>
-          {(()=>{
-            const t=new Date();t.setHours(0,0,0,0);const out=[];
-            for(let i=-20;i<=7;i++){const d=new Date(t);d.setDate(d.getDate()+i);out.push({date:d,key:dk(d),used:!!usage[dk(d)],isToday:i===0});}
-            return out.map(d=>(
-              <div key={d.key} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
-                <div style={{fontSize:7,color:C.text3,fontWeight:600}}>{DAYS_S[d.date.getDay()]}</div>
-                <div style={{width:22,height:22,borderRadius:6,background:d.isToday?C.accent:d.used?"rgba(163,230,53,0.22)":"rgba(255,255,255,0.04)",border:d.isToday?`2px solid ${C.accent}`:d.used?"1px solid rgba(163,230,53,0.40)":"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:d.isToday?"white":d.used?C.accent:C.text3,fontWeight:700,boxShadow:d.isToday?"0 0 10px rgba(163,230,53,0.5)":d.used?"0 0 4px rgba(163,230,53,0.2)":undefined,transition:"all 0.2s"}}>{d.date.getDate()}</div>
-              </div>
-            ));
-          })()}
+        <div style={{display:"flex",gap:3,marginBottom:10}}>
+          {Array.from({length:8}).map((_,i)=>(
+            <div key={i} onClick={()=>setWater({date:dKey,count:i+1})} style={{flex:1,height:4,borderRadius:2,background:i<wCount?"rgba(59,130,246,0.70)":"rgba(255,255,255,0.07)",cursor:"pointer",transition:"background 0.2s"}}/>
+          ))}
         </div>
+        <button onClick={addWater} disabled={wCount>=8} style={{width:"100%",background:wCount>=8?"rgba(59,130,246,0.18)":"rgba(59,130,246,0.10)",border:`1px solid rgba(59,130,246,${wCount>=8?"0.40":"0.16"})`,borderRadius:10,padding:"8px 0",fontFamily:"'Space Grotesk',sans-serif",fontSize:12,fontWeight:700,color:C.blue,letterSpacing:0.3}}>+ Add Water</button>
       </div>
 
-      {/* ── DAILY QUOTE ─────────────────────────────────────────────── */}
-      <div className="slide-up" style={{margin:"12px 16px 0",position:"relative",background:"rgba(255,255,255,0.03)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.13)",borderRadius:22,padding:"20px 20px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06)",overflow:"hidden",animationDelay:"0.14s"}}>
+      {/* ── DAILY QUOTE ─────────────────────────────────────────────────── */}
+      <div className="slide-up" style={{margin:"12px 16px 24px",background:"rgba(139,92,246,0.06)",border:"1px solid rgba(139,92,246,0.15)",borderRadius:20,padding:"18px 20px",position:"relative",overflow:"hidden",animationDelay:"0.14s"}}>
         <div className="scan-overlay"/>
-        <div style={{position:"absolute",top:-12,right:-8,fontSize:88,color:"rgba(163,230,53,0.05)",lineHeight:1,pointerEvents:"none",userSelect:"none",fontFamily:"Georgia,serif",animation:"breathe 6s ease-in-out infinite"}}>❝</div>
-        <div style={{fontSize:9,color:C.accent,fontWeight:800,letterSpacing:1.4,textTransform:"uppercase",marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
-          <span style={{width:4,height:4,borderRadius:"50%",background:C.accent,display:"inline-block",animation:"liveOrb 2.5s ease-in-out infinite"}}/>
-          Daily Inspiration
+        <div style={{position:"absolute",top:-8,right:4,fontFamily:"Georgia,serif",fontSize:72,color:"rgba(139,92,246,0.07)",lineHeight:1,pointerEvents:"none",userSelect:"none"}}>❝</div>
+        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
+          <div style={{width:4,height:4,borderRadius:"50%",background:C.violet,animation:"liveOrb 2.5s ease-in-out infinite"}}/>
+          <span style={{fontSize:10,fontWeight:700,color:C.violet,letterSpacing:1.2,textTransform:"uppercase"}}>Daily Inspiration</span>
         </div>
-        <div style={{fontSize:15,color:C.text,lineHeight:1.85,fontStyle:"italic",fontFamily:"Georgia,serif"}}>{getQuote()}</div>
+        <div style={{fontSize:14,color:C.text,lineHeight:1.8,fontStyle:"italic",fontFamily:"Georgia,serif",opacity:0.9}}>{getQuote()}</div>
       </div>
 
-      {/* ── ENERGY CHECK-IN ─────────────────────────────────────────── */}
-      {(()=>{
-        const today2=dk();const score=energy[today2];
-        const LABELS=["😴 Low","😕 Tired","😐 Okay","😊 Good","⚡ Peak"];
-        const COLORS=[C.red,C.amber,C.text2,C.green,C.accent];
-        return(
-          <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:20,padding:"14px 16px",animationDelay:"0.18s"}}>
-            <div style={{fontSize:9,color:C.text3,fontWeight:700,letterSpacing:0.6,textTransform:"uppercase",marginBottom:10}}>⚡ Energy Level</div>
-            {score?(
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                <div style={{fontSize:18,fontWeight:800,color:COLORS[score-1],animation:"bounceIn 0.4s ease"}}>{LABELS[score-1]}</div>
-                <button onClick={()=>setEnergy(e=>{const n={...e};delete n[today2];return n;})} style={{fontSize:11,color:C.text3,padding:"4px 10px",borderRadius:10,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.09)"}}>Reset</button>
-              </div>
-            ):(
-              <div>
-                <div style={{fontSize:11,color:C.text2,marginBottom:8}}>How do you feel today?</div>
-                <div style={{display:"flex",gap:6}}>
-                  {[1,2,3,4,5].map(n=>(
-                    <button key={n} onClick={()=>setEnergy(e=>({...e,[dk()]:n}))} style={{flex:1,padding:"10px 4px",borderRadius:12,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.10)",fontSize:18,transition:"all 0.15s"}}>{["😴","😕","😐","😊","⚡"][n-1]}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* ── AI ICON GENERATOR ───────────────────────────────────────── */}
-      <div style={{margin:"12px 16px 24px"}}>
-        <button onClick={()=>setShowIconSettings(s=>!s)} style={{width:"100%",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:14}}>✨</span>
-            <span style={{fontSize:12,fontWeight:700,color:C.text2}}>AI Icon Generator</span>
-            {Object.keys(aiIcons).length>0&&<span style={{fontSize:10,color:C.accent,fontWeight:700,background:"rgba(163,230,53,0.12)",padding:"1px 7px",borderRadius:10}}>Active</span>}
-          </div>
-          <span style={{fontSize:10,color:C.text3,transition:"transform 0.2s",transform:showIconSettings?"rotate(180deg)":"none"}}>▼</span>
-        </button>
-        {showIconSettings&&(
-          <div className="slide-up" style={{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.18)",borderRadius:"0 0 16px 16px",padding:"14px 16px",marginTop:-1}}>
-            <div style={{fontSize:10,color:C.text3,marginBottom:10,lineHeight:1.5}}>Powered by Google Imagen. Generates custom AI icons for your nav tabs. Get a free key at <span style={{color:C.accent}}>aistudio.google.com</span></div>
-            {!geminiKey?(
-              <div style={{display:"flex",gap:8,marginBottom:10}}>
-                <input value={genKeyInput} onChange={e=>setGenKeyInput(e.target.value)} placeholder="Paste Google Gemini API key…" type="password" style={{flex:1,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:12,color:C.text,outline:"none"}}/>
-              </div>
-            ):(
-              <div style={{fontSize:10,color:C.green,marginBottom:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                <span>✓ Gemini key saved</span>
-                <button onClick={()=>{setGeminiKey("");localStorage.removeItem("dos_gemini_key_v1");}} style={{color:C.red,fontSize:10,fontWeight:700,background:"none",border:"none",cursor:"pointer"}}>Remove</button>
-              </div>
-            )}
-            <div style={{display:"flex",gap:8}}>
-              <button onClick={generateAIIcons} disabled={generatingIcons||(!geminiKey&&!genKeyInput.trim())} style={{flex:1,background:generatingIcons?"rgba(163,230,53,0.10)":`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",borderRadius:10,padding:"10px 0",fontSize:13,fontWeight:700,color:generatingIcons?C.accent:"#0a0a0e",opacity:(!geminiKey&&!genKeyInput.trim())?0.4:1,cursor:(!geminiKey&&!genKeyInput.trim())?"default":"pointer"}}>
-                {generatingIcons?<><span className="spin"/>Generating 5 icons…</>:"🎨 Generate AI Icons"}
-              </button>
-              {Object.keys(aiIcons).length>0&&<button onClick={()=>{localStorage.removeItem("dos_ai_icons_v1");setAiIcons({});window.dispatchEvent(new CustomEvent("aiIconsUpdated"));}} style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,107,107,0.12)",border:"1px solid rgba(255,107,107,0.25)",color:C.red,fontSize:12,fontWeight:700}}>Reset</button>}
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
+
 // ── GYM HEATMAP ───────────────────────────────────────────────────────────────
 // Rendered inside HomePage. attend is the dos_attend_v7 map keyed by date string,
 // where each value is { gym: bool, kb: bool }. Uses getDayInfo() to decide
@@ -1919,6 +1940,29 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
         {off!==0&&<button onClick={()=>setOff(0)} style={{background:"rgba(163,230,53,0.12)",color:C.accent,borderRadius:20,padding:"4px 12px",fontSize:11,fontWeight:700}}>Today</button>}
       </div>
 
+      {/* Day type toggle */}
+      <div style={{display:"flex",gap:6,padding:"0 16px 10px"}}>
+        {[
+          {key:"combo",label:"KB + Gym",  ov:{noKb:false,noGym:false}},
+          {key:"kb",   label:"Kickboxing",ov:{noKb:false,noGym:true}},
+          {key:"gym",  label:"Gym Only",  ov:{noKb:true, noGym:false}},
+          {key:"rest", label:"Rest",       ov:{noKb:true, noGym:true}},
+        ].filter(opt=>{
+          if((opt.key==="combo"||opt.key==="kb")&&!rawInfo.isKick) return opt.key!=="combo";
+          return true;
+        }).map(opt=>{
+          const isActive = effType===opt.key;
+          const colors = {combo:C.accent,kb:C.green,gym:C.amber,rest:C.teal};
+          const col = colors[opt.key];
+          return (
+            <button key={opt.key} onClick={()=>{
+              setDayOverrides(prev=>({...prev,[dKey]:{...opt.ov}}));
+            }} style={{flex:1,padding:"7px 4px",borderRadius:12,fontSize:11,fontWeight:700,letterSpacing:0.2,background:isActive?`rgba(${opt.key==="combo"?"245,158,11":opt.key==="kb"?"16,185,129":opt.key==="gym"?"245,158,11":"6,182,212"},0.15)`:"rgba(255,255,255,0.03)",border:`1px solid ${isActive?col:"rgba(255,255,255,0.09)"}`,color:isActive?col:C.text3,transition:"all 0.18s cubic-bezier(0.34,1.56,0.64,1)"}}>
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
       {/* Day banner */}
       <div style={{margin:"0 16px 12px",borderRadius:20,padding:"16px 18px",background:`rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.07)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.22)`}}>
         <div style={{fontSize:18,fontWeight:700,color:col,marginBottom:8}}>{banLbl[effType]}</div>
@@ -2272,313 +2316,6 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
   );
 }
 
-// ── VOCAB PAGE ────────────────────────────────────────────────────────────────
-// ── VOCAB PAGE ────────────────────────────────────────────────────────────────
-// vocab = today's 3 words (dos_vocab_v7_<date>), regenerated each new day via
-// getTodayWords(). learned = all-time learned words (dos_learned_v7).
-// The camera recording feature uses MediaRecorder + getUserMedia to capture
-// a short pronunciation video, stored as a base64 data URL inside the word
-// object. Videos survive page refreshes but are large — localStorage can fill
-// up if many words are recorded. Object URLs are revoked after save/discard
-// to prevent memory leaks.
-function VocabPage({ vocab, setVocab, learned, setLearned }) {
-  const [vtab, setVtab] = useState("today");
-  const [recState, setRecState] = useState("idle");
-  const [recIdx, setRecIdx] = useState(null);
-  const [prevVid, setPrevVid] = useState(null);
-  const [prevIdx, setPrevIdx] = useState(null);
-  const [vidError, setVidError] = useState("");
-  const mrRef = useRef();
-  const chunksRef = useRef([]);
-  const streamRef = useRef(null);
-  const liveVideoRef = useRef(null);
-  const prevVidRef = useRef(null);
-  const [showVoiceSettings, setShowVoiceSettings] = useState(false);
-  const [ttsPrefs, setTtsPrefs] = useState(()=>loadTTSPrefs());
-  const [browserVoices, setBrowserVoices] = useState([]);
-  const [elApiKey, setElApiKey] = useState(()=>loadElKey());
-  const [elKeyDirty, setElKeyDirty] = useState(false);
-
-  useEffect(()=>{ return ()=>{ if(streamRef.current) streamRef.current.getTracks().forEach(t=>t.stop()); if(prevVidRef.current) URL.revokeObjectURL(prevVidRef.current); }; },[]);
-
-  useEffect(()=>{
-    const load = ()=>{
-      const vs = (window.speechSynthesis?.getVoices()||[]).filter(v=>v.lang.startsWith("en"));
-      if(vs.length) setBrowserVoices(vs);
-    };
-    load();
-    if(window.speechSynthesis) window.speechSynthesis.addEventListener("voiceschanged",load);
-    return ()=>{ if(window.speechSynthesis) window.speechSynthesis.removeEventListener("voiceschanged",load); };
-  },[]);
-
-  const updateTtsPrefs = (patch) => {
-    const next = {...ttsPrefs,...patch};
-    setTtsPrefs(next);
-    saveTTSPrefs(next);
-  };
-
-  const markLearned = (i) => {
-    const w = vocab[i]; const nl = !w.learned;
-    setVocab(prev=>prev.map((x,j)=>j===i?{...x,learned:nl}:x));
-    if(nl) { setLearned(prev=>prev.find(l=>l.word===w.word)?prev:[{word:w.word,pos:w.pos,definition:w.definition,date:tdk(),videoUrl:w.videoUrl||null},...prev]); }
-    else { setLearned(prev=>prev.filter(l=>l.word!==w.word)); }
-  };
-
-  const startRec = async (i) => {
-    setVidError("");
-    if (!navigator.mediaDevices?.getUserMedia) { setVidError("Camera not available. Open via HTTPS or localhost."); return; }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:true});
-      streamRef.current = stream; chunksRef.current = [];
-      // Attach live preview
-      if (liveVideoRef.current) { liveVideoRef.current.srcObject = stream; liveVideoRef.current.play().catch(()=>{}); }
-      const mimeTypes = ["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm","video/mp4"];
-      const supported = mimeTypes.find(t=>MediaRecorder.isTypeSupported(t))||"";
-      const mr = new MediaRecorder(stream, supported?{mimeType:supported}:{});
-      mr.ondataavailable = e=>{ if(e.data&&e.data.size>0) chunksRef.current.push(e.data); };
-      mr.onstop = ()=>{
-        const blob = new Blob(chunksRef.current,{type:mr.mimeType||"video/webm"});
-        const vidUrl = URL.createObjectURL(blob); prevVidRef.current = vidUrl; setPrevVid(vidUrl); setPrevIdx(i); setRecState("preview");
-        stream.getTracks().forEach(t=>t.stop()); streamRef.current=null;
-        if (liveVideoRef.current) { liveVideoRef.current.srcObject = null; }
-      };
-      mrRef.current=mr; mr.start(200); setRecIdx(i); setRecState("recording");
-    } catch(err) {
-      setVidError(err.name==="NotAllowedError"?"Camera permission denied.":err.name==="NotFoundError"?"No camera found.":"Camera error: "+err.message);
-    }
-  };
-
-  const stopRec = ()=>{ if(mrRef.current&&recState==="recording") mrRef.current.stop(); };
-
-  const saveVid = async ()=>{
-    if(!prevVid||prevIdx===null) return;
-    setRecState("saving");
-    try {
-      const resp = await fetch(prevVid); const blob = await resp.blob();
-      const reader = new FileReader();
-      reader.onload = ()=>{
-        const dataUrl = reader.result;
-        const w = vocab[prevIdx];
-        setVocab(prev=>prev.map((x,i)=>i===prevIdx?{...x,videoUrl:dataUrl}:x));
-        setLearned(prev=>{ const ex=prev.find(l=>l.word===w.word); if(ex) return prev.map(l=>l.word===w.word?{...l,videoUrl:dataUrl}:l); return [{word:w.word,pos:w.pos,definition:w.definition,date:tdk(),videoUrl:dataUrl},...prev]; });
-        URL.revokeObjectURL(prevVid); prevVidRef.current=null;
-        setPrevVid(null); setPrevIdx(null); setRecState("idle"); setRecIdx(null);
-      };
-      reader.onerror=()=>{ setVidError("Failed to save. Try a shorter recording."); setRecState("preview"); };
-      reader.readAsDataURL(blob);
-    } catch(err){ setVidError("Save failed: "+err.message); setRecState("preview"); }
-  };
-
-  const discardVid = ()=>{ if(prevVid) URL.revokeObjectURL(prevVid); prevVidRef.current=null; setPrevVid(null); setPrevIdx(null); setRecState("idle"); setRecIdx(null); };
-
-  return (
-    <div>
-      {/* ── LIVE CAMERA OVERLAY (while recording) ── */}
-      {recState==="recording"&&(
-        <div style={{position:"fixed",inset:0,background:"#000",zIndex:300,display:"flex",flexDirection:"column"}} className="pop-in">
-          <video ref={liveVideoRef} autoPlay muted playsInline style={{flex:1,width:"100%",objectFit:"cover",transform:"scaleX(-1)"}}/>
-          {/* Overlay UI */}
-          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",justifyContent:"space-between",pointerEvents:"none"}}>
-            {/* Top bar */}
-            <div style={{padding:"54px 20px 0",display:"flex",alignItems:"center",gap:10}}>
-              <div style={{width:12,height:12,borderRadius:"50%",background:C.red,animation:"recPulse 1.2s ease infinite",boxShadow:`0 0 0 0 ${C.red}`}}/>
-              <span style={{color:"white",fontSize:13,fontWeight:700,letterSpacing:0.3,textShadow:"0 1px 6px rgba(0,0,0,0.8)"}}>Recording</span>
-            </div>
-            {/* Word prompt */}
-            <div style={{margin:"0 20px 30px",background:"rgba(0,0,0,0.72)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:20,padding:"18px 20px",pointerEvents:"all"}}>
-              <div style={{fontSize:11,color:"rgba(255,255,255,0.5)",fontWeight:700,textTransform:"uppercase",letterSpacing:0.8,marginBottom:6}}>Use this word in a sentence</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:28,color:"white",fontWeight:400,marginBottom:14}}>{vocab[recIdx]?.word}</div>
-              <button onClick={stopRec} style={{width:"100%",background:C.red,border:"none",borderRadius:14,padding:"16px 0",fontSize:16,fontWeight:800,color:"white",boxShadow:`0 4px 20px rgba(255,107,107,0.5)`,animation:"glow 2s ease infinite"}}>
-                ■  Stop Recording
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── PREVIEW / SAVE MODAL ── */}
-      {(recState==="preview"||recState==="saving")&&prevVid&&(
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.94)",zIndex:300,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20}} className="pop-in">
-          <div style={{background:"rgba(5,5,8,0.97)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1px solid rgba(163,230,53,0.22)`,borderRadius:24,padding:20,width:"100%",maxWidth:380,boxShadow:"0 24px 60px rgba(0,0,0,0.7)"}}>
-            <div style={{fontSize:16,fontWeight:800,marginBottom:14,textAlign:"center",color:C.text}}>
-              {recState==="saving"?"⏳ Saving…":"🎬 Review Recording"}
-            </div>
-            <video key={prevVid} src={prevVid} controls style={{width:"100%",borderRadius:14,marginBottom:14,background:"#000"}}/>
-            {vidError&&<div style={{fontSize:12,color:C.red,marginBottom:10,textAlign:"center"}}>{vidError}</div>}
-            {recState!=="saving"&&(
-              <div style={{display:"flex",gap:10}}>
-                <button onClick={saveVid} style={{flex:1,background:`linear-gradient(135deg,rgba(74,222,128,0.25),rgba(74,222,128,0.1))`,border:"1px solid rgba(74,222,128,0.4)",borderRadius:14,padding:"14px 0",color:C.green,fontWeight:800,fontSize:15}}>✓ Save</button>
-                <button onClick={discardVid} style={{flex:1,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.12)`,borderRadius:14,padding:"14px 0",color:C.text2,fontSize:15}}>Re-try</button>
-              </div>
-            )}
-            {recState==="saving"&&<div style={{textAlign:"center",padding:"6px 0"}}><span className="spin"></span><span style={{fontSize:13,color:C.text2}}>Saving video…</span></div>}
-          </div>
-        </div>
-      )}
-
-      <div style={{padding:"52px 20px 16px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-30,right:-10,width:140,height:140,borderRadius:"50%",background:"radial-gradient(circle,rgba(244,114,182,0.12) 0%,transparent 70%)",pointerEvents:"none"}}/>
-        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
-          <div>
-            <div style={{fontSize:32,fontWeight:900,letterSpacing:-1,background:`linear-gradient(90deg,${C.text},${C.pink})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Vocabulary</div>
-            <div style={{fontSize:13,color:C.text2,marginTop:4}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
-          </div>
-          <button onClick={()=>setShowVoiceSettings(s=>!s)} style={{marginTop:8,width:36,height:36,borderRadius:"50%",background:showVoiceSettings?"rgba(163,230,53,0.18)":"rgba(255,255,255,0.07)",border:`1px solid ${showVoiceSettings?"rgba(163,230,53,0.4)":"rgba(255,255,255,0.13)"}`,color:showVoiceSettings?C.accent:C.text2,fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>⚙️</button>
-        </div>
-      </div>
-
-      {/* Voice Settings Panel */}
-      {showVoiceSettings&&(
-        <div style={{margin:"0 16px 16px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(163,230,53,0.20)",borderRadius:20,padding:"16px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.4)"}} className="slide-up">
-          <div style={{fontSize:10,fontWeight:700,letterSpacing:1.2,color:C.text2,textTransform:"uppercase",marginBottom:12}}>Voice Settings</div>
-          {/* Provider toggle — 3 options */}
-          <div style={{display:"flex",gap:6,marginBottom:14}}>
-            {[{id:"streamelements",label:"SE Free ⚡"},{id:"elevenlabs",label:"ElevenLabs ✨"},{id:"google",label:"Google"},{id:"browser",label:"Offline"}].map(p=>(
-              <button key={p.id} onClick={()=>updateTtsPrefs({provider:p.id})} style={{flex:1,padding:"8px 4px",borderRadius:12,fontSize:9,fontWeight:700,background:ttsPrefs.provider===p.id?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:`1px solid ${ttsPrefs.provider===p.id?"transparent":"rgba(255,255,255,0.12)"}`,color:ttsPrefs.provider===p.id?"#0a0a0e":C.text2,transition:"all 0.2s"}}>{p.label}</button>
-            ))}
-          </div>
-          {/* Provider-specific settings */}
-          {ttsPrefs.provider==="streamelements"?(
-            <div>
-              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>Voice</div>
-              <select value={ttsPrefs.seVoice||SE_VOICES[0].id} onChange={e=>updateTtsPrefs({seVoice:e.target.value})} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}>
-                {SE_VOICES.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}
-              </select>
-              <div style={{fontSize:10,color:C.green,marginTop:6}}>✓ Completely free · No API key · AWS Polly voices</div>
-            </div>
-          ):ttsPrefs.provider==="elevenlabs"?(
-            <div>
-              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>ElevenLabs API Key</div>
-              <div style={{display:"flex",gap:8,marginBottom:10}}>
-                <input value={elApiKey} onChange={e=>{setElApiKey(e.target.value);setElKeyDirty(true);}} placeholder="Paste your ElevenLabs API key…" type="password" style={{flex:1,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:12,color:C.text,outline:"none"}}/>
-                {elKeyDirty&&<button onClick={()=>{saveElKey(elApiKey);setElKeyDirty(false);}} style={{padding:"9px 14px",borderRadius:10,background:C.accent,color:"#0a0a0e",fontWeight:800,fontSize:12}}>Save</button>}
-              </div>
-              <div style={{fontSize:10,color:C.text3,marginBottom:10}}>Free 10k chars/month · <span style={{color:C.accent,textDecoration:"underline",cursor:"pointer"}} onClick={()=>window.open("https://elevenlabs.io","_blank")}>Get free key →</span></div>
-              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>Voice</div>
-              <select value={ttsPrefs.elVoice||ELEVENLABS_VOICES[0].id} onChange={e=>updateTtsPrefs({elVoice:e.target.value})} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}>
-                {ELEVENLABS_VOICES.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}
-              </select>
-              <div style={{fontSize:10,color:C.text3,marginTop:6}}>Most natural voices — requires internet & API key.</div>
-            </div>
-          ):ttsPrefs.provider==="google"?(
-            <div>
-              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>Accent / Voice</div>
-              <select value={ttsPrefs.gtLocale||"en-US"} onChange={e=>updateTtsPrefs({gtLocale:e.target.value})} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}>
-                {GT_VOICES.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}
-              </select>
-              <div style={{fontSize:10,color:C.text3,marginTop:6}}>Google TTS — no API key needed, requires internet.</div>
-            </div>
-          ):(
-            <div>
-              <div style={{fontSize:10,color:C.text3,fontWeight:600,marginBottom:6}}>Voice {browserVoices.length===0&&"(loading…)"}</div>
-              <select value={ttsPrefs.browserVoice||""} onChange={e=>updateTtsPrefs({browserVoice:e.target.value})} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}>
-                <option value="">Auto (best available)</option>
-                {browserVoices.map(v=><option key={v.name} value={v.name}>{v.name} ({v.lang})</option>)}
-              </select>
-              <div style={{fontSize:10,color:C.text3,marginTop:6}}>Works offline — voice quality varies by device.</div>
-            </div>
-          )}
-          <button onClick={()=>speakText("Hello, this is a test of the selected voice.",0.85)} style={{marginTop:12,width:"100%",background:`linear-gradient(135deg,rgba(163,230,53,0.15),rgba(20,184,166,0.10))`,border:"1px solid rgba(163,230,53,0.25)",borderRadius:12,padding:"10px 0",fontSize:13,fontWeight:700,color:C.accent}}>▶ Test Voice</button>
-        </div>
-      )}
-
-      <div style={{display:"flex",borderBottom:`1px solid ${C.border}`,margin:"0 16px 16px"}}>
-        {["today","learned"].map(t=>(
-          <button key={t} onClick={()=>setVtab(t)} style={{borderBottom:`2px solid ${vtab===t?C.accent:"transparent"}`,padding:"10px 20px",fontSize:13,fontWeight:700,color:vtab===t?C.accent:C.text3,marginBottom:-1}}>
-            {t==="today"?"Today's Words":"Learned"}
-            {t==="learned"&&learned.length>0&&<span style={{background:"rgba(167,139,250,0.15)",color:C.accent,borderRadius:10,padding:"1px 7px",fontSize:10,marginLeft:5}}>{learned.length}</span>}
-          </button>
-        ))}
-      </div>
-
-      {vidError&&recState==="idle"&&<div style={{margin:"0 16px 12px",background:"rgba(248,113,113,0.1)",border:"1px solid rgba(248,113,113,0.25)",borderRadius:12,padding:"10px 14px",fontSize:13,color:C.red}}>⚠️ {vidError}</div>}
-
-      {vtab==="today"&&(
-        <div style={{padding:"0 16px"}}>
-          {(!vocab||vocab.length===0)?(
-            <div style={{textAlign:"center",padding:"3rem 0",color:C.text3,fontSize:14}}>
-              <div style={{fontSize:32,marginBottom:8}}>📖</div>
-              <div style={{marginBottom:16}}>Couldn't load today's words.</div>
-              <button onClick={()=>setVocab(getTodayWords())} style={{background:`linear-gradient(135deg,rgba(163,230,53,0.15),rgba(20,184,166,0.10))`,border:"1px solid rgba(163,230,53,0.25)",borderRadius:12,padding:"10px 20px",fontSize:13,fontWeight:700,color:C.accent}}>↻ Reload words</button>
-            </div>
-          ):vocab.map((w,i)=>{
-            const wordColors=[[C.accent,"rgba(163,230,53,0.10)","rgba(163,230,53,0.20)"],[C.pink,"rgba(244,114,182,0.10)","rgba(244,114,182,0.20)"],[C.teal,"rgba(20,184,166,0.10)","rgba(20,184,166,0.20)"]];
-            const [wc,wbg,wbdr]=wordColors[i%3];
-            return(
-            <div key={w.word} className="slide-up" style={{background:w.learned?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${w.learned?"rgba(255,255,255,0.06)":wbdr}`,borderRadius:24,padding:20,marginBottom:16,opacity:w.learned?0.45:1,transition:"opacity 0.3s",boxShadow:w.learned?undefined:`0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.04) inset`}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
-                <div>
-                  <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:400,color:C.text,letterSpacing:-0.3}}>{w.word}</div>
-                  <span style={{display:"inline-block",fontSize:10,fontWeight:800,color:wc,background:wbg,backdropFilter:"blur(8px)",border:`1px solid ${wbdr}`,borderRadius:20,padding:"3px 12px",marginTop:5,letterSpacing:0.3}}>{w.pos}</span>
-                </div>
-                <div style={{display:"flex",gap:6}}>
-                  <button aria-label="Play syllables" onClick={()=>playSyllablesText(w.syllables)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>▶</button>
-                  <button aria-label="Speak word" onClick={()=>speakText(w.word,0.8)} style={{width:34,height:34,borderRadius:"50%",background:C.bg4,border:`1px solid ${C.border2}`,color:C.text2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>🔊</button>
-                  <button aria-label={w.learned?"Unmark learned":"Mark learned"} onClick={()=>markLearned(i)} style={{width:34,height:34,borderRadius:"50%",background:w.learned?"rgba(74,222,128,0.18)":C.bg4,border:`1px solid ${w.learned?"rgba(74,222,128,0.4)":C.border2}`,color:w.learned?C.green:C.text2,fontSize:14,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:w.learned?`0 0 10px rgba(74,222,128,0.3)`:undefined}}>✓</button>
-                </div>
-              </div>
-              <button onClick={()=>playSyllablesText(w.syllables)} style={{display:"flex",alignItems:"center",gap:6,border:`1px solid ${wbdr}`,background:wbg,backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",borderRadius:20,padding:"5px 14px",color:wc,fontSize:11,fontWeight:700,marginBottom:12}}>▶ Syllable by syllable</button>
-              <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap",marginBottom:14}}>
-                {w.syllables.map((s,si)=>(
-                  <span key={si} style={{display:"flex",alignItems:"center",gap:6}}>
-                    <span onClick={()=>speakText(s,0.6)} style={{background:C.bg4,border:`1px solid ${C.border2}`,color:wc,fontSize:13,padding:"5px 12px",borderRadius:20,cursor:"pointer",fontWeight:600}}>{s}</span>
-                    {si<w.syllables.length-1&&<span style={{color:C.text3,fontSize:14}}>·</span>}
-                  </span>
-                ))}
-              </div>
-              <div style={{fontSize:14,color:C.text,lineHeight:1.7,marginBottom:10}}>{w.definition}</div>
-              <div style={{fontSize:13,color:C.text2,fontStyle:"italic",lineHeight:1.6,paddingLeft:14,borderLeft:`2px solid ${wbdr}`,marginBottom:16}}>"{w.example}"</div>
-              {w.videoUrl?(
-                <div>
-                  <div style={{fontSize:11,color:C.green,fontWeight:600,marginBottom:6}}>📹 Your recorded sentence</div>
-                  <video key={w.videoUrl} src={w.videoUrl} controls style={{width:"100%",borderRadius:12,marginBottom:10,background:"#000",maxHeight:200}}/>
-                  <button onClick={()=>startRec(i)} style={{fontSize:12,color:C.text2,border:`1px solid rgba(255,255,255,0.12)`,borderRadius:10,padding:"7px 14px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(8px)"}}>🔄 Re-record</button>
-                </div>
-              ):(
-                <button onClick={()=>startRec(i)} disabled={recState==="recording"} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,background:`linear-gradient(135deg,rgba(163,230,53,0.10),rgba(20,184,166,0.06))`,backdropFilter:"blur(8px)",border:"1px solid rgba(163,230,53,0.22)",borderRadius:14,padding:"13px 14px",color:C.accent,fontSize:14,fontWeight:700,width:"100%",opacity:recState==="recording"?0.3:1,boxShadow:"0 2px 12px rgba(163,230,53,0.08)"}}>
-                  📹 Record yourself using this word
-                </button>
-              )}
-            </div>
-          );})}
-        </div>
-      )}
-
-      {vtab==="learned"&&(
-        <div style={{padding:"0 16px"}}>
-          {learned.length===0?(
-            <div style={{textAlign:"center",padding:"3rem 0",color:C.text3,fontSize:14}}>
-              <div style={{fontSize:32,marginBottom:8}}>📚</div>
-              Mark words as learned to archive them here.
-            </div>
-          ):learned.map((w)=>(
-            <div key={w.word} style={{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.09)`,borderRadius:16,padding:14,marginBottom:10}}>
-              <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:6}}>
-                <div>
-                  <div style={{fontFamily:"Georgia,serif",fontSize:17,color:C.text}}>{w.word}</div>
-                  <span style={{fontSize:10,fontWeight:700,color:C.accent,background:"rgba(167,139,250,0.1)",borderRadius:20,padding:"1px 8px"}}>{w.pos}</span>
-                </div>
-                <div style={{fontSize:11,color:C.text3,flexShrink:0,marginLeft:8}}>{w.date}</div>
-              </div>
-              <div style={{fontSize:12,color:C.text2,lineHeight:1.5,marginBottom:w.videoUrl?10:0}}>{w.definition}</div>
-              {w.videoUrl&&(
-                <div>
-                  <div style={{fontSize:11,color:C.green,fontWeight:600,marginBottom:4}}>📹 Your sentence</div>
-                  <video key={w.videoUrl} src={w.videoUrl} controls style={{width:"100%",borderRadius:8,background:"#000",maxHeight:130}}/>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-      <div style={{height:16}}/>
-    </div>
-  );
-}
-
-// ── BOTTOM NAV (4 tabs) ───────────────────────────────────────────────────────
-// ── HABITS PAGE ───────────────────────────────────────────────────────────────
-// Full-page wrapper for HabitSection with a header. Reached via the Habits tab.
 function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked }) {
   const today = tdk();
   const done = habits.filter(h => (habitChecked[today]||{})[h.id]).length;
@@ -2606,39 +2343,59 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked }) {
   );
 }
 
-// ── NAV ───────────────────────────────────────────────────────────────────────
-// Fixed bottom bar with a sliding pill indicator that moves between tabs.
-// The pill uses CSS transition so it glides smoothly on tab switch.
 function Nav({ page, setPage }) {
   const tabs = [
-    {id:"home",icon:"🏠",label:"Home"},
-    {id:"fitness",icon:"💪",label:"Fitness"},
-    {id:"habits",icon:"🎯",label:"Habits"},
-    {id:"vocab",icon:"📖",label:"Vocab"},
-    {id:"supplements",icon:"💊",label:"Supps"},
+    {id:"home",      label:"Home"},
+    {id:"fitness",   label:"Train"},
+    {id:"habits",    label:"Habits"},
+    {id:"supplements",label:"Stack"},
   ];
-  const [aiIcons, setAiIcons] = React.useState(()=>{try{return JSON.parse(localStorage.getItem("dos_ai_icons_v1"))||{};}catch{return{};}});
-  React.useEffect(()=>{
-    const reload = ()=>{try{setAiIcons(JSON.parse(localStorage.getItem("dos_ai_icons_v1"))||{});}catch{setAiIcons({});}};
-    window.addEventListener("aiIconsUpdated", reload);
-    return ()=>window.removeEventListener("aiIconsUpdated", reload);
-  },[]);
-  const idx = tabs.findIndex(t => t.id === page);
-  const n = tabs.length;
+  const TAB_COLORS = {home:"#F59E0B",fitness:"#10B981",habits:"#8B5CF6",supplements:"#06B6D4"};
+  const activeColor = TAB_COLORS[page] || "#F59E0B";
+
+  const icons = {
+    home: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V16H9V21H4C3.45 21 3 20.55 3 20V9.5Z"/>
+      </svg>
+    ),
+    fitness: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="9" width="4" height="6" rx="1.5"/>
+        <rect x="18" y="9" width="4" height="6" rx="1.5"/>
+        <rect x="6" y="10" width="3" height="4" rx="0.5"/>
+        <rect x="15" y="10" width="3" height="4" rx="0.5"/>
+        <line x1="9" y1="12" x2="15" y2="12" strokeWidth="2.2"/>
+      </svg>
+    ),
+    habits: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <circle cx="12" cy="12" r="4.5"/>
+        <circle cx="12" cy="12" r="1" fill={active?activeColor:"#3A4260"} stroke="none"/>
+      </svg>
+    ),
+    supplements: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 6 8 3Z"/>
+        <line x1="4" y1="12" x2="20" y2="12"/>
+      </svg>
+    ),
+  };
+
   return (
-    <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(5,5,8,0.88)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.10)",zIndex:100,padding:"8px 6px calc(18px + env(safe-area-inset-bottom))",boxShadow:"0 -8px 32px rgba(0,0,0,0.35)"}}>
-      <div style={{position:"relative",display:"flex",gap:2,alignItems:"center"}}>
-        <div style={{position:"absolute",top:0,bottom:0,width:`calc(${100/n}% - 2.4px)`,left:`calc(${idx} * ${100/n}% + 1.2px)`,background:"rgba(163,230,53,0.12)",border:"1px solid rgba(163,230,53,0.24)",borderRadius:16,transition:"left 0.38s cubic-bezier(0.34,1.56,0.64,1)",pointerEvents:"none",boxShadow:"0 2px 12px rgba(163,230,53,0.08)"}}/>
+    <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(6,8,16,0.97)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.06)",zIndex:100,padding:"0 0 calc(env(safe-area-inset-bottom))"}}>
+      <div style={{display:"flex",alignItems:"stretch"}}>
         {tabs.map(tab=>{
-          const imgSrc = aiIcons[tab.id];
           const isActive = page===tab.id;
+          const col = TAB_COLORS[tab.id];
           return (
-            <button key={tab.id} onClick={()=>setPage(tab.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"7px 2px",borderRadius:16,background:"transparent",border:"1px solid transparent",position:"relative",zIndex:1,transition:"none"}}>
-              {imgSrc
-                ? <img src={imgSrc} alt={tab.label} style={{width:22,height:22,objectFit:"contain",filter:isActive?"drop-shadow(0 0 8px rgba(163,230,53,0.85))":"grayscale(0.3)",transform:isActive?"scale(1.10)":"scale(1)",transition:"filter 0.28s,transform 0.28s"}}/>
-                : <span style={{fontSize:19,filter:isActive?"drop-shadow(0 0 8px rgba(163,230,53,0.85))":"none",transition:"filter 0.28s",transform:isActive?"scale(1.08)":"scale(1)",display:"block"}}>{tab.icon}</span>
-              }
-              <span style={{fontSize:8,fontWeight:800,letterSpacing:0.4,color:isActive?C.accent:C.text3,transition:"color 0.28s"}}>{tab.label}</span>
+            <button key={tab.id} onClick={()=>setPage(tab.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:5,padding:"10px 2px 12px",background:"transparent",border:"none",position:"relative",overflow:"hidden"}}>
+              <div style={{transition:"transform 0.18s cubic-bezier(0.34,1.56,0.64,1),filter 0.18s",transform:isActive?"scale(1.08)":"scale(1)",filter:isActive?`drop-shadow(0 0 6px ${col}88)`:"none"}}>
+                {icons[tab.id](isActive)}
+              </div>
+              <span style={{fontFamily:"'Space Grotesk',sans-serif",fontSize:10,fontWeight:isActive?700:500,letterSpacing:0.3,color:isActive?col:"#3A4260",transition:"color 0.18s",lineHeight:1}}>{tab.label}</span>
+              <div style={{position:"absolute",bottom:0,left:"20%",right:"20%",height:2,borderRadius:"2px 2px 0 0",background:col,opacity:isActive?1:0,transform:isActive?"scaleX(1)":"scaleX(0)",transition:"opacity 0.22s,transform 0.22s cubic-bezier(0.34,1.56,0.64,1)",transformOrigin:"center",animation:isActive?"navIndicatorAnim 0.3s ease forwards":undefined}}/>
             </button>
           );
         })}
@@ -2661,8 +2418,6 @@ function App() {
   const [meals, setMeals]     = useState(()=>ld("dos_meals_v7",{}));
   const [attend, setAttend]   = useState(()=>ld("dos_attend_v7",{}));
   const [usage, setUsage]     = useState(()=>ld("dos_usage_v7",{}));
-  const [vocab, setVocab]     = useState(()=>{ const k="dos_vocab_v7_"+tdk(); const s=ld(k,null); return(s&&s.length===3)?s:getTodayWords(); });
-  const [learned, setLearned] = useState(()=>ld("dos_learned_v7",[]));
   const [favorites, setFavorites] = useState(()=>ld("dos_favorites_v1",[]));
   const [supps, setSupps]     = useState(()=>ld("dos_supps_v1", DEFAULT_SUPPLEMENTS));
   const [suppChecked, setSuppChecked] = useState(()=>ld("dos_supp_checked_v1",{}));
@@ -2678,8 +2433,6 @@ function App() {
   useEffect(()=>{ const k=tdk(); setUsage(prev=>{const u={...prev,[k]:(prev[k]||0)+1};sv("dos_usage_v7",u);return u;}); },[]);
   useEffect(()=>{ sv("dos_meals_v7",meals); },[meals]);
   useEffect(()=>{ sv("dos_attend_v7",attend); },[attend]);
-  useEffect(()=>{ sv("dos_vocab_v7_"+tdk(),vocab); },[vocab]);
-  useEffect(()=>{ sv("dos_learned_v7",learned); },[learned]);
   useEffect(()=>{ sv("dos_favorites_v1",favorites); },[favorites]);
   useEffect(()=>{ sv("dos_supps_v1",supps); },[supps]);
   useEffect(()=>{ sv("dos_supp_checked_v1",suppChecked); },[suppChecked]);
@@ -2711,7 +2464,6 @@ function App() {
         {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal} water={water} setWater={setWater} energy={energy} setEnergy={setEnergy}/>}
         {page==="fitness"     && <FitnessPage   meals={meals} setMeals={setMeals} attend={attend} setAttend={setAttend} apiKey={apiKey} favorites={favorites} setFavorites={setFavorites} bwLog={bwLog} setBwLog={setBwLog} dayOverrides={dayOverrides} setDayOverrides={setDayOverrides} prLog={prLog} setPrLog={setPrLog}/>}
         {page==="habits"      && <HabitsPage    habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked}/>}
-        {page==="vocab"       && <VocabPage     vocab={vocab} setVocab={setVocab} learned={learned} setLearned={setLearned}/>}
         {page==="supplements" && <SupplementsPage supps={supps} setSupps={setSupps} checked={suppChecked} setChecked={setSuppChecked}/>}
       </div>
       <Nav page={page} setPage={setPage}/>
