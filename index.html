@@ -335,7 +335,9 @@ function getDayInfo(date) {
 }
 
 // Resolve a day's effective info after manual overrides.
-// Override shape: { type:"combo"|"kb"|"gym"|"rest" } (explicit), or legacy { noKb, noGym } (subtractive).
+// Override shape: { type:"combo"|"kb"|"gym"|"rest", split:0|1 } (explicit),
+// or legacy { noKb, noGym } (subtractive). `split` indexes GYM_SPLITS so the
+// user can pick Chest/Back/Shoulders vs Legs/Biceps/Triceps for a gym day.
 function effDayInfo(date, overrides) {
   const raw = getDayInfo(date);
   const ov = (overrides || {})[dk(date)] || {};
@@ -349,7 +351,8 @@ function effDayInfo(date, overrides) {
   }
   const d = new Date(date); d.setHours(0,0,0,0);
   const diff = Math.round((d - GYM_ANCHOR) / 86400000);
-  const splitIdx = ((Math.floor(Math.abs(diff) / 2) % 2) + 2) % 2;
+  const dateSplit = ((Math.floor(Math.abs(diff) / 2) % 2) + 2) % 2;
+  const splitIdx = (ov.split === 0 || ov.split === 1) ? ov.split : dateSplit;
   const type = (isKick && isGym) ? "combo" : isKick ? "kb" : isGym ? "gym" : "rest";
   return { type, isKick, isGym, gymSplit: isGym ? GYM_SPLITS[splitIdx] : null };
 }
@@ -1171,29 +1174,40 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
   const todayChecked = habitChecked[today] || {};
   const allDone = habits.length > 0 && habits.every(h => todayChecked[h.id]);
   // Pointer-based reordering — works on touch (phone PWA) where HTML5 drag-and-drop never fires.
+  // The dragged row follows the finger; the others ease open a gap (no live array
+  // splice mid-drag), so the motion is smooth and springy. Commit once on release.
   const rowEls = useRef([]);
-  const dragRef = useRef({ active:false, idx:-1 });
-  const [dragIdx, setDragIdx] = useState(-1);
+  const dragRef = useRef(null);
+  const [drag, setDrag] = useState(null); // { idx, target, dy, h }
   const startDrag = (e, i) => {
-    dragRef.current = { active:true, idx:i };
-    setDragIdx(i);
+    const h = rowEls.current[i]?.getBoundingClientRect().height || 56;
+    dragRef.current = { idx:i, target:i, startY:e.clientY, h };
+    setDrag({ idx:i, target:i, dy:0, h });
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch(_) {}
   };
   const moveDrag = (e) => {
-    if (!dragRef.current.active) return;
+    const d = dragRef.current; if (!d) return;
     e.preventDefault();
     const y = e.clientY;
     const els = rowEls.current;
-    let to = els.findIndex(el => el && y < el.getBoundingClientRect().bottom);
-    if (to === -1) to = els.length - 1;
-    const from = dragRef.current.idx;
-    if (to !== from && to >= 0) {
-      setHabits(prev => { const n = [...prev]; const [it] = n.splice(from, 1); n.splice(to, 0, it); return n; });
-      dragRef.current.idx = to;
-      setDragIdx(to);
+    let target = d.idx;
+    for (let j = 0; j < els.length; j++) {
+      const el = els[j]; if (!el || j === d.idx) continue;
+      const r = el.getBoundingClientRect();
+      const mid = r.top + r.height / 2;
+      if (j < d.idx && y < mid) target = Math.min(target, j);
+      else if (j > d.idx && y > mid) target = Math.max(target, j);
     }
+    dragRef.current = { ...d, target };
+    setDrag({ idx:d.idx, target, dy:y - d.startY, h:d.h });
   };
-  const endDrag = () => { dragRef.current = { active:false, idx:-1 }; setDragIdx(-1); };
+  const endDrag = () => {
+    const d = dragRef.current; dragRef.current = null;
+    if (d && d.target !== d.idx) {
+      setHabits(prev => { const n = [...prev]; const [it] = n.splice(d.idx, 1); n.splice(d.target, 0, it); return n; });
+    }
+    setDrag(null);
+  };
 
   return (
     <div style={{margin:"12px 20px 0"}}>
@@ -1212,11 +1226,17 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
         {habits.map((h, i) => {
           const done = !!todayChecked[h.id];
           const streak = habitStreak(h.id, habitChecked);
-          const isDragging = dragIdx===i;
+          const isDragging = drag && drag.idx===i;
+          let ty = 0;
+          if (drag && !isDragging) {
+            if (drag.target > drag.idx && i > drag.idx && i <= drag.target) ty = -drag.h;
+            else if (drag.target < drag.idx && i >= drag.target && i < drag.idx) ty = drag.h;
+          }
+          const xform = isDragging ? `translateY(${drag.dy}px) scale(1.03)` : `translateY(${ty}px)`;
           return (
             <div key={h.id}
               ref={el=>rowEls.current[i]=el}
-              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:isDragging?"rgba(139,92,246,0.14)":done?"rgba(74,222,128,0.06)":"rgba(255,255,255,0.01)",boxShadow:isDragging?"0 12px 28px rgba(0,0,0,0.55)":"none",transform:isDragging?"scale(1.02)":"scale(1)",position:"relative",zIndex:isDragging?5:1,transition:dragIdx===-1?"transform 0.2s cubic-bezier(0.34,1.4,0.64,1),background 0.2s":"background 0.2s"}}>
+              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:isDragging?"rgba(139,92,246,0.16)":done?"rgba(74,222,128,0.06)":"rgba(255,255,255,0.01)",boxShadow:isDragging?"0 14px 32px rgba(0,0,0,0.55)":"none",transform:xform,position:"relative",zIndex:isDragging?20:1,transition:isDragging?"none":"transform 0.34s cubic-bezier(0.34,1.46,0.5,1),background 0.25s,box-shadow 0.25s"}}>
               {/* Grab handle — drag to reorder */}
               <div onPointerDown={(e)=>startDrag(e,i)} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} style={{color:isDragging?C.violet:C.text3,fontSize:16,flexShrink:0,opacity:isDragging?1:0.5,letterSpacing:-1,userSelect:"none",cursor:"grab",touchAction:"none",padding:"6px 3px",margin:"-6px -1px"}}>⠿</div>
               <button onClick={()=>toggle(h.id)} style={{width:34,height:34,borderRadius:"50%",flexShrink:0,border:`2px solid ${done?h.color:C.border2}`,background:done?h.color+"22":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,transition:"all 0.25s",animation:done?"habitCheck 0.35s ease":undefined,boxShadow:done?`0 0 14px ${h.color}66`:undefined}}>
@@ -1441,22 +1461,17 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
         <div className="hero-row" style={{position:"relative",padding:"calc(env(safe-area-inset-top,20px) + 18px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:6}}>
           <div style={{flex:1,minWidth:0}}>
             <div style={{fontSize:12,fontWeight:500,color:C.text2,letterSpacing:0.3,marginBottom:4,fontFamily:"'Space Grotesk',sans-serif"}}>{DAYS_L[today.getDay()]} · {MONTHS_L[today.getMonth()]} {today.getDate()}</div>
-            <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-2,lineHeight:0.9,color:C.text}}>WELCOME<br/><span style={{background:"linear-gradient(100deg,#c4b5fd,#8B5CF6)",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent"}}>ISH</span></div>
-            <div style={{marginTop:12,display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
+            <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:54,fontWeight:900,letterSpacing:-2.5,lineHeight:0.86,color:C.text}}>WELCOME<br/><span style={{background:"linear-gradient(100deg,#c4b5fd,#8B5CF6)",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent"}}>ISH</span></div>
+            <div style={{marginTop:14,display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
               <div style={{display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px",borderRadius:999,background:tc.bg,border:`1px solid ${tc.border}`}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:tc.color,animation:"liveOrb 2.5s ease-in-out infinite"}}/>
                 <span style={{fontSize:11,fontWeight:700,color:tc.color,letterSpacing:0.3}}>{tc.label}</span>
               </div>
-              <div style={{display:"inline-flex",alignItems:"center",gap:5,padding:"4px 10px",borderRadius:999,background:"rgba(245,158,11,0.10)",border:"1px solid rgba(245,158,11,0.28)"}}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2c1 5-3 6-3 10a3 3 0 006 0c0-1-.5-2-1-2.5.5 3-2 3-2-.5 0-2 2-3 3-7.5z"/></svg>
-                <span style={{fontSize:11,fontWeight:800,color:C.amber,fontFamily:"'Syne',sans-serif",animation:"streakFire 3s ease-in-out infinite"}}>{streak()}</span>
-                <span style={{fontSize:10,color:C.text2,fontWeight:500}}>{streak()===1?"day":"days"}</span>
-              </div>
             </div>
           </div>
           <div style={{position:"relative",flexShrink:0,alignSelf:"flex-end",marginRight:-6}}>
-            <div style={{position:"absolute",right:6,bottom:0,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.28) 0%,transparent 65%)",pointerEvents:"none"}}/>
-            <img src={ISH_CROPPED} alt="" aria-hidden="true" className="float hero-photo" style={{position:"relative",display:"block",height:172,width:"auto",objectFit:"contain",pointerEvents:"none",filter:"drop-shadow(0 10px 22px rgba(0,0,0,0.55))",maskImage:"linear-gradient(to bottom,#000 78%,transparent 100%)",WebkitMaskImage:"linear-gradient(to bottom,#000 78%,transparent 100%)"}}/>
+            <div style={{position:"absolute",right:6,bottom:0,width:185,height:185,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.30) 0%,transparent 65%)",pointerEvents:"none"}}/>
+            <img src={ISH_CROPPED} alt="" aria-hidden="true" className="float hero-photo" style={{position:"relative",display:"block",height:208,width:"auto",objectFit:"contain",pointerEvents:"none",filter:"drop-shadow(0 12px 26px rgba(0,0,0,0.6))",maskImage:"linear-gradient(to bottom,#000 80%,transparent 100%)",WebkitMaskImage:"linear-gradient(to bottom,#000 80%,transparent 100%)"}}/>
           </div>
         </div>
 
@@ -1859,6 +1874,14 @@ function PRTracker({ prLog, setPrLog, gymSplit }) {
   );
 }
 
+// ── ACTIVITY ICONS (inline SVG, no emojis) ───────────────────────────────────
+// Used across the Health tab so each activity label carries a matching glyph:
+// Kickboxing → glove, Gym → dumbbell, Rest → moon, done → check.
+function GloveIcon({size=14,color="currentColor"}){return(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 10V7a3 3 0 016 0v3"/><path d="M9 10h7a3 3 0 013 3v.5a4.5 4.5 0 01-4.5 4.5H11a3 3 0 01-3-3v-4a1 1 0 011-1z"/><path d="M6 10.5a2 2 0 00-2 2v.5a2 2 0 002 2"/></svg>);}
+function DumbbellIcon({size=14,color="currentColor"}){return(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1.5" y="9" width="4" height="6" rx="1.5"/><rect x="18.5" y="9" width="4" height="6" rx="1.5"/><rect x="5.5" y="10" width="3" height="4" rx="0.5"/><rect x="15.5" y="10" width="3" height="4" rx="0.5"/><line x1="8.5" y1="12" x2="15.5" y2="12" strokeWidth="2.2"/></svg>);}
+function MoonIcon({size=14,color="currentColor"}){return(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>);}
+function CheckIcon({size=14,color="currentColor"}){return(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>);}
+
 function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, setFavorites, bwLog, setBwLog, dayOverrides, setDayOverrides, prLog, setPrLog }) {
   const [off, setOff] = useState(0);
   const [showChat, setShowChat] = useState(false);
@@ -1889,6 +1912,23 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
   const banColors = {combo:[C.accent,"rgba(167,139,250,0.1)","rgba(167,139,250,0.22)"],kb:[C.green,"rgba(52,211,153,0.1)","rgba(52,211,153,0.22)"],gym:[C.amber,"rgba(251,191,36,0.1)","rgba(251,191,36,0.2)"],rest:[C.blue,"rgba(96,165,250,0.1)","rgba(96,165,250,0.2)"]};
   const banLbl = {combo:"Kickboxing + Gym",kb:"Kickboxing Day",gym:"Gym Day",rest:"Rest Day"};
   const [col,bg,bdr] = banColors[effType];
+
+  // Pick the gym split for this day. Picking one auto-flips the NEXT gym day to
+  // the opposite split (Chest/Back/Shoulders ↔ Legs/Biceps/Triceps), and keeps
+  // the gym/rest rhythm by resting the gym the day after.
+  const curSplitIdx = GYM_SPLITS.indexOf(info.gymSplit);
+  const chooseSplit = (idx) => {
+    setDayOverrides(prev=>{
+      const cur = prev[dKey]||{};
+      const next = {...prev, [dKey]: {...cur, type: cur.type || effType, split: idx}};
+      const nd = new Date(vdate); nd.setHours(0,0,0,0); nd.setDate(nd.getDate()+1);
+      next[dk(nd)] = {...(next[dk(nd)]||{}), type: getDayInfo(nd).isKick ? "kb" : "rest"};
+      // Find the next gym day after the rest day and flip its split.
+      const g = new Date(nd);
+      for(let k=0;k<10;k++){ g.setDate(g.getDate()+1); if(getDayInfo(g).isGym){ next[dk(g)] = {...(next[dk(g)]||{}), split: idx===0?1:0}; break; } }
+      return next;
+    });
+  };
 
   const [lastAtt, setLastAtt] = React.useState(null);
   const toggleAtt = (val) => {
@@ -1943,12 +1983,13 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
 
       <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 48px) 20px 14px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-20,right:-10,width:120,height:120,borderRadius:"50%",background:"radial-gradient(circle,rgba(163,230,53,0.10) 0%,transparent 70%)",pointerEvents:"none"}}/>
-        <div className="pill-badge" style={{marginBottom:10}}>
-          <span style={{fontSize:11}}>💪</span>
-          <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Fitness</span>
+        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(16,185,129,0.14) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.10) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
+        <div className="pill-badge" style={{marginBottom:10,position:"relative"}}>
+          <DumbbellIcon size={12} color={C.amber}/>
+          <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Health</span>
         </div>
-        <div style={{fontSize:32,fontWeight:900,letterSpacing:-1,background:`linear-gradient(90deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Track Your Day</div>
+        <div style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-1.5,lineHeight:0.92,position:"relative",background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Track Your Day</div>
       </div>
 
       {/* Date nav */}
@@ -1964,10 +2005,10 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       {/* Day type toggle */}
       <div style={{display:"flex",gap:6,padding:"0 16px 10px"}}>
         {[
-          {key:"combo",label:"KB + Gym",  ov:{noKb:false,noGym:false}},
-          {key:"kb",   label:"Kickboxing",ov:{noKb:false,noGym:true}},
-          {key:"gym",  label:"Gym Only",  ov:{noKb:true, noGym:false}},
-          {key:"rest", label:"Rest",       ov:{noKb:true, noGym:true}},
+          {key:"combo",label:"KB + Gym"},
+          {key:"kb",   label:"Kickboxing"},
+          {key:"gym",  label:"Gym Only"},
+          {key:"rest", label:"Rest"},
         ].filter(opt=>{
           // Kickboxing only makes sense Mon–Thu; hide KB options on other days.
           if((opt.key==="combo"||opt.key==="kb")&&!rawInfo.isKick) return false;
@@ -1975,19 +2016,27 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
         }).map(opt=>{
           const isActive = effType===opt.key;
           const colors = {combo:C.accent,kb:C.green,gym:C.amber,rest:C.teal};
+          const rgbas  = {combo:"245,158,11",kb:"16,185,129",gym:"245,158,11",rest:"6,182,212"};
           const col = colors[opt.key];
+          const ic = isActive?col:C.text3;
+          const icon = opt.key==="rest" ? <MoonIcon size={15} color={ic}/>
+            : opt.key==="gym" ? <DumbbellIcon size={15} color={ic}/>
+            : opt.key==="kb" ? <GloveIcon size={15} color={ic}/>
+            : <span style={{display:"inline-flex",gap:2}}><GloveIcon size={13} color={ic}/><DumbbellIcon size={13} color={ic}/></span>;
           return (
             <button key={opt.key} onClick={()=>{
               setDayOverrides(prev=>{
-                const next = {...prev, [dKey]: {type:opt.key}};
+                // Preserve any chosen split when switching type.
+                const next = {...prev, [dKey]: {...(prev[dKey]||{}), type:opt.key}};
                 // Mark a gym/combo day → next day auto-rests the gym (keeps the gym/rest rhythm).
                 if(opt.key==="combo"||opt.key==="gym"){
                   const nd = new Date(vdate); nd.setHours(0,0,0,0); nd.setDate(nd.getDate()+1);
-                  next[dk(nd)] = {type: getDayInfo(nd).isKick ? "kb" : "rest"};
+                  next[dk(nd)] = {...(next[dk(nd)]||{}), type: getDayInfo(nd).isKick ? "kb" : "rest"};
                 }
                 return next;
               });
-            }} style={{flex:1,padding:"7px 4px",borderRadius:12,fontSize:11,fontWeight:700,letterSpacing:0.2,background:isActive?`rgba(${opt.key==="combo"?"245,158,11":opt.key==="kb"?"16,185,129":opt.key==="gym"?"245,158,11":"6,182,212"},0.15)`:"rgba(255,255,255,0.03)",border:`1px solid ${isActive?col:"rgba(255,255,255,0.09)"}`,color:isActive?col:C.text3,transition:"all 0.18s cubic-bezier(0.34,1.56,0.64,1)"}}>
+            }} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5,padding:"9px 4px",borderRadius:14,fontSize:10.5,fontWeight:700,letterSpacing:0.2,background:isActive?`rgba(${rgbas[opt.key]},0.14)`:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isActive?col:"rgba(255,255,255,0.09)"}`,color:isActive?col:C.text3,boxShadow:isActive?`0 0 16px rgba(${rgbas[opt.key]},0.22)`:undefined,transition:"all 0.2s cubic-bezier(0.34,1.56,0.64,1)"}}>
+              <span style={{height:16,display:"flex",alignItems:"center"}}>{icon}</span>
               {opt.label}
             </button>
           );
@@ -1995,13 +2044,31 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       </div>
       {/* Day banner */}
       <div style={{margin:"0 16px 12px",borderRadius:20,padding:"16px 18px",background:`rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.07)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.22)`}}>
-        <div style={{fontSize:18,fontWeight:700,color:col,marginBottom:8}}>{banLbl[effType]}</div>
+        <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:col,marginBottom:8}}>{banLbl[effType]}</div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-          {info.isKick&&<span style={{fontSize:11,fontWeight:600,padding:"3px 10px",borderRadius:20,color:C.green,background:"rgba(52,211,153,0.12)",border:"1px solid rgba(52,211,153,0.25)"}}>🥊 Kickboxing</span>}
-          {info.gymSplit&&<span style={{fontSize:11,fontWeight:600,padding:"3px 10px",borderRadius:20,color:C.amber,background:"rgba(251,191,36,0.12)",border:"1px solid rgba(251,191,36,0.25)"}}>🏋️ {info.gymSplit}</span>}
-          {effType==="rest"&&<span style={{fontSize:11,fontWeight:600,padding:"3px 10px",borderRadius:20,color:C.blue,background:"rgba(96,165,250,0.12)",border:"1px solid rgba(96,165,250,0.25)"}}>😴 Low Carb Recovery</span>}
+          {info.isKick&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.green,background:"rgba(52,211,153,0.12)",border:"1px solid rgba(52,211,153,0.25)"}}><GloveIcon size={13} color={C.green}/>Kickboxing</span>}
+          {info.gymSplit&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.amber,background:"rgba(251,191,36,0.12)",border:"1px solid rgba(251,191,36,0.25)"}}><DumbbellIcon size={13} color={C.amber}/>{info.gymSplit}</span>}
+          {effType==="rest"&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.blue,background:"rgba(96,165,250,0.12)",border:"1px solid rgba(96,165,250,0.25)"}}><MoonIcon size={13} color={C.blue}/>Low Carb Recovery</span>}
         </div>
       </div>
+
+      {/* Gym split picker — only on gym days. Choosing one flips the next gym day. */}
+      {info.isGym&&(
+        <div style={{margin:"0 16px 12px",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:18,padding:"12px 14px"}}>
+          <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:9}}>Today's Split</div>
+          <div style={{display:"flex",gap:8}}>
+            {GYM_SPLITS.map((sp,idx)=>{
+              const on = curSplitIdx===idx;
+              return (
+                <button key={sp} onClick={()=>chooseSplit(idx)} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:13,fontSize:11.5,fontWeight:700,lineHeight:1.15,textAlign:"center",background:on?"rgba(245,158,11,0.14)":"rgba(255,255,255,0.04)",border:`1px solid ${on?C.amber:"rgba(255,255,255,0.09)"}`,color:on?C.amber:C.text2,boxShadow:on?"0 0 16px rgba(245,158,11,0.22)":undefined,transition:"all 0.2s cubic-bezier(0.34,1.56,0.64,1)"}}>
+                  <DumbbellIcon size={15} color={on?C.amber:C.text3}/>
+                  <span>{sp}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Macro targets banner */}
       <div style={{margin:"0 16px 12px",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.09)`,borderRadius:16,padding:"10px 14px"}}>
@@ -2023,8 +2090,8 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
               {info.isGym&&gymStreak>0&&<div style={{fontSize:11,fontWeight:800,color:C.amber,background:"rgba(251,191,36,0.12)",border:"1px solid rgba(251,191,36,0.28)",borderRadius:20,padding:"2px 9px"}}>🔥 {gymStreak} gym {gymStreak===1?"day":"days"}</div>}
             </div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
-              {info.isKick&&<button onClick={()=>toggleAtt("kb")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.kb?"rgba(74,222,128,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.kb?"rgba(74,222,128,0.14)":"rgba(255,255,255,0.04)",color:attend[dKey]?.kb?C.green:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="kb"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.kb?`0 0 18px rgba(74,222,128,0.35)`:undefined}}>{attend[dKey]?.kb?"✅ Kickboxing done":"🥊 Mark Kickboxing"}</button>}
-              {info.isGym&&<button onClick={()=>toggleAtt("gym")} style={{flex:1,minWidth:130,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.gym?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.gym?"rgba(251,191,36,0.12)":"rgba(255,255,255,0.04)",color:attend[dKey]?.gym?C.amber:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="gym"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.gym?`0 0 18px rgba(251,191,36,0.35)`:undefined}}>{attend[dKey]?.gym?"✅ Gym done":"🏋️ Mark Gym"}</button>}
+              {info.isKick&&<button onClick={()=>toggleAtt("kb")} style={{flex:1,minWidth:130,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.kb?"rgba(74,222,128,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.kb?"rgba(74,222,128,0.14)":"rgba(255,255,255,0.04)",color:attend[dKey]?.kb?C.green:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="kb"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.kb?`0 0 18px rgba(74,222,128,0.35)`:undefined}}>{attend[dKey]?.kb?<CheckIcon size={15} color={C.green}/>:<GloveIcon size={15} color={C.text2}/>}{attend[dKey]?.kb?"Kickboxing done":"Mark Kickboxing"}</button>}
+              {info.isGym&&<button onClick={()=>toggleAtt("gym")} style={{flex:1,minWidth:130,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.gym?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.gym?"rgba(251,191,36,0.12)":"rgba(255,255,255,0.04)",color:attend[dKey]?.gym?C.amber:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="gym"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.gym?`0 0 18px rgba(251,191,36,0.35)`:undefined}}>{attend[dKey]?.gym?<CheckIcon size={15} color={C.amber}/>:<DumbbellIcon size={15} color={C.text2}/>}{attend[dKey]?.gym?"Gym done":"Mark Gym"}</button>}
             </div>
           </div>
         )}
@@ -2149,10 +2216,6 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
         })()}
       </div>
 
-      {/* Weekly history */}
-      <div style={{height:16}}/>
-      <WeeklyHistory meals={meals}/>
-
       {/* Saved favorites */}
       <div style={{padding:"0 16px",marginBottom:16}}>
         <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>⭐ Saved Favorites</div>
@@ -2251,10 +2314,15 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
 
   return (
     <div>
-      <div style={{padding:"52px 20px 16px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-30,right:-10,width:140,height:140,borderRadius:"50%",background:"radial-gradient(circle,rgba(45,212,191,0.12) 0%,transparent 70%)",pointerEvents:"none"}}/>
-        <div style={{fontSize:32,fontWeight:900,letterSpacing:-1,background:`linear-gradient(90deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
-        <div style={{fontSize:13,color:C.text2,marginTop:4}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
+      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 16px",position:"relative",overflow:"hidden"}}>
+        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.16) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.09) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
+        <div className="pill-badge" style={{marginBottom:10,position:"relative",background:"rgba(6,182,212,0.10)",border:"1px solid rgba(6,182,212,0.22)"}}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 3 8 3Z"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+          <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Stack</span>
+        </div>
+        <div style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-1.5,lineHeight:0.92,position:"relative",background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
+        <div style={{fontSize:13,color:C.text2,marginTop:6,position:"relative"}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
       </div>
 
       {/* Progress */}
@@ -2341,13 +2409,18 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked }) {
   return (
     <div style={{paddingBottom:110}}>
       {/* Header */}
-      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 22px) 20px 0",background:`linear-gradient(180deg,#060608 0%,${C.bg} 100%)`,position:"relative",overflow:"hidden"}}>
+      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 0",background:`linear-gradient(180deg,#060608 0%,${C.bg} 100%)`,position:"relative",overflow:"hidden"}}>
         <div className="scan-overlay"/>
+        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.16) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:0,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,rgba(244,114,182,0.10) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
         <div style={{position:"relative",zIndex:1}}>
-          <div style={{fontSize:10,color:C.accent,fontWeight:700,letterSpacing:2,textTransform:"uppercase",marginBottom:6}}>Daily Rituals</div>
-          <div style={{fontSize:32,fontWeight:900,color:C.text,letterSpacing:-1,lineHeight:1.1,marginBottom:6}}>
+          <div className="pill-badge" style={{marginBottom:10,background:"rgba(139,92,246,0.10)",border:"1px solid rgba(139,92,246,0.22)"}}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.violet} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill={C.violet} stroke="none"/></svg>
+            <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Daily Rituals</span>
+          </div>
+          <div style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,color:C.text,letterSpacing:-1.5,lineHeight:0.92,marginBottom:6}}>
             Your{" "}
-            <span style={{background:`linear-gradient(90deg,${C.accent},${C.pink})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Habits</span>
+            <span style={{background:`linear-gradient(100deg,${C.violet},${C.pink})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Habits</span>
           </div>
           {habits.length > 0 && (
             <div style={{fontSize:13,color:allDone?C.green:C.text3,fontWeight:600,marginBottom:16,transition:"color 0.4s"}}>
