@@ -309,6 +309,13 @@ const TARGETS = {
 // User profile
 const PROFILE = { currentWeight:157, goalWeight:165, height:"5'10\"" };
 
+// LogMeal API token (APIUser) — powers photo food scanning. LogMeal allows
+// direct browser calls (returns CORS headers), so no proxy is needed. Note:
+// this token ships in the public source; it's a regenerable APIUser sub-token,
+// so reset it in the LogMeal dashboard if it's ever abused.
+const LOGMEAL_TOKEN = "304ea02ee3b482e18c311138ad056cc176d38701";
+const LOGMEAL_BASE = "https://api.logmeal.es";
+
 // ── DEFAULT SUPPLEMENTS (lean bulk stack) ────────────────────────────────────
 const DEFAULT_SUPPLEMENTS = [
   {id:"creatine", name:"Creatine Monohydrate", dose:"5g",       time:"morning"},
@@ -653,23 +660,74 @@ async function callClaude(apiKey, messages, system, maxTokens, model) {
   return data.content.filter(c=>c.type==="text").map(c=>c.text).join("");
 }
 
+// LogMeal only accepts jpg/jpeg uploads, so re-encode whatever the user picked
+// (png/heic/webp) to JPEG via canvas, downsizing huge photos to keep the upload
+// small. Returns a Blob ready for multipart upload.
+function imageB64ToJpegBlob(b64, mime) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 1280;
+      let { width, height } = img;
+      if (Math.max(width, height) > maxDim) {
+        const s = maxDim / Math.max(width, height);
+        width = Math.round(width * s); height = Math.round(height * s);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width; canvas.height = height;
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error("Image conversion failed")), "image/jpeg", 0.9);
+    };
+    img.onerror = () => reject(new Error("Couldn't read that image."));
+    img.src = "data:" + (mime || "image/jpeg") + ";base64," + b64;
+  });
+}
+
+// Photo scanning is powered by LogMeal (food recognition + nutrition), called
+// directly from the browser. apiKey is unused (kept for signature compatibility
+// with the text path); auth uses LOGMEAL_TOKEN. Two-step flow: segmentation →
+// nutritionalInfo. Returns the JSON shape the rest of the app expects:
+// { name, calories, carbs, protein, fat, fiber, items, confidence, note }.
 async function analyzePhotoWithKey(apiKey, b64, mime) {
   checkRateLimit();
-  const body = {
-    model:"claude-sonnet-4-6", max_tokens:1000,
-    messages:[{ role:"user", content:[
-      { type:"image", source:{ type:"base64", media_type: mime||"image/jpeg", data:b64 } },
-      { type:"text", text:'You are a precision nutrition AI. Identify every food item visible. Estimate portions carefully. Return ONLY valid JSON, no markdown:\n{"name":"full meal description","calories":number,"carbs":number,"protein":number,"fat":number,"fiber":number,"items":["item 1 - portion - ~Xcal"],"confidence":"high/medium/low","note":"brief note"}' }
-    ]}]
+  const auth = { Authorization: `Bearer ${LOGMEAL_TOKEN}` };
+  const round = n => (typeof n === "number" && isFinite(n) ? Math.round(n) : 0);
+
+  const jpeg = await imageB64ToJpegBlob(b64, mime);
+  const form = new FormData();
+  form.append("image", jpeg, "meal.jpg");
+
+  const segRes = await fetch(`${LOGMEAL_BASE}/v2/image/segmentation/complete/v1.0`, { method:"POST", headers:auth, body:form });
+  const seg = await segRes.json().catch(()=>({}));
+  if (!segRes.ok) throw new Error(seg.message || "Couldn't recognize that photo. Make sure food is clearly visible.");
+  const imageId = seg.imageId;
+  if (!imageId) throw new Error("LogMeal couldn't read that photo. Try another.");
+
+  const recog = [];
+  let topProb = 0;
+  for (const s of seg.segmentation_results || []) {
+    const top = (s.recognition_results || [])[0];
+    if (top) { recog.push(top.name); if (typeof top.prob === "number" && top.prob > topProb) topProb = top.prob; }
+  }
+
+  const nutRes = await fetch(`${LOGMEAL_BASE}/v2/recipe/nutritionalInfo/v1.0`, { method:"POST", headers:{ ...auth, "Content-Type":"application/json" }, body:JSON.stringify({ imageId }) });
+  const nut = await nutRes.json().catch(()=>({}));
+  if (!nutRes.ok) throw new Error(nut.message || "Couldn't get nutrition for that photo.");
+
+  const info = nut.nutritional_info || {};
+  const t = info.totalNutrients || {};
+  const names = (nut.foodName && nut.foodName.length) ? nut.foodName : recog;
+  return {
+    name: names.length ? names.join(", ") : "Meal",
+    calories: round(info.calories ?? t.ENERC_KCAL?.quantity),
+    carbs: round(t.CHOCDF?.quantity),
+    protein: round(t.PROCNT?.quantity),
+    fat: round(t.FAT?.quantity),
+    fiber: round(t.FIBTG?.quantity),
+    items: names,
+    confidence: topProb >= 0.7 ? "high" : topProb >= 0.4 ? "medium" : "low",
+    note: nut.hasNutritionalInfo === false ? "LogMeal recognized the dish but had no nutrition match — rough estimate." : "Estimated by LogMeal."
   };
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json", "x-api-key":apiKey, "anthropic-version":"2023-06-01", "anthropic-dangerous-direct-browser-access":"true" },
-    body: JSON.stringify(body)
-  });
-  if (!r.ok) { const e = await r.json().catch(()=>{}); throw new Error(e?.error?.message || "Photo analysis failed"); }
-  const data = await r.json();
-  return extractJSON(data.content.filter(c=>c.type==="text").map(c=>c.text).join(""));
 }
 
 // ── API KEY SCREEN ────────────────────────────────────────────────────────────
@@ -850,7 +908,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div>
             <div style={{fontSize:18,fontWeight:800}}>AI Food Logger</div>
-            <div style={{fontSize:12,color:C.text2,marginTop:2}}>Powered by Claude · Type food or scan a photo</div>
+            <div style={{fontSize:12,color:C.text2,marginTop:2}}>Powered by Claude + LogMeal · Type food or scan a photo</div>
           </div>
           <button aria-label="Close" onClick={onClose} style={{width:34,height:34,borderRadius:"50%",background:"rgba(255,255,255,0.08)",backdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.15)`,color:C.text2,fontSize:20}}>×</button>
         </div>
