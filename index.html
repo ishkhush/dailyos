@@ -85,6 +85,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Space Grotesk","Barlow",-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+:root{--accent:#F59E0B;--accent-glow:rgba(245,158,11,0.28);--accent-glow-strong:rgba(245,158,11,0.30)}
 html{background:#060810;-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
 body{background:#060810;color:#EEF0F7;min-height:100vh;position:relative}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(139,92,246,0.09) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 85% 95%,rgba(245,158,11,0.07) 0%,transparent 50%),radial-gradient(ellipse 40% 30% at 60% 45%,rgba(6,182,212,0.04) 0%,transparent 40%);pointer-events:none;z-index:-1}
@@ -122,7 +123,6 @@ video,img{display:block}
 @keyframes cosmicOrb{0%{transform:translate(0,0) scale(1) rotate(0deg)}33%{transform:translate(22px,-16px) scale(1.08) rotate(120deg)}66%{transform:translate(-12px,22px) scale(0.94) rotate(240deg)}100%{transform:translate(0,0) scale(1) rotate(360deg)}}
 @keyframes shimmerBar{0%{background-position:200% center}100%{background-position:-200% center}}
 @keyframes statCountUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes navIndicatorAnim{from{opacity:0.4;transform:scaleX(0.5)}to{opacity:1;transform:scaleX(1)}}
 @keyframes bigNumPop{0%{opacity:0;transform:scale(0.5) translateY(12px)}65%{transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes dotDance{0%,100%{transform:translateY(0)}33%{transform:translateY(-5px)}66%{transform:translateY(2px)}}
 @keyframes ambientPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.18)}50%{box-shadow:0 0 32px 4px rgba(245,158,11,0.08)}}
@@ -151,6 +151,9 @@ video,img{display:block}
 .section-rule span{font-family:"Space Grotesk",sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;color:#2A3050;text-transform:uppercase;white-space:nowrap}
 .cyber-card{background:rgba(255,255,255,0.03);border:1px solid rgba(245,158,11,0.12);border-radius:16px;position:relative;overflow:hidden}
 .prayer-active{animation:prayerNext 3s ease-in-out infinite}
+.tap{transition:transform .12s cubic-bezier(.22,1,.36,1),filter .12s ease}
+.tap:active{transform:scale(.96)}
+@media (hover:hover){.tap:hover{filter:brightness(1.06)}}
 
 /* Landscape / horizontal: widen the column and compact the hero so a short viewport stays usable */
 @media (orientation:landscape) and (max-height:600px){
@@ -193,6 +196,7 @@ function useCountUp(target, duration = 850) {
   useEffect(() => {
     cancelAnimationFrame(raf.current);
     if (!target) { setVal(0); return; }
+    if (_reduceMotion()) { setVal(target); return; }
     let start = null;
     const step = ts => {
       if (!start) start = ts;
@@ -209,15 +213,33 @@ function useCountUp(target, duration = 850) {
 }
 
 // ── COLORS ───────────────────────────────────────────────────────────────────
+// The primary accent (accent/amber/gold) resolves to a CSS var so the theme
+// picker can recolor the app at runtime; the fallback keeps OG amber if unset.
+// Secondary colors (green/teal/violet/etc.) stay fixed — that's the OG identity.
 const C = {
-  accent:"#F59E0B", green:"#10B981", amber:"#F59E0B", gold:"#F59E0B", blue:"#3B82F6", red:"#F43F5E",
+  accent:"var(--accent,#F59E0B)", green:"#10B981", amber:"var(--accent,#F59E0B)", gold:"var(--accent,#F59E0B)", blue:"#3B82F6", red:"#F43F5E",
   pink:"#F472B6", teal:"#06B6D4", steel:"#06B6D4", orange:"#FB923C", violet:"#8B5CF6", lime:"#A3E635",
   bg:"#060810", bg2:"#0C0F1B", bg3:"#111727", bg4:"#171E30",
   glass:"rgba(255,255,255,0.02)", glassMid:"rgba(255,255,255,0.04)", glassHigh:"rgba(255,255,255,0.07)",
   border:"rgba(255,255,255,0.06)", border2:"rgba(255,255,255,0.10)",
   text:"#EEF0F7", text2:"#6B7280", text3:"#2C3050",
-  glowAccent:"rgba(245,158,11,0.28)", glowGreen:"rgba(16,185,129,0.25)", glowBlue:"rgba(59,130,246,0.25)", glowGold:"rgba(245,158,11,0.30)",
+  glowAccent:"var(--accent-glow,rgba(245,158,11,0.28))", glowGreen:"rgba(16,185,129,0.25)", glowBlue:"rgba(59,130,246,0.25)", glowGold:"var(--accent-glow-strong,rgba(245,158,11,0.30))",
   glowViolet:"rgba(139,92,246,0.30)", glowCyan:"rgba(6,182,212,0.28)"
+};
+
+// Accent themes. OG keeps the original multicolor look (amber primary). Others
+// swap only the primary accent + its glow; everything else stays as-is.
+const THEMES = {
+  OG:      { label:"OG",      accent:"#F59E0B", glow:"rgba(245,158,11,0.28)", glowStrong:"rgba(245,158,11,0.30)", swatch:["#F59E0B","#10B981","#8B5CF6","#06B6D4"] },
+  Teal:    { label:"Teal",    accent:"#06B6D4", glow:"rgba(6,182,212,0.28)",  glowStrong:"rgba(6,182,212,0.34)",  swatch:["#06B6D4"] },
+  Violet:  { label:"Violet",  accent:"#8B5CF6", glow:"rgba(139,92,246,0.28)", glowStrong:"rgba(139,92,246,0.34)", swatch:["#8B5CF6"] },
+  Crimson: { label:"Crimson", accent:"#F43F5E", glow:"rgba(244,63,94,0.28)",  glowStrong:"rgba(244,63,94,0.34)",  swatch:["#F43F5E"] },
+};
+const applyTheme = (key) => {
+  const t = THEMES[key] || THEMES.OG, r = document.documentElement.style;
+  r.setProperty("--accent", t.accent);
+  r.setProperty("--accent-glow", t.glow);
+  r.setProperty("--accent-glow-strong", t.glowStrong);
 };
 
 
@@ -374,6 +396,11 @@ const tdk = () => dk(new Date());
 const vd = (o) => { const d = new Date(); d.setDate(d.getDate()+o); d.setHours(0,0,0,0); return d; };
 const ld = (k, f) => { try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : f; } catch { return f; } };
 const sv = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+const _reduceMotion = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+// Subtle tap haptic. No-op on iOS Safari (no Vibration API support there).
+const haptic = (ms = 10) => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
+// Apply the saved accent theme before first paint so non-OG themes don't flash amber.
+applyTheme(ld("dos_theme_v1", "OG"));
 const getQuote = () => { const d = new Date(); return QUOTES[(d.getFullYear()*366+d.getMonth()*31+d.getDate())%QUOTES.length]; };
 
 
@@ -881,6 +908,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
 
   const confirmAdd = () => {
     if (!pendingResult) return;
+    haptic(18);
     const m = servingMult;
     const label = m !== 1 ? `${pendingResult.name} ×${m}` : pendingResult.name;
     onAddMeal({
@@ -1014,7 +1042,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
               </div>
             ))}
           </div>
-          <button onClick={confirmAdd} style={{width:"100%",background:`linear-gradient(135deg,${C.green},${C.teal})`,border:"none",borderRadius:14,padding:"13px 0",fontSize:15,fontWeight:800,color:"#0a0a0c"}}>
+          <button className="tap" onClick={confirmAdd} style={{width:"100%",background:`linear-gradient(135deg,${C.green},${C.teal})`,border:"none",borderRadius:14,padding:"13px 0",fontSize:15,fontWeight:800,color:"#0a0a0c"}}>
             ✓ Add to Log
           </button>
         </div>
@@ -1154,6 +1182,7 @@ function WeightSparkline({ bwLog, onClick }) {
 // stroke-dashoffset is set as a CSS variable so the animation starts from
 // the empty state and sweeps to the filled state on first render.
 function CalorieRing({ consumed, target }) {
+  const shown = useCountUp(Math.round(consumed));
   const pct = Math.min(1, consumed / target);
   const SIZE = 120, STROKE = 11, R = (SIZE - STROKE) / 2;
   const CIRC = 2 * Math.PI * R;
@@ -1189,7 +1218,7 @@ function CalorieRing({ consumed, target }) {
         />
       </svg>
       <div style={{position:"absolute",display:"flex",flexDirection:"column",alignItems:"center",pointerEvents:"none"}}>
-        <div style={{fontSize:18,fontWeight:900,color:C.text,lineHeight:1}}>{Math.round(consumed)}</div>
+        <div style={{fontSize:18,fontWeight:900,color:C.text,lineHeight:1}}>{shown}</div>
         <div style={{fontSize:9,color:C.text3,fontWeight:700,letterSpacing:0.5,marginTop:1}}>/ {target}</div>
         <div style={{fontSize:8,color:C.teal,fontWeight:800,letterSpacing:1,textTransform:"uppercase",marginTop:2}}>kcal</div>
       </div>
@@ -1331,20 +1360,39 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
 const WX_LABEL = c => c===0?"Clear":c<=3?"Partly Cloudy":c<=48?"Foggy":c<=57?"Drizzle":c<=67?"Rain":c<=77?"Snow":c<=82?"Showers":c===95?"Thunderstorm":"Cloudy";
 const UV_LABEL = v => v<=2?"Low":v<=5?"Moderate":v<=7?"High":v<=10?"Very High":"Extreme";
 const UV_COLOR = v => v<=2?"#10B981":v<=5?"#F59E0B":v<=7?"#FB923C":v<=10?"#F43F5E":"#8B5CF6";
+const fmtHour = h => h===0?"12 AM":h<12?h+" AM":h===12?"12 PM":(h-12)+" PM";
+// Contiguous span of today's hours whose UV sits in the same band as the day's peak,
+// e.g. "11 AM – 3 PM". Returns null when no hours qualify (e.g. overnight).
+function uvPeakWindow(times, vals, peak){
+  if(!Array.isArray(times)||!Array.isArray(vals)) return null;
+  const band = UV_LABEL(peak);
+  let start=-1, end=-1;
+  for(let i=0;i<times.length;i++){
+    if(UV_LABEL(Math.round(vals[i]||0))===band){ if(start<0) start=i; end=i; }
+  }
+  if(start<0) return null;
+  const sH = new Date(times[start]).getHours();
+  const eH = (new Date(times[end]).getHours()+1)%24; // UV at hour H covers H:00→H+1
+  return `${fmtHour(sH)} – ${fmtHour(eH)}`;
+}
 
 function useWeatherData() {
   const [wx, setWx] = React.useState(null);
   React.useEffect(()=>{
-    fetch("https://api.open-meteo.com/v1/forecast?latitude=33.6846&longitude=-117.8265&current=temperature_2m,apparent_temperature,weathercode,uv_index&daily=uv_index_max&timezone=America%2FLos_Angeles&forecast_days=1&temperature_unit=fahrenheit")
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=33.6846&longitude=-117.8265&current=temperature_2m,apparent_temperature,weathercode,uv_index&hourly=uv_index&daily=uv_index_max&timezone=America%2FLos_Angeles&forecast_days=1&temperature_unit=fahrenheit")
       .then(r=>r.json())
       .then(d=>{
-        if(d?.current) setWx({
-          temp: Math.round(d.current.temperature_2m),
-          feels: Math.round(d.current.apparent_temperature),
-          code: d.current.weathercode,
-          uvNow: Math.round(d.current.uv_index||0),
-          uvMax: Math.round(d.daily?.uv_index_max?.[0]||0),
-        });
+        if(d?.current){
+          const uvMax = Math.round(d.daily?.uv_index_max?.[0]||0);
+          setWx({
+            temp: Math.round(d.current.temperature_2m),
+            feels: Math.round(d.current.apparent_temperature),
+            code: d.current.weathercode,
+            uvNow: Math.round(d.current.uv_index||0),
+            uvMax,
+            uvWindow: uvPeakWindow(d.hourly?.time, d.hourly?.uv_index, uvMax),
+          });
+        }
       })
       .catch(()=>{});
   },[]);
@@ -1438,7 +1486,7 @@ function WxIcon({code,size=28,color="#EEF0F7"}) {
   );
 }
 
-function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal, water, setWater, energy, setEnergy, prayerChecked={}, setPrayerChecked, dayOverrides={} }) {
+function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal, setShowThemeSheet, water, setWater, energy, setEnergy, prayerChecked={}, setPrayerChecked, dayOverrides={} }) {
   const today = new Date(); today.setHours(0,0,0,0);
   const dKey = tdk();
   const info = effDayInfo(today, dayOverrides);
@@ -1505,7 +1553,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
   const passedPrayers = prayerList.filter(p=>p.mins<=nowMins);
   const currentPrayerKey = passedPrayers.length ? passedPrayers[passedPrayers.length-1].key : (prayerList.length ? prayerList[prayerList.length-1].key : null);
   const todayPrayed = (prayerChecked && prayerChecked[dKey]) || {};
-  const togglePrayer = (k)=> setPrayerChecked && setPrayerChecked(prev=>({...prev,[dKey]:{...(prev[dKey]||{}),[k]:!((prev[dKey]||{})[k])}}));
+  const togglePrayer = (k)=> { haptic(); setPrayerChecked && setPrayerChecked(prev=>({...prev,[dKey]:{...(prev[dKey]||{}),[k]:!((prev[dKey]||{})[k])}})); };
 
   return (
     <div style={{fontFamily:"'Space Grotesk',sans-serif",background:C.bg,minHeight:"100vh"}}>
@@ -1515,11 +1563,16 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
         <div className="orb-drift" style={{position:"absolute",top:-60,right:-40,width:280,height:280,borderRadius:"50%",background:`radial-gradient(circle,${tc.glow} 0%,transparent 65%)`,pointerEvents:"none",animationDuration:"26s"}}/>
         <div className="orb-drift" style={{position:"absolute",bottom:-50,left:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.10) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"30s",animationDelay:"8s"}}/>
         <div className="orb-drift" style={{position:"absolute",top:"30%",left:"40%",width:140,height:140,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.06) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"35s",animationDelay:"15s"}}/>
+        {setShowThemeSheet && (
+          <button aria-label="Change accent theme" className="tap" onClick={()=>{ haptic(); setShowThemeSheet(true); }} style={{position:"absolute",top:"calc(env(safe-area-inset-top,20px) + 14px)",right:14,zIndex:5,width:34,height:34,borderRadius:11,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,0.12)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={C.text} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        )}
 
         <div className="hero-row" style={{position:"relative",padding:"calc(env(safe-area-inset-top,20px) + 18px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:6}}>
           <div style={{flex:1,minWidth:0}}>
             <div style={{fontSize:12,fontWeight:500,color:C.text2,letterSpacing:0.3,marginBottom:4,fontFamily:"'Space Grotesk',sans-serif"}}>{DAYS_L[today.getDay()]} · {MONTHS_L[today.getMonth()]} {today.getDate()}</div>
-            <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:54,fontWeight:900,letterSpacing:-2.5,lineHeight:0.86,color:C.text}}>WELCOME<br/><span style={{background:"linear-gradient(100deg,#c4b5fd,#8B5CF6)",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent"}}>ISH</span></div>
+            <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:23,fontWeight:800,letterSpacing:1,lineHeight:1,color:C.text2,paddingRight:6}}>WELCOME<br/><span style={{display:"inline-block",fontSize:48,fontWeight:900,letterSpacing:-1.5,lineHeight:0.95,marginTop:3,background:"linear-gradient(100deg,#c4b5fd,#8B5CF6)",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent",paddingRight:4}}>ISH</span></div>
             <div style={{marginTop:14,display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
               <div style={{display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px",borderRadius:999,background:tc.bg,border:`1px solid ${tc.border}`}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:tc.color,animation:"liveOrb 2.5s ease-in-out infinite"}}/>
@@ -1551,14 +1604,17 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
                 <span style={{fontSize:11,color:C.teal,fontWeight:600,paddingBottom:2}}>{WX_LABEL(wx.code)}</span>
               </div>
               <div style={{fontSize:9,color:C.teal,fontWeight:700,letterSpacing:0.4,marginBottom:4,opacity:0.85}}>IRVINE, CA</div>
-              <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
                 <span style={{fontSize:10,color:C.text3}}>Feels {wx.feels}°</span>
-                <span style={{fontSize:10,color:UV_COLOR(wx.uvMax),fontWeight:700,background:`${UV_COLOR(wx.uvMax)}18`,padding:"1px 7px",borderRadius:8}}>UV {wx.uvMax} · {UV_LABEL(wx.uvMax)}</span>
+                <span style={{fontSize:10,color:UV_COLOR(wx.uvMax),fontWeight:700,background:`${UV_COLOR(wx.uvMax)}18`,padding:"1px 7px",borderRadius:8}}>UV {wx.uvMax} · {UV_LABEL(wx.uvMax)}{wx.uvWindow?` · ${wx.uvWindow}`:""}</span>
               </div>
             </div>
           ) : (
-            <div style={{flex:1,background:"rgba(6,182,212,0.05)",border:"1px solid rgba(6,182,212,0.12)",borderRadius:16,padding:"12px 14px",display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <span style={{fontSize:11,color:C.text3}}>Loading weather…</span>
+            <div style={{flex:1,background:"rgba(6,182,212,0.05)",border:"1px solid rgba(6,182,212,0.12)",borderRadius:16,padding:"12px 14px",position:"relative",overflow:"hidden",display:"flex",flexDirection:"column",justifyContent:"center",gap:8}}>
+              <div style={{position:"absolute",top:0,bottom:0,width:"55%",background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)",animation:"shimmerMove 1.6s ease-in-out infinite"}}/>
+              <div style={{height:14,width:"50%",borderRadius:6,background:"rgba(255,255,255,0.06)"}}/>
+              <div style={{height:9,width:"34%",borderRadius:5,background:"rgba(255,255,255,0.05)"}}/>
+              <div style={{height:9,width:"68%",borderRadius:5,background:"rgba(255,255,255,0.05)"}}/>
             </div>
           )}
         </div>
@@ -1990,6 +2046,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 
   const [lastAtt, setLastAtt] = React.useState(null);
   const toggleAtt = (val) => {
+    haptic(14);
     setAttend(prev=>{const c=prev[dKey]||{};return{...prev,[dKey]:{...c,[val]:!c[val]}};});
     setLastAtt(val);
     setTimeout(()=>setLastAtt(null), 650);
@@ -2317,7 +2374,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
   const [newDose, setNewDose] = useState("");
   const [newTime, setNewTime] = useState("morning");
 
-  const toggle = (id) => setChecked(prev=>{const tc=prev[today]||{};return{...prev,[today]:{...tc,[id]:!tc[id]}};});
+  const toggle = (id) => { haptic(); setChecked(prev=>{const tc=prev[today]||{};return{...prev,[today]:{...tc,[id]:!tc[id]}};}); };
   const removeSupp = (id) => setSupps(prev=>prev.filter(s=>s.id!==id));
   const addSupp = () => {
     if (!newName.trim()) return;
@@ -2379,7 +2436,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 3 8 3Z"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Stack</span>
         </div>
-        <div style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-1.5,lineHeight:0.92,position:"relative",background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
+        <div style={{display:"inline-block",fontFamily:"'Syne',sans-serif",fontSize:32,fontWeight:900,letterSpacing:-1.0,lineHeight:0.95,position:"relative",paddingRight:6,background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
         <div style={{fontSize:13,color:C.text2,marginTop:6,position:"relative"}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
       </div>
 
@@ -2531,20 +2588,23 @@ function Nav({ page, setPage }) {
 
   return (
     <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(6,8,16,0.97)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.06)",zIndex:100,padding:"0 0 calc(env(safe-area-inset-bottom))"}}>
-      <div style={{display:"flex",alignItems:"stretch"}}>
+      <div style={{display:"flex",alignItems:"stretch",position:"relative"}}>
         {tabs.map(tab=>{
           const isActive = page===tab.id;
           const col = TAB_COLORS[tab.id];
           return (
-            <button key={tab.id} onClick={()=>setPage(tab.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:5,padding:"10px 2px 12px",background:"transparent",border:"none",position:"relative",overflow:"hidden"}}>
+            <button key={tab.id} className="tap" onClick={()=>{ if(page!==tab.id) haptic(); setPage(tab.id); }} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:5,padding:"10px 2px 12px",background:"transparent",border:"none",position:"relative",overflow:"hidden"}}>
               <div style={{transition:"transform 0.18s cubic-bezier(0.34,1.56,0.64,1),filter 0.18s",transform:isActive?"scale(1.08)":"scale(1)",filter:isActive?`drop-shadow(0 0 6px ${col}88)`:"none"}}>
                 {icons[tab.id](isActive)}
               </div>
               <span style={{fontFamily:"'Space Grotesk',sans-serif",fontSize:10,fontWeight:isActive?700:500,letterSpacing:0.3,color:isActive?col:"#3A4260",transition:"color 0.18s",lineHeight:1}}>{tab.label}</span>
-              <div style={{position:"absolute",bottom:0,left:"20%",right:"20%",height:2,borderRadius:"2px 2px 0 0",background:col,opacity:isActive?1:0,transform:isActive?"scaleX(1)":"scaleX(0)",transition:"opacity 0.22s,transform 0.22s cubic-bezier(0.34,1.56,0.64,1)",transformOrigin:"center",animation:isActive?"navIndicatorAnim 0.3s ease forwards":undefined}}/>
             </button>
           );
         })}
+        {/* Single indicator that slides to the active tab, adopting its color */}
+        <div aria-hidden="true" style={{position:"absolute",bottom:0,left:0,width:`${100/tabs.length}%`,transform:`translateX(${Math.max(0,tabs.findIndex(t=>t.id===page))*100}%)`,display:"flex",justifyContent:"center",pointerEvents:"none",transition:"transform 0.34s cubic-bezier(0.34,1.56,0.64,1)"}}>
+          <div style={{width:"60%",height:2,borderRadius:"2px 2px 0 0",background:TAB_COLORS[page]||"#F59E0B",boxShadow:`0 0 8px ${TAB_COLORS[page]||"#F59E0B"}`,transition:"background 0.25s"}}/>
+        </div>
       </div>
     </div>
   );
@@ -2557,6 +2617,34 @@ function Nav({ page, setPage }) {
 // No context, no reducers — all state flows down as props.
 // If !apiKey, renders ApiKeyScreen instead of the full app (first-launch gate).
 // Page routing is a simple string — no router library.
+// Bottom sheet for picking the accent theme. Swatches show each theme's real
+// colors; OG shows the original four-color mix, others a single accent.
+function ThemeSheet({ theme, setTheme, onClose }) {
+  return (
+    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(2px)",WebkitBackdropFilter:"blur(2px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"rgba(12,15,27,0.98)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 22px)",animation:"slideUp 0.3s cubic-bezier(0.22,1,0.36,1)"}}>
+        <div style={{width:38,height:4,borderRadius:2,background:"rgba(255,255,255,0.16)",margin:"0 auto 16px"}}/>
+        <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:C.text,marginBottom:2}}>Accent theme</div>
+        <div style={{fontSize:12,color:C.text2,marginBottom:16}}>Recolor the app's highlight. OG keeps the original mix.</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+          {Object.keys(THEMES).map(k=>{
+            const t = THEMES[k], active = theme===k;
+            return (
+              <button key={k} className="tap" onClick={()=>{ haptic(); setTheme(k); onClose(); }} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",borderRadius:14,background:active?"rgba(255,255,255,0.07)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?t.accent:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 18px ${t.glow}`:"none",transition:"border 0.2s,box-shadow 0.2s"}}>
+                <div style={{display:"flex",flexShrink:0}}>
+                  {t.swatch.map((c,i)=>(<div key={i} style={{width:16,height:16,borderRadius:"50%",background:c,marginLeft:i?-6:0,border:"2px solid rgba(12,15,27,0.95)"}}/>))}
+                </div>
+                <span style={{fontSize:14,fontWeight:700,color:active?C.text:C.text2}}>{t.label}</span>
+                {active && <span style={{marginLeft:"auto",color:t.accent,fontSize:14,fontWeight:900}}>✓</span>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [page, setPage]       = useState("home");
   const [scrollY, setScrollY] = useState(0);
@@ -2576,6 +2664,9 @@ function App() {
   const [prayerChecked, setPrayerChecked] = useState(()=>ld("dos_prayer_checked_v1",{}));
   const [prLog, setPrLog] = useState(()=>ld("dos_pr_v1",{}));
   const [showBwModal, setShowBwModal] = useState(false);
+  const [theme, setTheme] = useState(()=>ld("dos_theme_v1","OG"));
+  const [showThemeSheet, setShowThemeSheet] = useState(false);
+  useEffect(()=>{ applyTheme(theme); sv("dos_theme_v1",theme); },[theme]);
 
   useEffect(()=>{ const k=tdk(); setUsage(prev=>{const u={...prev,[k]:(prev[k]||0)+1};sv("dos_usage_v7",u);return u;}); },[]);
   useEffect(()=>{ sv("dos_meals_v7",meals); },[meals]);
@@ -2607,9 +2698,10 @@ function App() {
   return (
     <div>
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
+      {showThemeSheet&&<ThemeSheet theme={theme} setTheme={setTheme} onClose={()=>setShowThemeSheet(false)}/>}
       {/* key=page triggers page-enter animation on every tab switch */}
       <div key={page} className="page-enter">
-        {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal} water={water} setWater={setWater} energy={energy} setEnergy={setEnergy} prayerChecked={prayerChecked} setPrayerChecked={setPrayerChecked} dayOverrides={dayOverrides}/>}
+        {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal} setShowThemeSheet={setShowThemeSheet} water={water} setWater={setWater} energy={energy} setEnergy={setEnergy} prayerChecked={prayerChecked} setPrayerChecked={setPrayerChecked} dayOverrides={dayOverrides}/>}
         {page==="fitness"     && <FitnessPage   meals={meals} setMeals={setMeals} attend={attend} setAttend={setAttend} apiKey={apiKey} favorites={favorites} setFavorites={setFavorites} bwLog={bwLog} setBwLog={setBwLog} dayOverrides={dayOverrides} setDayOverrides={setDayOverrides} prLog={prLog} setPrLog={setPrLog}/>}
         {page==="habits"      && <HabitsPage    habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked}/>}
         {page==="supplements" && <SupplementsPage supps={supps} setSupps={setSupps} checked={suppChecked} setChecked={setSuppChecked}/>}
