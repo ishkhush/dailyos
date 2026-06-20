@@ -5,7 +5,7 @@
 // drop the old cache on next activate, which is how you push a forced update.
 // Only index.html and sw.js are deployed (see deploy.sh); nothing else is served.
 
-const CACHE = 'dailyos-1781927045';
+const CACHE = 'dailyos-1781927046';
 
 // On install: pre-cache './' so the app loads instantly from cache next visit.
 // skipWaiting() makes the new SW take control immediately instead of waiting
