@@ -85,10 +85,80 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Space Grotesk","Barlow",-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
-:root{--accent:#F59E0B;--accent-glow:rgba(245,158,11,0.28);--accent-glow-strong:rgba(245,158,11,0.30)}
-html{background:#060810;-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
-body{background:#060810;color:#EEF0F7;min-height:100vh;position:relative}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(139,92,246,0.09) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 85% 95%,rgba(245,158,11,0.07) 0%,transparent 50%),radial-gradient(ellipse 40% 30% at 60% 45%,rgba(6,182,212,0.04) 0%,transparent 40%);pointer-events:none;z-index:-1}
+/* ── THEME TOKENS ─────────────────────────────────────────────────────────────
+   Every themeable color routes through these. :root defaults = the original "OG"
+   multicolor identity. [data-theme] blocks are fully monochromatic families:
+   every role is a shade of one hue. applyTheme() just flips documentElement
+   data-theme. Alpha tints in JS use color-mix(in srgb, var(--role) N%, transparent). */
+:root{
+  --bg:#060810; --bg-1:#0C0F1B; --bg-2:#111727; --bg-3:#171E30;
+  --ink:#EEF0F7; --ink-2:#6B7280; --ink-3:#2C3050;
+  --c-primary:#F59E0B; --c-2:#8B5CF6; --c-3:#06B6D4; --c-good:#10B981; --c-action:#A3E635; --c-bad:#F43F5E;
+  --c-blue:#3B82F6; --c-orange:#FB923C; --c-pink:#F472B6;
+  --on-accent:#0a0a0c;
+  --glow:rgba(245,158,11,0.28); --glow-strong:rgba(245,158,11,0.42);
+  --tab-1:#F59E0B; --tab-2:#10B981; --tab-3:#8B5CF6; --tab-4:#06B6D4;
+  --amb-1:rgba(139,92,246,0.09); --amb-2:rgba(245,158,11,0.07); --amb-3:rgba(6,182,212,0.04);
+  --accent:var(--c-primary); --accent-glow:var(--glow); --accent-glow-strong:var(--glow-strong);
+}
+[data-theme="crimson"]{
+  --bg:hsl(348 42% 5%); --bg-1:hsl(348 34% 9%); --bg-2:hsl(348 32% 13%); --bg-3:hsl(348 30% 18%);
+  --ink:hsl(348 40% 96%); --ink-2:hsl(348 20% 72%); --ink-3:hsl(348 24% 48%);
+  --c-primary:hsl(348 90% 62%); --c-2:hsl(348 78% 74%); --c-3:hsl(348 66% 52%); --c-good:hsl(348 92% 64%); --c-action:hsl(348 95% 68%); --c-bad:hsl(348 70% 42%);
+  --on-accent:hsl(348 60% 8%);
+  --glow:hsl(348 90% 62% / 0.30); --glow-strong:hsl(348 90% 62% / 0.44);
+  --tab-1:hsl(348 88% 74%); --tab-2:hsl(348 85% 64%); --tab-3:hsl(348 80% 54%); --tab-4:hsl(348 74% 44%);
+  --amb-1:hsl(348 85% 55% / 0.13); --amb-2:hsl(348 70% 50% / 0.08); --amb-3:hsl(348 60% 45% / 0.05);
+}
+[data-theme="solar"]{
+  --bg:hsl(34 48% 5%); --bg-1:hsl(34 38% 9%); --bg-2:hsl(34 34% 12%); --bg-3:hsl(34 30% 17%);
+  --ink:hsl(40 40% 96%); --ink-2:hsl(38 22% 72%); --ink-3:hsl(36 26% 48%);
+  --c-primary:hsl(38 95% 58%); --c-2:hsl(44 92% 70%); --c-3:hsl(28 80% 52%); --c-good:hsl(42 95% 62%); --c-action:hsl(48 96% 64%); --c-bad:hsl(24 78% 46%);
+  --on-accent:hsl(34 70% 7%);
+  --glow:hsl(38 95% 58% / 0.30); --glow-strong:hsl(38 95% 58% / 0.44);
+  --tab-1:hsl(46 92% 70%); --tab-2:hsl(40 92% 60%); --tab-3:hsl(34 88% 52%); --tab-4:hsl(28 80% 46%);
+  --amb-1:hsl(40 85% 52% / 0.12); --amb-2:hsl(34 80% 50% / 0.08); --amb-3:hsl(28 70% 45% / 0.05);
+}
+[data-theme="aqua"]{
+  --bg:hsl(196 50% 5%); --bg-1:hsl(195 40% 9%); --bg-2:hsl(194 36% 12%); --bg-3:hsl(193 32% 17%);
+  --ink:hsl(190 38% 96%); --ink-2:hsl(192 22% 72%); --ink-3:hsl(194 26% 48%);
+  --c-primary:hsl(189 90% 52%); --c-2:hsl(184 80% 68%); --c-3:hsl(200 75% 50%); --c-good:hsl(174 85% 56%); --c-action:hsl(186 90% 60%); --c-bad:hsl(205 70% 42%);
+  --on-accent:hsl(196 70% 7%);
+  --glow:hsl(189 90% 52% / 0.30); --glow-strong:hsl(189 90% 52% / 0.44);
+  --tab-1:hsl(184 82% 68%); --tab-2:hsl(189 85% 56%); --tab-3:hsl(196 80% 50%); --tab-4:hsl(202 74% 44%);
+  --amb-1:hsl(189 85% 50% / 0.12); --amb-2:hsl(196 80% 48% / 0.08); --amb-3:hsl(184 70% 45% / 0.05);
+}
+[data-theme="violet"]{
+  --bg:hsl(265 44% 6%); --bg-1:hsl(264 36% 10%); --bg-2:hsl(263 34% 14%); --bg-3:hsl(262 30% 19%);
+  --ink:hsl(268 38% 96%); --ink-2:hsl(266 22% 73%); --ink-3:hsl(264 26% 49%);
+  --c-primary:hsl(262 88% 68%); --c-2:hsl(274 80% 76%); --c-3:hsl(250 72% 60%); --c-good:hsl(280 84% 70%); --c-action:hsl(268 90% 72%); --c-bad:hsl(248 66% 50%);
+  --on-accent:hsl(265 60% 9%);
+  --glow:hsl(262 88% 68% / 0.32); --glow-strong:hsl(262 88% 68% / 0.46);
+  --tab-1:hsl(274 82% 78%); --tab-2:hsl(264 84% 70%); --tab-3:hsl(256 78% 62%); --tab-4:hsl(248 70% 52%);
+  --amb-1:hsl(264 85% 60% / 0.14); --amb-2:hsl(274 75% 58% / 0.08); --amb-3:hsl(250 70% 55% / 0.05);
+}
+[data-theme="emerald"]{
+  --bg:hsl(158 46% 5%); --bg-1:hsl(157 36% 8%); --bg-2:hsl(156 34% 11%); --bg-3:hsl(155 30% 16%);
+  --ink:hsl(150 36% 96%); --ink-2:hsl(154 22% 71%); --ink-3:hsl(156 26% 46%);
+  --c-primary:hsl(156 80% 50%); --c-2:hsl(166 72% 64%); --c-3:hsl(146 68% 46%); --c-good:hsl(150 84% 56%); --c-action:hsl(160 86% 58%); --c-bad:hsl(140 60% 40%);
+  --on-accent:hsl(158 70% 6%);
+  --glow:hsl(156 80% 50% / 0.30); --glow-strong:hsl(156 80% 50% / 0.44);
+  --tab-1:hsl(166 74% 64%); --tab-2:hsl(156 80% 54%); --tab-3:hsl(148 76% 46%); --tab-4:hsl(142 68% 40%);
+  --amb-1:hsl(156 80% 48% / 0.12); --amb-2:hsl(166 70% 46% / 0.07); --amb-3:hsl(146 70% 44% / 0.05);
+}
+[data-theme="graphite"]{
+  --bg:hsl(222 14% 6%); --bg-1:hsl(222 12% 10%); --bg-2:hsl(222 12% 14%); --bg-3:hsl(222 10% 19%);
+  --ink:hsl(222 15% 96%); --ink-2:hsl(222 10% 70%); --ink-3:hsl(222 12% 46%);
+  --c-primary:hsl(220 14% 80%); --c-2:hsl(220 12% 66%); --c-3:hsl(220 12% 54%); --c-good:hsl(220 16% 84%); --c-action:hsl(220 14% 82%); --c-bad:hsl(220 12% 52%);
+  --on-accent:hsl(222 22% 10%);
+  --glow:hsl(220 24% 72% / 0.22); --glow-strong:hsl(220 24% 72% / 0.34);
+  --tab-1:hsl(220 16% 84%); --tab-2:hsl(220 14% 72%); --tab-3:hsl(220 12% 60%); --tab-4:hsl(220 12% 48%);
+  --amb-1:hsl(220 30% 52% / 0.08); --amb-2:hsl(220 20% 50% / 0.05); --amb-3:hsl(220 20% 50% / 0.04);
+}
+[data-theme="crimson"],[data-theme="solar"],[data-theme="aqua"],[data-theme="violet"],[data-theme="emerald"],[data-theme="graphite"]{--c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2)}
+html{background:var(--bg);-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+body{background:var(--bg);color:var(--ink);min-height:100vh;position:relative;transition:background 0.45s ease,color 0.45s ease}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 0%,var(--amb-1) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 85% 95%,var(--amb-2) 0%,transparent 50%),radial-gradient(ellipse 40% 30% at 60% 45%,var(--amb-3) 0%,transparent 40%);pointer-events:none;z-index:-1}
 #root{max-width:430px;margin:0 auto;padding-bottom:100px;min-height:100vh}
 button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit;transition:transform 0.13s cubic-bezier(0.34,1.56,0.64,1),opacity 0.13s}
 button:active:not(:disabled){transform:scale(0.93)}
@@ -99,10 +169,10 @@ video,img{display:block}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes popIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,0.6)}70%{box-shadow:0 0 0 12px rgba(248,113,113,0)}}
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--c-bad) 60%, transparent)}70%{box-shadow:0 0 0 12px transparent}}
 @keyframes sweepRing{from{stroke-dashoffset:var(--ring-full)}to{stroke-dashoffset:var(--ring-offset)}}
 @keyframes heatPop{from{transform:scale(0.4);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.5)}50%{box-shadow:0 0 12px 4px rgba(245,158,11,0.2)}}
+@keyframes bwPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--c-primary) 50%, transparent)}50%{box-shadow:0 0 12px 4px color-mix(in srgb, var(--c-primary) 20%, transparent)}}
 @keyframes pageEnter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes floatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes numPop{0%{opacity:0;transform:scale(0.6) translateY(6px)}70%{transform:scale(1.06) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
@@ -116,17 +186,22 @@ video,img{display:block}
 @keyframes borderGlow{0%,100%{opacity:0.5}50%{opacity:1}}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes bounceIn{0%{transform:scale(0.85)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
-@keyframes restDone{0%,100%{color:#ff6b6b;transform:scale(1)}50%{color:#fb923c;transform:scale(1.15)}}
+@keyframes restDone{0%,100%{color:var(--c-bad);transform:scale(1)}50%{color:var(--c-orange);transform:scale(1.15)}}
 @keyframes glowBorder{0%,100%{opacity:0.6}50%{opacity:1}}
-@keyframes streakFire{0%,100%{text-shadow:0 0 8px rgba(245,158,11,0.8)}50%{text-shadow:0 0 20px rgba(245,158,11,1),0 0 40px rgba(245,158,11,0.5)}}
-@keyframes prayerNext{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,0.4)}50%{box-shadow:0 0 18px 4px rgba(139,92,246,0.15)}}
+@keyframes streakFire{0%,100%{text-shadow:0 0 8px color-mix(in srgb, var(--c-primary) 80%, transparent)}50%{text-shadow:0 0 20px var(--c-primary),0 0 40px color-mix(in srgb, var(--c-primary) 50%, transparent)}}
+@keyframes prayerNext{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--c-2) 40%, transparent)}50%{box-shadow:0 0 18px 4px color-mix(in srgb, var(--c-2) 15%, transparent)}}
 @keyframes cosmicOrb{0%{transform:translate(0,0) scale(1) rotate(0deg)}33%{transform:translate(22px,-16px) scale(1.08) rotate(120deg)}66%{transform:translate(-12px,22px) scale(0.94) rotate(240deg)}100%{transform:translate(0,0) scale(1) rotate(360deg)}}
 @keyframes shimmerBar{0%{background-position:200% center}100%{background-position:-200% center}}
 @keyframes statCountUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes bigNumPop{0%{opacity:0;transform:scale(0.5) translateY(12px)}65%{transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes dotDance{0%,100%{transform:translateY(0)}33%{transform:translateY(-5px)}66%{transform:translateY(2px)}}
-@keyframes ambientPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.18)}50%{box-shadow:0 0 32px 4px rgba(245,158,11,0.08)}}
-.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.10);border-top-color:#F59E0B;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes ambientPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--c-primary) 18%, transparent)}50%{box-shadow:0 0 32px 4px color-mix(in srgb, var(--c-primary) 8%, transparent)}}
+@keyframes toastIn{from{opacity:0;transform:translateY(-16px) scale(0.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px) scale(0.96)}}
+@keyframes backdropFade{from{opacity:0}to{opacity:1}}
+@keyframes sheetUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sparkDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.10);border-top-color:var(--c-primary);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
 .fade-in{animation:fadeIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
 .slide-up{animation:slideUp 0.34s cubic-bezier(0.22,1,0.36,1)}
 .pop-in{animation:popIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
@@ -141,15 +216,15 @@ video,img{display:block}
 .syne{font-family:"Syne",sans-serif}
 .sg{font-family:"Space Grotesk",sans-serif}
 .glass-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);box-shadow:0 4px 24px rgba(0,0,0,0.4)}
-.pill-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18);border-radius:999px}
+.pill-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:color-mix(in srgb, var(--c-primary) 8%, transparent);border:1px solid color-mix(in srgb, var(--c-primary) 18%, transparent);border-radius:999px}
 .scan-overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
-.scan-overlay::after{content:'';position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.30),transparent);animation:scanLine 8s linear infinite;opacity:0.5}
+.scan-overlay::after{content:'';position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb, var(--c-2) 30%, transparent),transparent);animation:scanLine 8s linear infinite;opacity:0.5}
 .ambient-pulse{animation:ambientPulse 5s ease-in-out infinite}
 .orb-drift{animation:orbDrift 22s ease-in-out infinite}
 .section-rule{display:flex;align-items:center;gap:12px;margin:20px 16px 12px}
 .section-rule::before,.section-rule::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06)}
-.section-rule span{font-family:"Space Grotesk",sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;color:#2A3050;text-transform:uppercase;white-space:nowrap}
-.cyber-card{background:rgba(255,255,255,0.03);border:1px solid rgba(245,158,11,0.12);border-radius:16px;position:relative;overflow:hidden}
+.section-rule span{font-family:"Space Grotesk",sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;color:var(--ink-3);text-transform:uppercase;white-space:nowrap}
+.cyber-card{background:rgba(255,255,255,0.03);border:1px solid color-mix(in srgb, var(--c-primary) 12%, transparent);border-radius:16px;position:relative;overflow:hidden}
 .prayer-active{animation:prayerNext 3s ease-in-out infinite}
 .tap{transition:transform .12s cubic-bezier(.22,1,.36,1),filter .12s ease}
 .tap:active{transform:scale(.96)}
@@ -216,31 +291,35 @@ function useCountUp(target, duration = 850) {
 // The primary accent (accent/amber/gold) resolves to a CSS var so the theme
 // picker can recolor the app at runtime; the fallback keeps OG amber if unset.
 // Secondary colors (green/teal/violet/etc.) stay fixed — that's the OG identity.
+// Every color routes through a CSS token so the theme engine can re-skin the
+// whole app. Glass/border stay neutral white-alpha (correct on any theme).
 const C = {
-  accent:"var(--accent,#F59E0B)", green:"#10B981", amber:"var(--accent,#F59E0B)", gold:"var(--accent,#F59E0B)", blue:"#3B82F6", red:"#F43F5E",
-  pink:"#F472B6", teal:"#06B6D4", steel:"#06B6D4", orange:"#FB923C", violet:"#8B5CF6", lime:"#A3E635",
-  bg:"#060810", bg2:"#0C0F1B", bg3:"#111727", bg4:"#171E30",
+  accent:"var(--c-primary)", green:"var(--c-good)", amber:"var(--c-primary)", gold:"var(--c-primary)", blue:"var(--c-blue)", red:"var(--c-bad)",
+  pink:"var(--c-pink)", teal:"var(--c-3)", steel:"var(--c-3)", orange:"var(--c-orange)", violet:"var(--c-2)", lime:"var(--c-action)",
+  bg:"var(--bg)", bg2:"var(--bg-1)", bg3:"var(--bg-2)", bg4:"var(--bg-3)",
   glass:"rgba(255,255,255,0.02)", glassMid:"rgba(255,255,255,0.04)", glassHigh:"rgba(255,255,255,0.07)",
   border:"rgba(255,255,255,0.06)", border2:"rgba(255,255,255,0.10)",
-  text:"#EEF0F7", text2:"#6B7280", text3:"#2C3050",
-  glowAccent:"var(--accent-glow,rgba(245,158,11,0.28))", glowGreen:"rgba(16,185,129,0.25)", glowBlue:"rgba(59,130,246,0.25)", glowGold:"var(--accent-glow-strong,rgba(245,158,11,0.30))",
-  glowViolet:"rgba(139,92,246,0.30)", glowCyan:"rgba(6,182,212,0.28)"
+  text:"var(--ink)", text2:"var(--ink-2)", text3:"var(--ink-3)",
+  glowAccent:"var(--glow)", glowGreen:"color-mix(in srgb, var(--c-good) 25%, transparent)", glowBlue:"color-mix(in srgb, var(--c-blue) 25%, transparent)", glowGold:"var(--glow-strong)",
+  glowViolet:"color-mix(in srgb, var(--c-2) 30%, transparent)", glowCyan:"color-mix(in srgb, var(--c-3) 28%, transparent)"
 };
 
-// Accent themes. OG keeps the original multicolor look (amber primary). Others
-// swap only the primary accent + its glow; everything else stays as-is.
+// Themes. OG is the original multicolor identity (root token defaults). The rest
+// are fully monochromatic families defined by [data-theme] CSS blocks; each swatch
+// shows a few shades of that family. applyTheme just flips documentElement's
+// data-theme, so every token-routed color re-skins at once.
 const THEMES = {
-  OG:      { label:"OG",      accent:"#F59E0B", glow:"rgba(245,158,11,0.28)", glowStrong:"rgba(245,158,11,0.30)", swatch:["#F59E0B","#10B981","#8B5CF6","#06B6D4"] },
-  Teal:    { label:"Teal",    accent:"#06B6D4", glow:"rgba(6,182,212,0.28)",  glowStrong:"rgba(6,182,212,0.34)",  swatch:["#06B6D4"] },
-  Violet:  { label:"Violet",  accent:"#8B5CF6", glow:"rgba(139,92,246,0.28)", glowStrong:"rgba(139,92,246,0.34)", swatch:["#8B5CF6"] },
-  Crimson: { label:"Crimson", accent:"#F43F5E", glow:"rgba(244,63,94,0.28)",  glowStrong:"rgba(244,63,94,0.34)",  swatch:["#F43F5E"] },
+  og:       { label:"OG",       swatch:["#F59E0B","#10B981","#8B5CF6","#06B6D4"] },
+  crimson:  { label:"Crimson",  swatch:["hsl(348 88% 74%)","hsl(348 85% 60%)","hsl(348 74% 44%)"] },
+  solar:    { label:"Solar",    swatch:["hsl(46 92% 70%)","hsl(38 95% 58%)","hsl(28 80% 46%)"] },
+  aqua:     { label:"Aqua",     swatch:["hsl(184 82% 68%)","hsl(189 88% 54%)","hsl(202 74% 44%)"] },
+  violet:   { label:"Violet",   swatch:["hsl(274 82% 78%)","hsl(262 86% 68%)","hsl(248 70% 52%)"] },
+  emerald:  { label:"Emerald",  swatch:["hsl(166 74% 64%)","hsl(156 80% 52%)","hsl(142 68% 40%)"] },
+  graphite: { label:"Graphite", swatch:["hsl(220 16% 84%)","hsl(220 13% 64%)","hsl(220 12% 46%)"] },
 };
-const applyTheme = (key) => {
-  const t = THEMES[key] || THEMES.OG, r = document.documentElement.style;
-  r.setProperty("--accent", t.accent);
-  r.setProperty("--accent-glow", t.glow);
-  r.setProperty("--accent-glow-strong", t.glowStrong);
-};
+const THEME_ALIAS = { OG:"og", Teal:"aqua", Violet:"violet", Crimson:"crimson" };
+const normTheme = k => THEMES[k] ? k : (THEME_ALIAS[k] || "og");
+const applyTheme = (key) => { document.documentElement.dataset.theme = normTheme(key); };
 
 
 // ── PROFILE PHOTO ───────────────────────────────────────────────────────────
@@ -295,8 +374,8 @@ const MONTHS_L = ["January","February","March","April","May","June","July","Augu
 
 // ── HABIT DEFAULTS ────────────────────────────────────────────────────────────
 const DEFAULT_HABITS = [
-  { id:"h1", name:"Cold shower",  emoji:"🚿", color:"#5bbcff" },
-  { id:"h2", name:"Meditate",     emoji:"🧘", color:"#b39dfa" },
+  { id:"h1", name:"Cold shower",  emoji:"🚿", color:"var(--c-3)" },
+  { id:"h2", name:"Meditate",     emoji:"🧘", color:"var(--c-2)" },
 ];
 const HABIT_EMOJIS = [
   "🚿","🧘","📖","🏃","💧","🌅","🥗","😴","🎯","✍️","🧠","💪",
@@ -399,6 +478,9 @@ const sv = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch
 const _reduceMotion = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 // Subtle tap haptic. No-op on iOS Safari (no Vibration API support there).
 const haptic = (ms = 10) => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
+// Lightweight toast bus: toast(msg, kind) → any mounted ToastHost renders it.
+const _toastFns = new Set();
+const toast = (msg, kind = "info") => { _toastFns.forEach(fn => fn(msg, kind)); };
 // Apply the saved accent theme before first paint so non-OG themes don't flash amber.
 applyTheme(ld("dos_theme_v1", "OG"));
 const getQuote = () => { const d = new Date(); return QUOTES[(d.getFullYear()*366+d.getMonth()*31+d.getDate())%QUOTES.length]; };
@@ -786,7 +868,7 @@ function ApiKeyScreen({ onSave }) {
       <button onClick={test} disabled={testing||!key.trim()} style={{width:"100%",background:key.trim()?`linear-gradient(135deg,${C.accent},${C.teal})`:"rgba(255,255,255,0.06)",border:"none",borderRadius:14,padding:"14px 0",fontSize:15,fontWeight:700,color:"white",marginBottom:12,opacity:testing?0.7:1}}>
         {testing?"Testing key…":"Connect & Save"}
       </button>
-      {error && <div style={{background:"rgba(248,113,113,0.12)",border:"1px solid rgba(248,113,113,0.25)",borderRadius:10,padding:"10px 14px",fontSize:13,color:C.red,marginBottom:12}}>{error}</div>}
+      {error && <div style={{background:"color-mix(in srgb, var(--c-bad) 12%, transparent)",border:"1px solid color-mix(in srgb, var(--c-bad) 25%, transparent)",borderRadius:10,padding:"10px 14px",fontSize:13,color:C.red,marginBottom:12}}>{error}</div>}
       <div style={{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.09)`,borderRadius:16,padding:"14px 16px"}}>
         <div style={{fontSize:12,fontWeight:700,color:C.text3,marginBottom:8,textTransform:"uppercase",letterSpacing:0.5}}>How to get your key</div>
         <div style={{fontSize:13,color:C.text2,lineHeight:1.7}}>
@@ -922,6 +1004,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
     setServingMult(1);
     setPendingResult(null);
     setMessages(prev=>[...prev,{role:"assistant",content:"✅ Added to your log! What else did you eat?",isConfirm:true}]);
+    toast(`${Math.round(num(pendingResult.calories)*m)} cal logged`,"success");
   };
 
   const quickAddFavorite = (fav) => {
@@ -972,7 +1055,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
             <div style={{fontSize:14,color:C.text,lineHeight:1.65}}>Hey Ish! 👋 Tell me what you ate:</div>
             <div style={{marginTop:10,display:"flex",flexDirection:"column",gap:6}}>
               {["2 cups Raw Farms raw milk","2 eggs with avocado toast","Chipotle chicken bowl","1 Quest protein bar"].map(s=>(
-                <button key={s} onClick={()=>sendMessage(s)} style={{background:"rgba(163,230,53,0.07)",backdropFilter:"blur(8px)",border:`1px solid rgba(163,230,53,0.18)`,borderRadius:12,padding:"8px 12px",fontSize:13,color:C.accent,textAlign:"left"}}>{s} →</button>
+                <button key={s} onClick={()=>sendMessage(s)} style={{background:"color-mix(in srgb, var(--c-action) 7%, transparent)",backdropFilter:"blur(8px)",border:`1px solid color-mix(in srgb, var(--c-action) 18%, transparent)`,borderRadius:12,padding:"8px 12px",fontSize:13,color:C.accent,textAlign:"left"}}>{s} →</button>
               ))}
             </div>
           </div>
@@ -984,7 +1067,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
               <div style={{background:C.accent,borderRadius:"18px 18px 4px 18px",padding:"10px 14px",maxWidth:"80%",fontSize:14,color:"white"}}>{m.content}</div>
             ) : (
               <div style={{maxWidth:"90%",width:m.isResult?"90%":undefined}}>
-                <div style={{background:m.isResult?"rgba(74,222,128,0.08)":m.isError?"rgba(248,113,113,0.08)":m.isConfirm?"rgba(74,222,128,0.08)":"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${m.isResult?"rgba(74,222,128,0.22)":m.isError?"rgba(248,113,113,0.22)":m.isConfirm?"rgba(74,222,128,0.22)":"rgba(255,255,255,0.10)"}`,borderRadius:"4px 18px 18px 18px",padding:"12px 14px"}}>
+                <div style={{background:m.isResult?"color-mix(in srgb, var(--c-good) 8%, transparent)":m.isError?"color-mix(in srgb, var(--c-bad) 8%, transparent)":m.isConfirm?"color-mix(in srgb, var(--c-good) 8%, transparent)":"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${m.isResult?"color-mix(in srgb, var(--c-good) 22%, transparent)":m.isError?"color-mix(in srgb, var(--c-bad) 22%, transparent)":m.isConfirm?"color-mix(in srgb, var(--c-good) 22%, transparent)":"rgba(255,255,255,0.10)"}`,borderRadius:"4px 18px 18px 18px",padding:"12px 14px"}}>
                   <div style={{fontSize:14,color:C.text,lineHeight:1.65,whiteSpace:"pre-wrap"}}>{m.content}</div>
                   {m.isResult&&m.result&&!m.isConfirm&&(
                     <div style={{marginTop:10}}>
@@ -998,7 +1081,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
                       </div>
                       {/* Save to favorites button */}
                       {onSaveFavorite && (
-                        <button onClick={()=>onSaveFavorite(m.result)} style={{fontSize:12,color:C.amber,border:`1px solid rgba(251,191,36,0.25)`,background:"rgba(251,191,36,0.08)",borderRadius:8,padding:"5px 12px"}}>
+                        <button onClick={()=>onSaveFavorite(m.result)} style={{fontSize:12,color:C.amber,border:`1px solid color-mix(in srgb, var(--c-primary) 25%, transparent)`,background:"color-mix(in srgb, var(--c-primary) 8%, transparent)",borderRadius:8,padding:"5px 12px"}}>
                           ⭐ Save as Favorite
                         </button>
                       )}
@@ -1042,7 +1125,7 @@ function FoodAIChat({ apiKey, onAddMeal, onClose, favorites, onSaveFavorite }) {
               </div>
             ))}
           </div>
-          <button className="tap" onClick={confirmAdd} style={{width:"100%",background:`linear-gradient(135deg,${C.green},${C.teal})`,border:"none",borderRadius:14,padding:"13px 0",fontSize:15,fontWeight:800,color:"#0a0a0c"}}>
+          <button className="tap" onClick={confirmAdd} style={{width:"100%",background:`linear-gradient(135deg,${C.green},${C.teal})`,border:"none",borderRadius:14,padding:"13px 0",fontSize:15,fontWeight:800,color:"var(--on-accent)"}}>
             ✓ Add to Log
           </button>
         </div>
@@ -1153,8 +1236,8 @@ function WeightSparkline({ bwLog, onClick }) {
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{overflow:"visible",animation:"sparkleIn 0.5s ease forwards"}}>
         <defs>
           <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#a3e635" stopOpacity="0.35"/>
-            <stop offset="100%" stopColor="#a3e635" stopOpacity="0.02"/>
+            <stop offset="0%" stopColor="var(--c-action)" stopOpacity="0.35"/>
+            <stop offset="100%" stopColor="var(--c-action)" stopOpacity="0.02"/>
           </linearGradient>
           <filter id="sparkGlow">
             <feGaussianBlur stdDeviation="1.5" result="blur"/>
@@ -1162,10 +1245,10 @@ function WeightSparkline({ bwLog, onClick }) {
           </filter>
         </defs>
         <path d={areaPath} fill="url(#sparkGrad)"/>
-        <polyline points={polyline} fill="none" stroke="#a3e635" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparkGlow)"/>
+        <polyline points={polyline} fill="none" stroke="var(--c-action)" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparkGlow)" pathLength="1" style={{strokeDasharray:1,animation:"sparkDraw 0.9s cubic-bezier(0.22,1,0.36,1) forwards"}}/>
         {pts.map((p, i) => (
           <circle key={i} cx={p[0]} cy={p[1]} r={i === pts.length - 1 ? 4 : 2.5}
-            fill={i === pts.length - 1 ? "#a3e635" : "rgba(163,230,53,0.5)"}
+            fill={i === pts.length - 1 ? "var(--c-action)" : "color-mix(in srgb, var(--c-action) 50%, transparent)"}
             style={{animation:`bwPulse 2s ease infinite ${i===pts.length-1?"":`${i*0.1}s`}`}}/>
         ))}
       </svg>
@@ -1192,8 +1275,8 @@ function CalorieRing({ consumed, target }) {
       <svg width={SIZE} height={SIZE} style={{transform:"rotate(-90deg)"}}>
         <defs>
           <linearGradient id="calRingGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#a3e635"/>
-            <stop offset="100%" stopColor="#22d3ee"/>
+            <stop offset="0%" stopColor="var(--c-action)"/>
+            <stop offset="100%" stopColor="var(--c-3)"/>
           </linearGradient>
           <filter id="ringGlow">
             <feGaussianBlur stdDeviation="2" result="blur"/>
@@ -1303,10 +1386,10 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
           <span style={{fontSize:12}}>🎯</span>
           <span style={{fontSize:11,color:C.text,fontWeight:700,letterSpacing:0.5}}>Daily Rituals</span>
         </div>
-        <button onClick={()=>setShowAdd(s=>!s)} style={{width:28,height:28,borderRadius:"50%",background:"rgba(163,230,53,0.12)",border:"1px solid rgba(163,230,53,0.25)",color:C.accent,fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>+</button>
+        <button onClick={()=>setShowAdd(s=>!s)} style={{width:28,height:28,borderRadius:"50%",background:"color-mix(in srgb, var(--c-action) 12%, transparent)",border:"1px solid color-mix(in srgb, var(--c-action) 25%, transparent)",color:C.accent,fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>+</button>
       </div>
 
-      <div style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${allDone?"rgba(74,222,128,0.3)":C.border}`,borderRadius:20,overflow:"hidden",boxShadow:allDone?"0 0 24px rgba(74,222,128,0.12),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
+      <div style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${allDone?"color-mix(in srgb, var(--c-good) 30%, transparent)":C.border}`,borderRadius:20,overflow:"hidden",boxShadow:allDone?"0 0 24px color-mix(in srgb, var(--c-good) 12%, transparent),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
         {habits.length === 0 && (
           <div style={{padding:"20px 16px",textAlign:"center",color:C.text3,fontSize:13}}>No habits yet — tap + to add one</div>
         )}
@@ -1323,7 +1406,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
           return (
             <div key={h.id}
               ref={el=>rowEls.current[i]=el}
-              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:isDragging?"rgba(139,92,246,0.16)":done?"rgba(74,222,128,0.06)":"rgba(255,255,255,0.01)",boxShadow:isDragging?"0 14px 32px rgba(0,0,0,0.55)":"none",transform:xform,position:"relative",zIndex:isDragging?20:1,transition:isDragging?"none":"transform 0.34s cubic-bezier(0.34,1.46,0.5,1),background 0.25s,box-shadow 0.25s"}}>
+              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:isDragging?"color-mix(in srgb, var(--c-2) 16%, transparent)":done?"color-mix(in srgb, var(--c-good) 6%, transparent)":"rgba(255,255,255,0.01)",boxShadow:isDragging?"0 14px 32px rgba(0,0,0,0.55)":"none",transform:xform,position:"relative",zIndex:isDragging?20:1,transition:isDragging?"none":"transform 0.34s cubic-bezier(0.34,1.46,0.5,1),background 0.25s,box-shadow 0.25s"}}>
               {/* Grab handle — drag to reorder */}
               <div onPointerDown={(e)=>startDrag(e,i)} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} style={{color:isDragging?C.violet:C.text3,fontSize:16,flexShrink:0,opacity:isDragging?1:0.5,letterSpacing:-1,userSelect:"none",cursor:"grab",touchAction:"none",padding:"6px 3px",margin:"-6px -1px"}}>⠿</div>
               <button onClick={()=>toggle(h.id)} style={{width:34,height:34,borderRadius:"50%",flexShrink:0,border:`2px solid ${done?h.color:C.border2}`,background:done?h.color+"22":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,transition:"all 0.25s",animation:done?"habitCheck 0.35s ease":undefined,boxShadow:done?`0 0 14px ${h.color}66`:undefined}}>
@@ -1342,7 +1425,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
           <div style={{padding:"14px 16px",borderTop:`1px solid rgba(255,255,255,0.08)`,background:"rgba(255,255,255,0.03)"}}>
             <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:10}}>
               {HABIT_EMOJIS.map(e=>(
-                <button key={e} onClick={()=>setNewEmoji(e)} style={{width:34,height:34,borderRadius:10,background:newEmoji===e?"rgba(163,230,53,0.18)":C.bg4,border:newEmoji===e?"1px solid rgba(163,230,53,0.4)":"1px solid rgba(255,255,255,0.06)",fontSize:18}}>{e}</button>
+                <button key={e} onClick={()=>setNewEmoji(e)} style={{width:34,height:34,borderRadius:10,background:newEmoji===e?"color-mix(in srgb, var(--c-action) 18%, transparent)":C.bg4,border:newEmoji===e?"1px solid color-mix(in srgb, var(--c-action) 40%, transparent)":"1px solid rgba(255,255,255,0.06)",fontSize:18}}>{e}</button>
               ))}
             </div>
             <div style={{display:"flex",gap:8}}>
@@ -1359,7 +1442,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
 // ── WEATHER & UV (Open-Meteo, no key) ────────────────────────────────────────
 const WX_LABEL = c => c===0?"Clear":c<=3?"Partly Cloudy":c<=48?"Foggy":c<=57?"Drizzle":c<=67?"Rain":c<=77?"Snow":c<=82?"Showers":c===95?"Thunderstorm":"Cloudy";
 const UV_LABEL = v => v<=2?"Low":v<=5?"Moderate":v<=7?"High":v<=10?"Very High":"Extreme";
-const UV_COLOR = v => v<=2?"#10B981":v<=5?"#F59E0B":v<=7?"#FB923C":v<=10?"#F43F5E":"#8B5CF6";
+const UV_COLOR = v => v<=2?"var(--c-good)":v<=5?"var(--c-primary)":v<=7?"var(--c-orange)":v<=10?"var(--c-bad)":"var(--c-2)";
 const fmtHour = h => h===0?"12 AM":h<12?h+" AM":h===12?"12 PM":(h-12)+" PM";
 // Contiguous span of today's hours whose UV sits in the same band as the day's peak,
 // e.g. "11 AM – 3 PM". Returns null when no hours qualify (e.g. overnight).
@@ -1431,7 +1514,7 @@ function getNextPrayer(prayers) {
 }
 
 // ── WEATHER SVG ICONS ─────────────────────────────────────────────────────────
-function WxIcon({code,size=28,color="#EEF0F7"}) {
+function WxIcon({code,size=28,color="var(--ink)"}) {
   const isClear = code===0;
   const isCloud = code>=1&&code<=3;
   const isFog   = code>=45&&code<=48;
@@ -1517,10 +1600,10 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
   const E_COLORS = [C.red,C.amber,C.text2,C.green,C.accent];
 
   const TYPE_CONFIG = {
-    combo:{label:"Kickboxing + Gym", color:C.accent,  border:"rgba(245,158,11,0.35)",  bg:"rgba(245,158,11,0.10)",  glow:"rgba(245,158,11,0.20)"},
-    kb:   {label:"Kickboxing",       color:C.green,   border:"rgba(16,185,129,0.35)",  bg:"rgba(16,185,129,0.10)",  glow:"rgba(16,185,129,0.20)"},
-    gym:  {label:"Gym Day",          color:C.amber,   border:"rgba(245,158,11,0.35)",  bg:"rgba(245,158,11,0.10)",  glow:"rgba(245,158,11,0.20)"},
-    rest: {label:"Rest & Recover",   color:C.teal,    border:"rgba(6,182,212,0.30)",   bg:"rgba(6,182,212,0.08)",   glow:"rgba(6,182,212,0.15)"},
+    combo:{label:"Kickboxing + Gym", color:C.accent,  border:"color-mix(in srgb, var(--c-primary) 35%, transparent)", bg:"color-mix(in srgb, var(--c-primary) 10%, transparent)", glow:"color-mix(in srgb, var(--c-primary) 20%, transparent)"},
+    kb:   {label:"Kickboxing",       color:C.green,   border:"color-mix(in srgb, var(--c-good) 35%, transparent)",    bg:"color-mix(in srgb, var(--c-good) 10%, transparent)",    glow:"color-mix(in srgb, var(--c-good) 20%, transparent)"},
+    gym:  {label:"Gym Day",          color:C.amber,   border:"color-mix(in srgb, var(--c-primary) 35%, transparent)", bg:"color-mix(in srgb, var(--c-primary) 10%, transparent)", glow:"color-mix(in srgb, var(--c-primary) 20%, transparent)"},
+    rest: {label:"Rest & Recover",   color:C.teal,    border:"color-mix(in srgb, var(--c-3) 30%, transparent)",       bg:"color-mix(in srgb, var(--c-3) 8%, transparent)",        glow:"color-mix(in srgb, var(--c-3) 15%, transparent)"},
   };
   const tc = TYPE_CONFIG[type] || TYPE_CONFIG.gym;
 
@@ -1559,10 +1642,10 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
     <div style={{fontFamily:"'Space Grotesk',sans-serif",background:C.bg,minHeight:"100vh"}}>
 
       {/* ── COSMIC HERO HEADER ─────────────────────────────────────────── */}
-      <div className="hero-header" style={{position:"relative",overflow:"hidden",background:`linear-gradient(160deg,${C.bg} 0%,rgba(12,15,27,0.98) 100%)`,paddingBottom:24,borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+      <div className="hero-header" style={{position:"relative",overflow:"hidden",background:`linear-gradient(160deg,${C.bg} 0%,color-mix(in srgb, var(--bg-1) 98%, transparent) 100%)`,paddingBottom:24,borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
         <div className="orb-drift" style={{position:"absolute",top:-60,right:-40,width:280,height:280,borderRadius:"50%",background:`radial-gradient(circle,${tc.glow} 0%,transparent 65%)`,pointerEvents:"none",animationDuration:"26s"}}/>
-        <div className="orb-drift" style={{position:"absolute",bottom:-50,left:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.10) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"30s",animationDelay:"8s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:"30%",left:"40%",width:140,height:140,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.06) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"35s",animationDelay:"15s"}}/>
+        <div className="orb-drift" style={{position:"absolute",bottom:-50,left:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-2) 10%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"30s",animationDelay:"8s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:"30%",left:"40%",width:140,height:140,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-3) 6%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"35s",animationDelay:"15s"}}/>
         {setShowThemeSheet && (
           <button aria-label="Change accent theme" className="tap" onClick={()=>{ haptic(); setShowThemeSheet(true); }} style={{position:"absolute",top:"calc(env(safe-area-inset-top,20px) + 14px)",right:14,zIndex:5,width:34,height:34,borderRadius:11,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,0.12)",display:"flex",alignItems:"center",justifyContent:"center"}}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={C.text} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1572,7 +1655,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
         <div className="hero-row" style={{position:"relative",padding:"calc(env(safe-area-inset-top,20px) + 18px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:6}}>
           <div style={{flex:1,minWidth:0}}>
             <div style={{fontSize:12,fontWeight:500,color:C.text2,letterSpacing:0.3,marginBottom:4,fontFamily:"'Space Grotesk',sans-serif"}}>{DAYS_L[today.getDay()]} · {MONTHS_L[today.getMonth()]} {today.getDate()}</div>
-            <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:23,fontWeight:800,letterSpacing:1,lineHeight:1,color:C.text2,paddingRight:6}}>WELCOME<br/><span style={{display:"inline-block",fontSize:48,fontWeight:900,letterSpacing:-1.5,lineHeight:0.95,marginTop:3,background:"linear-gradient(100deg,#c4b5fd,#8B5CF6)",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent",paddingRight:4}}>ISH</span></div>
+            <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:23,fontWeight:800,letterSpacing:1,lineHeight:1,color:C.text2,paddingRight:6}}>WELCOME,<br/><span style={{display:"inline-block",fontSize:48,fontWeight:900,letterSpacing:-1.5,lineHeight:0.95,marginTop:3,background:"linear-gradient(105deg,var(--ink),var(--c-primary))",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent",paddingRight:4}}>ISH</span></div>
             <div style={{marginTop:14,display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
               <div style={{display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px",borderRadius:999,background:tc.bg,border:`1px solid ${tc.border}`}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:tc.color,animation:"liveOrb 2.5s ease-in-out infinite"}}/>
@@ -1581,8 +1664,8 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
             </div>
           </div>
           <div style={{position:"relative",flexShrink:0,alignSelf:"flex-end",marginRight:-6}}>
-            <div style={{position:"absolute",right:6,bottom:0,width:185,height:185,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.30) 0%,transparent 65%)",pointerEvents:"none"}}/>
-            <img src={ISH_CROPPED} alt="" aria-hidden="true" className="float hero-photo" style={{position:"relative",display:"block",height:208,width:"auto",objectFit:"contain",pointerEvents:"none",filter:"drop-shadow(0 12px 26px rgba(0,0,0,0.6))",maskImage:"linear-gradient(to bottom,#000 80%,transparent 100%)",WebkitMaskImage:"linear-gradient(to bottom,#000 80%,transparent 100%)"}}/>
+            <div style={{position:"absolute",right:14,bottom:10,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle, var(--glow,color-mix(in srgb, var(--c-2) 30%, transparent)) 0%,transparent 70%)",filter:"blur(6px)",pointerEvents:"none"}}/>
+            <img src={ISH_CROPPED} alt="" aria-hidden="true" className="float hero-photo" style={{position:"relative",display:"block",height:208,width:"auto",objectFit:"contain",pointerEvents:"none",maskImage:"radial-gradient(ellipse 78% 86% at 50% 42%, #000 52%, transparent 100%)",WebkitMaskImage:"radial-gradient(ellipse 78% 86% at 50% 42%, #000 52%, transparent 100%)"}}/>
           </div>
         </div>
 
@@ -1595,9 +1678,9 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
           </div>
           {/* Weather */}
           {wx ? (
-            <div style={{flex:1,background:"rgba(6,182,212,0.07)",border:"1px solid rgba(6,182,212,0.18)",borderRadius:16,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
+            <div style={{flex:1,background:"color-mix(in srgb, var(--c-3) 7%, transparent)",border:"1px solid color-mix(in srgb, var(--c-3) 18%, transparent)",borderRadius:16,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
               <div style={{position:"absolute",top:-10,right:-8,opacity:0.15,pointerEvents:"none"}}>
-                <WxIcon code={wx.code} size={56} color="#06B6D4"/>
+                <WxIcon code={wx.code} size={56} color="var(--c-3)"/>
               </div>
               <div style={{display:"flex",alignItems:"flex-end",gap:6,marginBottom:2}}>
                 <span style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:900,color:C.text,lineHeight:1}}>{wx.temp}°</span>
@@ -1610,7 +1693,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
               </div>
             </div>
           ) : (
-            <div style={{flex:1,background:"rgba(6,182,212,0.05)",border:"1px solid rgba(6,182,212,0.12)",borderRadius:16,padding:"12px 14px",position:"relative",overflow:"hidden",display:"flex",flexDirection:"column",justifyContent:"center",gap:8}}>
+            <div style={{flex:1,background:"color-mix(in srgb, var(--c-3) 5%, transparent)",border:"1px solid color-mix(in srgb, var(--c-3) 12%, transparent)",borderRadius:16,padding:"12px 14px",position:"relative",overflow:"hidden",display:"flex",flexDirection:"column",justifyContent:"center",gap:8}}>
               <div style={{position:"absolute",top:0,bottom:0,width:"55%",background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)",animation:"shimmerMove 1.6s ease-in-out infinite"}}/>
               <div style={{height:14,width:"50%",borderRadius:6,background:"rgba(255,255,255,0.06)"}}/>
               <div style={{height:9,width:"34%",borderRadius:5,background:"rgba(255,255,255,0.05)"}}/>
@@ -1621,8 +1704,8 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
       </div>
 
       {/* ── PRAYER TIMES ──────────────────────────────────────────────── */}
-      <div style={{margin:"14px 16px 0",background:"rgba(139,92,246,0.08)",border:"1px solid rgba(139,92,246,0.20)",borderRadius:20,padding:"14px 16px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-20,right:-16,width:100,height:100,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.15) 0%,transparent 70%)",pointerEvents:"none"}}/>
+      <div style={{margin:"14px 16px 0",background:"color-mix(in srgb, var(--c-2) 8%, transparent)",border:"1px solid color-mix(in srgb, var(--c-2) 20%, transparent)",borderRadius:20,padding:"14px 16px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-20,right:-16,width:100,height:100,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-2) 15%, transparent) 0%,transparent 70%)",pointerEvents:"none"}}/>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.violet} strokeWidth="2" strokeLinecap="round">
@@ -1639,9 +1722,9 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
             const isCurrent = currentPrayerKey===key;
             const prayed = !!todayPrayed[key];
             return (
-              <button key={key} onClick={()=>togglePrayer(key)} aria-pressed={prayed} style={{flex:1,textAlign:"center",padding:"8px 4px",borderRadius:12,cursor:"pointer",position:"relative",background:prayed?"rgba(16,185,129,0.16)":isCurrent?"rgba(139,92,246,0.20)":"rgba(255,255,255,0.04)",border:prayed?"1px solid rgba(16,185,129,0.45)":isCurrent?"1px solid rgba(139,92,246,0.45)":"1px solid rgba(255,255,255,0.07)",animation:isCurrent&&!prayed?"prayerNext 3s ease-in-out infinite":undefined,transition:"background 0.2s,border-color 0.2s"}}>
+              <button key={key} onClick={()=>togglePrayer(key)} aria-pressed={prayed} style={{flex:1,textAlign:"center",padding:"8px 4px",borderRadius:12,cursor:"pointer",position:"relative",background:prayed?"color-mix(in srgb, var(--c-good) 16%, transparent)":isCurrent?"color-mix(in srgb, var(--c-2) 20%, transparent)":"rgba(255,255,255,0.04)",border:prayed?"1px solid color-mix(in srgb, var(--c-good) 45%, transparent)":isCurrent?"1px solid color-mix(in srgb, var(--c-2) 45%, transparent)":"1px solid rgba(255,255,255,0.07)",animation:isCurrent&&!prayed?"prayerNext 3s ease-in-out infinite":undefined,transition:"background 0.2s,border-color 0.2s"}}>
                 <div style={{position:"absolute",top:4,right:5,width:13,height:13,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:prayed?C.green:"transparent",border:prayed?"none":"1px solid rgba(255,255,255,0.18)"}}>
-                  {prayed&&<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#06210f" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>}
+                  {prayed&&<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>}
                 </div>
                 <div style={{fontSize:9,fontWeight:700,color:prayed?C.green:isCurrent?C.violet:C.text2,letterSpacing:0.3,marginBottom:3,textTransform:"uppercase"}}>{PRAYER_NAMES[i]}</div>
                 <div style={{fontFamily:"'Syne',sans-serif",fontSize:11,fontWeight:800,color:prayed?C.green:isCurrent?C.violet:C.text,letterSpacing:-0.3}}>{formatTime12(timeStr)}</div>
@@ -1714,7 +1797,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
       {/* Nutrition + Body moved to the Health tab */}
 
       {/* ── WATER TRACKER ──────────────────────────────────────────────── */}
-      <div className="slide-up" style={{margin:"12px 16px 0",background:"rgba(59,130,246,0.06)",border:"1px solid rgba(59,130,246,0.15)",borderRadius:20,padding:"14px 16px",animationDelay:"0.10s"}}>
+      <div className="slide-up" style={{margin:"12px 16px 0",background:"color-mix(in srgb, var(--c-blue) 6%, transparent)",border:"1px solid color-mix(in srgb, var(--c-blue) 15%, transparent)",borderRadius:20,padding:"14px 16px",animationDelay:"0.10s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",gap:7}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.blue} strokeWidth="2" strokeLinecap="round"><path d="M12 2C8 8 4 12.5 4 16a8 8 0 0016 0c0-3.5-4-8-8-14z"/></svg>
@@ -1726,7 +1809,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
           {Array.from({length:BOTTLE_GOAL}).map((_,i)=>{
             const filled=i<wCount;
             return (
-              <button key={i} onClick={()=>setWater({date:dKey,count: wCount===i+1 ? i : i+1})} aria-label={`Bottle ${i+1}`} style={{flex:`0 0 auto`,width:44,height:64,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",background:filled?"rgba(59,130,246,0.16)":"rgba(255,255,255,0.03)",border:`1px solid ${filled?"rgba(59,130,246,0.5)":"rgba(255,255,255,0.10)"}`,boxShadow:filled?"0 0 16px rgba(59,130,246,0.30)":"none",transition:"all 0.25s cubic-bezier(0.34,1.4,0.64,1)"}}>
+              <button key={i} onClick={()=>setWater({date:dKey,count: wCount===i+1 ? i : i+1})} aria-label={`Bottle ${i+1}`} style={{flex:`0 0 auto`,width:44,height:64,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",background:filled?"color-mix(in srgb, var(--c-blue) 16%, transparent)":"rgba(255,255,255,0.03)",border:`1px solid ${filled?"color-mix(in srgb, var(--c-blue) 50%, transparent)":"rgba(255,255,255,0.10)"}`,boxShadow:filled?"0 0 16px color-mix(in srgb, var(--c-blue) 30%, transparent)":"none",transition:"all 0.25s cubic-bezier(0.34,1.4,0.64,1)"}}>
                 <svg width="22" height="34" viewBox="0 0 24 38" fill="none" stroke={filled?C.blue:C.text3} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 2h6"/>
                   <path d="M9 2v4.2a3 3 0 01-.7 1.9L6.6 10A4 4 0 005.8 12.4V32a4 4 0 004 4h4.4a4 4 0 004-4V12.4a4 4 0 00-.8-2.4l-1.7-1.9a3 3 0 01-.7-1.9V2"/>
@@ -1736,13 +1819,13 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
             );
           })}
         </div>
-        <button onClick={addWater} style={{width:"100%",background:wCount>=BOTTLE_GOAL?"rgba(59,130,246,0.18)":"rgba(59,130,246,0.10)",border:`1px solid rgba(59,130,246,${wCount>=BOTTLE_GOAL?"0.40":"0.16"})`,borderRadius:10,padding:"8px 0",fontFamily:"'Space Grotesk',sans-serif",fontSize:12,fontWeight:700,color:C.blue,letterSpacing:0.3}}>{wCount>=BOTTLE_GOAL?"✓ Goal reached — tap to reset":"+ Add Bottle"}</button>
+        <button onClick={addWater} style={{width:"100%",background:wCount>=BOTTLE_GOAL?"color-mix(in srgb, var(--c-blue) 18%, transparent)":"color-mix(in srgb, var(--c-blue) 10%, transparent)",border:`1px solid color-mix(in srgb, var(--c-blue) ${wCount>=BOTTLE_GOAL?"40":"16"}%, transparent)`,borderRadius:10,padding:"8px 0",fontFamily:"'Space Grotesk',sans-serif",fontSize:12,fontWeight:700,color:C.blue,letterSpacing:0.3}}>{wCount>=BOTTLE_GOAL?"✓ Goal reached — tap to reset":"+ Add Bottle"}</button>
       </div>
 
       {/* ── DAILY QUOTE ─────────────────────────────────────────────────── */}
-      <div className="slide-up" style={{margin:"12px 16px 24px",background:"rgba(139,92,246,0.06)",border:"1px solid rgba(139,92,246,0.15)",borderRadius:20,padding:"18px 20px",position:"relative",overflow:"hidden",animationDelay:"0.14s"}}>
+      <div className="slide-up" style={{margin:"12px 16px 24px",background:"color-mix(in srgb, var(--c-2) 6%, transparent)",border:"1px solid color-mix(in srgb, var(--c-2) 15%, transparent)",borderRadius:20,padding:"18px 20px",position:"relative",overflow:"hidden",animationDelay:"0.14s"}}>
         <div className="scan-overlay"/>
-        <div style={{position:"absolute",top:-8,right:4,fontFamily:"Georgia,serif",fontSize:72,color:"rgba(139,92,246,0.07)",lineHeight:1,pointerEvents:"none",userSelect:"none"}}>❝</div>
+        <div style={{position:"absolute",top:-8,right:4,fontFamily:"Georgia,serif",fontSize:72,color:"color-mix(in srgb, var(--c-2) 7%, transparent)",lineHeight:1,pointerEvents:"none",userSelect:"none"}}>❝</div>
         <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
           <div style={{width:4,height:4,borderRadius:"50%",background:C.violet,animation:"liveOrb 2.5s ease-in-out infinite"}}/>
           <span style={{fontSize:10,fontWeight:700,color:C.violet,letterSpacing:1.2,textTransform:"uppercase"}}>Daily Inspiration</span>
@@ -1778,9 +1861,9 @@ function GymHeatmap({ attend }) {
   for (let i = 0; i < 4; i++) weeks.push(cells.slice(i * 7, i * 7 + 7));
 
   const getCellStyle = (cell) => {
-    if (cell.didGym && cell.didKb) return { bg: "#a3e635", glow: "0 0 8px rgba(163,230,53,0.7)", opacity: 1 };
-    if (cell.didGym) return { bg: "#fbbf24", glow: "0 0 6px rgba(251,191,36,0.5)", opacity: 1 };
-    if (cell.didKb) return { bg: "#4ade80", glow: "0 0 6px rgba(74,222,128,0.5)", opacity: 1 };
+    if (cell.didGym && cell.didKb) return { bg: "var(--c-action)", glow: "0 0 8px color-mix(in srgb, var(--c-action) 70%, transparent)", opacity: 1 };
+    if (cell.didGym) return { bg: "var(--c-primary)", glow: "0 0 6px color-mix(in srgb, var(--c-primary) 50%, transparent)", opacity: 1 };
+    if (cell.didKb) return { bg: "var(--c-good)", glow: "0 0 6px color-mix(in srgb, var(--c-good) 50%, transparent)", opacity: 1 };
     if (!cell.wasWorkoutDay) return { bg: "rgba(255,255,255,0.04)", glow: "none", opacity: 0.6 }; // rest day
     return { bg: "rgba(255,255,255,0.02)", glow: "none", opacity: 1 }; // missed workout day
   };
@@ -1805,7 +1888,7 @@ ${cell.didGym?"Gym ":""}${cell.didKb?"KB":""}`}
                   aspectRatio:"1",
                   borderRadius:4,
                   background:cs.bg,
-                  boxShadow:cell.isToday?`0 0 0 2px #a3e635, ${cs.glow}`:cs.glow,
+                  boxShadow:cell.isToday?`0 0 0 2px var(--c-action), ${cs.glow}`:cs.glow,
                   opacity:cs.opacity,
                   animation:cell.didGym||cell.didKb?`heatPop 0.3s ${wi*0.05+ci*0.02}s both`:undefined,
                   transition:"background 0.3s"
@@ -1816,7 +1899,7 @@ ${cell.didGym?"Gym ":""}${cell.didKb?"KB":""}`}
       ))}
       {/* Legend */}
       <div style={{display:"flex",gap:10,marginTop:10,flexWrap:"wrap"}}>
-        {[["#a3e635","Gym + KB"],["#fbbf24","Gym"],["#4ade80","Kickboxing"],["rgba(255,255,255,0.06)","Missed"]].map(([c,l])=>(
+        {[["var(--c-action)","Gym + KB"],["var(--c-primary)","Gym"],["var(--c-good)","Kickboxing"],["rgba(255,255,255,0.06)","Missed"]].map(([c,l])=>(
           <div key={l} style={{display:"flex",alignItems:"center",gap:4}}>
             <div style={{width:8,height:8,borderRadius:2,background:c}}/>
             <span style={{fontSize:9,color:C.text3}}>{l}</span>
@@ -1847,14 +1930,16 @@ function WeightLogModal({ bwLog, setBwLog, onClose }) {
     newLog.sort((a, b) => a.date.localeCompare(b.date));
     setBwLog(newLog);
     setSaved(true);
+    haptic(18);
+    toast(`Weight saved — ${w} lbs`,"success");
     setTimeout(onClose, 800);
   };
 
   const last5 = [...bwLog].slice(-5).reverse();
 
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",zIndex:250,display:"flex",alignItems:"flex-end",justifyContent:"center"}} onClick={onClose}>
-      <div onClick={e=>e.stopPropagation()} className="slide-up" style={{background:"rgba(5,5,8,0.97)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"24px 24px 0 0",padding:"24px 20px calc(24px + env(safe-area-inset-bottom))",width:"100%",maxWidth:430,boxShadow:"0 -12px 48px rgba(0,0,0,0.5)"}}>
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",zIndex:250,display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"backdropFade 0.25s ease"}} onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"color-mix(in srgb, var(--bg) 97%, transparent)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"24px 24px 0 0",padding:"24px 20px calc(24px + env(safe-area-inset-bottom))",width:"100%",maxWidth:430,boxShadow:"0 -12px 48px rgba(0,0,0,0.5)",animation:"sheetUp 0.38s cubic-bezier(0.22,1,0.36,1)"}}>
         <div style={{fontSize:18,fontWeight:800,marginBottom:4}}>⚖️ Log Weight</div>
         <div style={{fontSize:12,color:C.text2,marginBottom:20}}>Goal: {PROFILE.currentWeight} → {PROFILE.goalWeight} lbs (lean bulk)</div>
         <div style={{display:"flex",gap:10,marginBottom:20}}>
@@ -1865,7 +1950,7 @@ function WeightLogModal({ bwLog, setBwLog, onClose }) {
             value={inputVal}
             onChange={e=>{setInputVal(e.target.value);setInputErr("");}}
             onKeyDown={e=>e.key==="Enter"&&handleSave()}
-            style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",border:`1px solid ${inputErr?"rgba(248,113,113,0.5)":"rgba(255,255,255,0.15)"}`,borderRadius:14,padding:"14px 16px",fontSize:18,fontWeight:700,color:C.text}}
+            style={{flex:1,background:"rgba(255,255,255,0.07)",backdropFilter:"blur(8px)",border:`1px solid ${inputErr?"color-mix(in srgb, var(--c-bad) 50%, transparent)":"rgba(255,255,255,0.15)"}`,borderRadius:14,padding:"14px 16px",fontSize:18,fontWeight:700,color:C.text}}
             autoFocus
           />
           <button onClick={handleSave} style={{background:saved?C.green:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",borderRadius:14,padding:"14px 20px",fontSize:15,fontWeight:800,color:"white",minWidth:80,transition:"background 0.3s"}}>
@@ -1948,7 +2033,7 @@ function PRTracker({ prLog, setPrLog, gymSplit }) {
     <div style={{margin:"0 16px 12px",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:18,padding:"14px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:allExercises.length?12:0}}>
         <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>🏆 PR Tracker</div>
-        <button onClick={()=>setShowForm(s=>!s)} style={{padding:"5px 12px",borderRadius:10,background:showForm?"rgba(255,255,255,0.07)":"rgba(163,230,53,0.14)",border:`1px solid ${showForm?"rgba(255,255,255,0.12)":"rgba(163,230,53,0.28)"}`,color:showForm?C.text2:C.accent,fontSize:11,fontWeight:700}}>
+        <button onClick={()=>setShowForm(s=>!s)} style={{padding:"5px 12px",borderRadius:10,background:showForm?"rgba(255,255,255,0.07)":"color-mix(in srgb, var(--c-action) 14%, transparent)",border:`1px solid ${showForm?"rgba(255,255,255,0.12)":"color-mix(in srgb, var(--c-action) 28%, transparent)"}`,color:showForm?C.text2:C.accent,fontSize:11,fontWeight:700}}>
           {showForm?"Cancel":"+ Log PR"}
         </button>
       </div>
@@ -1959,7 +2044,7 @@ function PRTracker({ prLog, setPrLog, gymSplit }) {
             <input value={weight} onChange={e=>setWeight(e.target.value)} placeholder="Weight (lbs)" type="number" inputMode="decimal" style={{flex:1,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}/>
             <input value={reps} onChange={e=>setReps(e.target.value)} placeholder="Reps" type="number" inputMode="numeric" style={{width:80,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:10,padding:"9px 12px",fontSize:13,color:C.text,outline:"none"}}/>
           </div>
-          <button onClick={logPR} disabled={!ex.trim()||!weight} style={{width:"100%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",borderRadius:10,padding:"11px 0",fontSize:13,fontWeight:800,color:"#050508",opacity:!ex.trim()||!weight?0.4:1}}>Save PR</button>
+          <button onClick={logPR} disabled={!ex.trim()||!weight} style={{width:"100%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",borderRadius:10,padding:"11px 0",fontSize:13,fontWeight:800,color:"var(--on-accent)",opacity:!ex.trim()||!weight?0.4:1}}>Save PR</button>
         </div>
       )}
       {allExercises.length>0&&(
@@ -1969,7 +2054,7 @@ function PRTracker({ prLog, setPrLog, gymSplit }) {
             const todayE = getTodayEntry(name);
             const isNew = todayE && todayE.weight >= best;
             return(
-              <div key={name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",background:"rgba(255,255,255,0.04)",borderRadius:10,border:`1px solid ${isNew?"rgba(163,230,53,0.25)":"rgba(255,255,255,0.07)"}`}}>
+              <div key={name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",background:"rgba(255,255,255,0.04)",borderRadius:10,border:`1px solid ${isNew?"color-mix(in srgb, var(--c-action) 25%, transparent)":"rgba(255,255,255,0.07)"}`}}>
                 <div>
                   <div style={{fontSize:13,fontWeight:700,color:C.text}}>{name}</div>
                   {todayE&&<div style={{fontSize:11,color:C.text2}}>Today: {todayE.weight}lbs{todayE.reps?` × ${todayE.reps}`:""}</div>}
@@ -2023,7 +2108,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
   const pct = (v,t)=>Math.min(100,Math.round(v/t*100));
 
 
-  const banColors = {combo:[C.accent,"rgba(167,139,250,0.1)","rgba(167,139,250,0.22)"],kb:[C.green,"rgba(52,211,153,0.1)","rgba(52,211,153,0.22)"],gym:[C.amber,"rgba(251,191,36,0.1)","rgba(251,191,36,0.2)"],rest:[C.blue,"rgba(96,165,250,0.1)","rgba(96,165,250,0.2)"]};
+  const banColors = {combo:[C.accent,"rgba(167,139,250,0.1)","rgba(167,139,250,0.22)"],kb:[C.green,"color-mix(in srgb, var(--c-good) 10%, transparent)","color-mix(in srgb, var(--c-good) 22%, transparent)"],gym:[C.amber,"color-mix(in srgb, var(--c-primary) 10%, transparent)","color-mix(in srgb, var(--c-primary) 20%, transparent)"],rest:[C.blue,"rgba(96,165,250,0.1)","rgba(96,165,250,0.2)"]};
   const banLbl = {combo:"Kickboxing + Gym",kb:"Kickboxing Day",gym:"Gym Day",rest:"Rest Day"};
   const [col,bg,bdr] = banColors[effType];
 
@@ -2059,6 +2144,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
   const saveFavorite = (result) => {
     const meal = {name:result.name,cal:num(result.calories),carb:num(result.carbs),prot:num(result.protein),fat:num(result.fat),fiber:num(result.fiber)};
     setFavorites(prev=>prev.find(f=>f.name===meal.name)?prev:[meal,...prev]);
+    haptic(); toast("Saved to favorites","success");
   };
   const saveMealToFavs = (m) => {
     setFavorites(prev=>prev.find(f=>f.name===m.name)?prev:[{name:m.name,cal:num(m.cal),carb:num(m.carb),prot:num(m.prot),fat:num(m.fat),fiber:num(m.fiber)},...prev]);
@@ -2098,8 +2184,8 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
 
       <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 48px) 20px 14px",position:"relative",overflow:"hidden"}}>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(16,185,129,0.14) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.10) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-good) 14%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-3) 10%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
         <div className="pill-badge" style={{marginBottom:10,position:"relative"}}>
           <DumbbellIcon size={12} color={C.amber}/>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Health</span>
@@ -2114,7 +2200,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
           {off===0?"Today · ":""}{DAYS_L[vdate.getDay()]}, {MONTHS_S[vdate.getMonth()]} {vdate.getDate()}
         </div>
         <button aria-label="Next day" onClick={()=>setOff(o=>o+1)} style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(255,255,255,0.12)`,color:C.text2,width:36,height:36,borderRadius:"50%",fontSize:18}}>›</button>
-        {off!==0&&<button onClick={()=>setOff(0)} style={{background:"rgba(163,230,53,0.12)",color:C.accent,borderRadius:20,padding:"4px 12px",fontSize:11,fontWeight:700}}>Today</button>}
+        {off!==0&&<button onClick={()=>setOff(0)} style={{background:"color-mix(in srgb, var(--c-action) 12%, transparent)",color:C.accent,borderRadius:20,padding:"4px 12px",fontSize:11,fontWeight:700}}>Today</button>}
       </div>
 
       {/* Day type toggle */}
@@ -2161,8 +2247,8 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       <div style={{margin:"0 16px 12px",borderRadius:20,padding:"16px 18px",background:`rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.07)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${effType==="combo"?"163,230,53":effType==="kb"?"74,222,128":effType==="gym"?"251,191,36":"163,230,53"},0.22)`}}>
         <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:col,marginBottom:8}}>{banLbl[effType]}</div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-          {info.isKick&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.green,background:"rgba(52,211,153,0.12)",border:"1px solid rgba(52,211,153,0.25)"}}><GloveIcon size={13} color={C.green}/>Kickboxing</span>}
-          {info.gymSplit&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.amber,background:"rgba(251,191,36,0.12)",border:"1px solid rgba(251,191,36,0.25)"}}><DumbbellIcon size={13} color={C.amber}/>{info.gymSplit}</span>}
+          {info.isKick&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.green,background:"color-mix(in srgb, var(--c-good) 12%, transparent)",border:"1px solid color-mix(in srgb, var(--c-good) 25%, transparent)"}}><GloveIcon size={13} color={C.green}/>Kickboxing</span>}
+          {info.gymSplit&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.amber,background:"color-mix(in srgb, var(--c-primary) 12%, transparent)",border:"1px solid color-mix(in srgb, var(--c-primary) 25%, transparent)"}}><DumbbellIcon size={13} color={C.amber}/>{info.gymSplit}</span>}
           {effType==="rest"&&<span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:20,color:C.blue,background:"rgba(96,165,250,0.12)",border:"1px solid rgba(96,165,250,0.25)"}}><MoonIcon size={13} color={C.blue}/>Low Carb Recovery</span>}
         </div>
       </div>
@@ -2175,7 +2261,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
             {GYM_SPLITS.map((sp,idx)=>{
               const on = curSplitIdx===idx;
               return (
-                <button key={sp} onClick={()=>chooseSplit(idx)} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:13,fontSize:11.5,fontWeight:700,lineHeight:1.15,textAlign:"center",background:on?"rgba(245,158,11,0.14)":"rgba(255,255,255,0.04)",border:`1px solid ${on?C.amber:"rgba(255,255,255,0.09)"}`,color:on?C.amber:C.text2,boxShadow:on?"0 0 16px rgba(245,158,11,0.22)":undefined,transition:"all 0.2s cubic-bezier(0.34,1.56,0.64,1)"}}>
+                <button key={sp} onClick={()=>chooseSplit(idx)} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:13,fontSize:11.5,fontWeight:700,lineHeight:1.15,textAlign:"center",background:on?"color-mix(in srgb, var(--c-primary) 14%, transparent)":"rgba(255,255,255,0.04)",border:`1px solid ${on?C.amber:"rgba(255,255,255,0.09)"}`,color:on?C.amber:C.text2,boxShadow:on?"0 0 16px color-mix(in srgb, var(--c-primary) 22%, transparent)":undefined,transition:"all 0.2s cubic-bezier(0.34,1.56,0.64,1)"}}>
                   <DumbbellIcon size={15} color={on?C.amber:C.text3}/>
                   <span>{sp}</span>
                 </button>
@@ -2202,11 +2288,11 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
           <div>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
               <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7}}>Did you show up?</div>
-              {info.isGym&&gymStreak>0&&<div style={{fontSize:11,fontWeight:800,color:C.amber,background:"rgba(251,191,36,0.12)",border:"1px solid rgba(251,191,36,0.28)",borderRadius:20,padding:"2px 9px"}}>🔥 {gymStreak} gym {gymStreak===1?"day":"days"}</div>}
+              {info.isGym&&gymStreak>0&&<div style={{fontSize:11,fontWeight:800,color:C.amber,background:"color-mix(in srgb, var(--c-primary) 12%, transparent)",border:"1px solid color-mix(in srgb, var(--c-primary) 28%, transparent)",borderRadius:20,padding:"2px 9px"}}>🔥 {gymStreak} gym {gymStreak===1?"day":"days"}</div>}
             </div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
-              {info.isKick&&<button onClick={()=>toggleAtt("kb")} style={{flex:1,minWidth:130,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.kb?"rgba(74,222,128,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.kb?"rgba(74,222,128,0.14)":"rgba(255,255,255,0.04)",color:attend[dKey]?.kb?C.green:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="kb"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.kb?`0 0 18px rgba(74,222,128,0.35)`:undefined}}>{attend[dKey]?.kb?<CheckIcon size={15} color={C.green}/>:<GloveIcon size={15} color={C.text2}/>}{attend[dKey]?.kb?"Kickboxing done":"Mark Kickboxing"}</button>}
-              {info.isGym&&<button onClick={()=>toggleAtt("gym")} style={{flex:1,minWidth:130,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.gym?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.gym?"rgba(251,191,36,0.12)":"rgba(255,255,255,0.04)",color:attend[dKey]?.gym?C.amber:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="gym"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.gym?`0 0 18px rgba(251,191,36,0.35)`:undefined}}>{attend[dKey]?.gym?<CheckIcon size={15} color={C.amber}/>:<DumbbellIcon size={15} color={C.text2}/>}{attend[dKey]?.gym?"Gym done":"Mark Gym"}</button>}
+              {info.isKick&&<button onClick={()=>toggleAtt("kb")} style={{flex:1,minWidth:130,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.kb?"color-mix(in srgb, var(--c-good) 40%, transparent)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.kb?"color-mix(in srgb, var(--c-good) 14%, transparent)":"rgba(255,255,255,0.04)",color:attend[dKey]?.kb?C.green:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="kb"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.kb?`0 0 18px color-mix(in srgb, var(--c-good) 35%, transparent)`:undefined}}>{attend[dKey]?.kb?<CheckIcon size={15} color={C.green}/>:<GloveIcon size={15} color={C.text2}/>}{attend[dKey]?.kb?"Kickboxing done":"Mark Kickboxing"}</button>}
+              {info.isGym&&<button onClick={()=>toggleAtt("gym")} style={{flex:1,minWidth:130,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7,padding:"11px 8px",borderRadius:12,border:`1px solid ${attend[dKey]?.gym?"color-mix(in srgb, var(--c-primary) 40%, transparent)":"rgba(255,255,255,0.10)"}`,background:attend[dKey]?.gym?"color-mix(in srgb, var(--c-primary) 12%, transparent)":"rgba(255,255,255,0.04)",color:attend[dKey]?.gym?C.amber:C.text2,fontSize:13,fontWeight:700,animation:lastAtt==="gym"?"attMarkDone 0.55s ease":undefined,boxShadow:attend[dKey]?.gym?`0 0 18px color-mix(in srgb, var(--c-primary) 35%, transparent)`:undefined}}>{attend[dKey]?.gym?<CheckIcon size={15} color={C.amber}/>:<DumbbellIcon size={15} color={C.text2}/>}{attend[dKey]?.gym?"Gym done":"Mark Gym"}</button>}
             </div>
           </div>
         )}
@@ -2222,12 +2308,12 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 
       {/* Log food */}
       <div style={{padding:"0 16px"}}>
-        <button onClick={()=>setShowChat(true)} style={{width:"100%",background:`linear-gradient(135deg,rgba(163,230,53,0.14),rgba(20,184,166,0.08))`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(163,230,53,0.28)",borderRadius:20,padding:"20px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,boxShadow:"0 4px 24px rgba(163,230,53,0.1)",animation:"glow 3s ease infinite"}}>
+        <button onClick={()=>setShowChat(true)} style={{width:"100%",background:`linear-gradient(135deg,color-mix(in srgb, var(--c-action) 14%, transparent),rgba(20,184,166,0.08))`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid color-mix(in srgb, var(--c-action) 28%, transparent)",borderRadius:20,padding:"20px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,boxShadow:"0 4px 24px color-mix(in srgb, var(--c-action) 10%, transparent)",animation:"glow 3s ease infinite"}}>
           <div style={{textAlign:"left"}}>
             <div style={{fontSize:17,fontWeight:800,color:C.text,marginBottom:4}}>🤖 Log Food with AI</div>
             <div style={{fontSize:12,color:C.text2}}>Type any food · snap a photo · instant macros</div>
           </div>
-          <div style={{width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginLeft:12,boxShadow:"0 4px 16px rgba(163,230,53,0.35)"}}>→</div>
+          <div style={{width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,border:"none",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginLeft:12,boxShadow:"0 4px 16px color-mix(in srgb, var(--c-action) 35%, transparent)"}}>→</div>
         </button>
 
         {/* Meal list */}
@@ -2245,7 +2331,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
           const curMult = m._mult || 1;
           const isFav = favorites.some(f=>f.name===(m._base||m).name||f.name===m.name.replace(/ ×[\d.]+$/,""));
           return (
-          <div key={m.id} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"rgba(163,230,53,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s"}}>
+          <div key={m.id} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"color-mix(in srgb, var(--c-action) 28%, transparent)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s"}}>
             {/* Tap header to expand */}
             <div onClick={()=>{setExpandedMeal(isExp?null:m.id);setCustomServ("");}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 14px",cursor:"pointer"}}>
               <div style={{flex:1,minWidth:0}}>
@@ -2274,7 +2360,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
                   <span style={{fontSize:11,color:C.text3,flexShrink:0}}>servings</span>
                 </div>
                 <div style={{display:"flex",gap:8}}>
-                  <button onClick={()=>saveMealToFavs(m._base||m)} style={{flex:1,padding:"9px 0",borderRadius:10,fontSize:12,fontWeight:700,background:isFav?"rgba(251,191,36,0.18)":"rgba(251,191,36,0.08)",border:`1px solid ${isFav?"rgba(251,191,36,0.4)":"rgba(251,191,36,0.22)"}`,color:C.amber}}>
+                  <button onClick={()=>saveMealToFavs(m._base||m)} style={{flex:1,padding:"9px 0",borderRadius:10,fontSize:12,fontWeight:700,background:isFav?"color-mix(in srgb, var(--c-primary) 18%, transparent)":"color-mix(in srgb, var(--c-primary) 8%, transparent)",border:`1px solid ${isFav?"color-mix(in srgb, var(--c-primary) 40%, transparent)":"color-mix(in srgb, var(--c-primary) 22%, transparent)"}`,color:C.amber}}>
                     {isFav?"⭐ Saved":"⭐ Save to Library"}
                   </button>
                   <button onClick={()=>delMeal(m.id)} style={{padding:"9px 14px",borderRadius:10,fontSize:12,fontWeight:700,background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.22)",color:C.red}}>
@@ -2290,7 +2376,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 
       {/* Weight log shortcut */}
       <div style={{margin:"12px 16px 0"}}>
-        <button onClick={()=>setShowBwModal(true)} style={{width:"100%",background:"rgba(163,230,53,0.07)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(163,230,53,0.18)",borderRadius:16,padding:"13px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <button onClick={()=>setShowBwModal(true)} style={{width:"100%",background:"color-mix(in srgb, var(--c-action) 7%, transparent)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid color-mix(in srgb, var(--c-action) 18%, transparent)",borderRadius:16,padding:"13px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{textAlign:"left"}}>
             <div style={{fontSize:14,fontWeight:700,color:C.text}}>⚖️ Log Body Weight</div>
             <div style={{fontSize:11,color:C.text3,marginTop:2}}>{bwLog&&bwLog.length>0?`Last: ${bwLog[bwLog.length-1].weight} lbs on ${bwLog[bwLog.length-1].date}`:"Start tracking your lean bulk progress"}</div>
@@ -2335,7 +2421,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       <div style={{padding:"0 16px",marginBottom:16}}>
         <div style={{fontSize:10,color:C.text3,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>⭐ Saved Favorites</div>
         {favorites.length===0?(
-          <div style={{background:"rgba(251,191,36,0.05)",border:"1px dashed rgba(251,191,36,0.22)",borderRadius:14,padding:"16px 14px",textAlign:"center"}}>
+          <div style={{background:"color-mix(in srgb, var(--c-primary) 5%, transparent)",border:"1px dashed color-mix(in srgb, var(--c-primary) 22%, transparent)",borderRadius:14,padding:"16px 14px",textAlign:"center"}}>
             <div style={{fontSize:24,marginBottom:6}}>⭐</div>
             <div style={{fontSize:12,color:C.text2,lineHeight:1.4}}>No favorites yet. Tap a logged meal, then <strong style={{color:C.amber}}>Save to Library</strong> to quick-add it any day.</div>
           </div>
@@ -2346,7 +2432,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
                 <div style={{fontSize:11,color:C.text3,marginTop:2}}>{fav.cal} cal · {fav.prot}g P · {fav.carb}g C · {fav.fat}g F</div>
               </div>
               <div style={{display:"flex",gap:6}}>
-                <button onClick={()=>setMeals(prev=>({...prev,[dKey]:[...(prev[dKey]||[]),{...fav,id:crypto.randomUUID()}]}))} style={{background:"rgba(52,211,153,0.12)",border:"1px solid rgba(52,211,153,0.25)",borderRadius:8,padding:"6px 10px",fontSize:13,color:C.green,fontWeight:700}}>+</button>
+                <button onClick={()=>setMeals(prev=>({...prev,[dKey]:[...(prev[dKey]||[]),{...fav,id:crypto.randomUUID()}]}))} style={{background:"color-mix(in srgb, var(--c-good) 12%, transparent)",border:"1px solid color-mix(in srgb, var(--c-good) 25%, transparent)",borderRadius:8,padding:"6px 10px",fontSize:13,color:C.green,fontWeight:700}}>+</button>
                 <button onClick={()=>removeFavorite(fav.name)} style={{background:"rgba(255,255,255,0.05)",border:`1px solid rgba(255,255,255,0.10)`,borderRadius:8,padding:"6px 10px",fontSize:13,color:C.text3}}>×</button>
               </div>
             </div>
@@ -2415,8 +2501,8 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
       onDragEnd={()=>{ suppDragId.current=null; setSuppDragOver(null); }}
       onDragOver={e=>{ e.preventDefault(); setSuppDragOver(s.id); }}
       onDrop={e=>{ e.preventDefault(); if(suppDragId.current&&suppDragId.current!==s.id) moveSupp(suppDragId.current,s.id); setSuppDragOver(null); }}
-      style={{display:"flex",alignItems:"center",gap:12,padding:"13px 14px",background:todayChecked[s.id]?"rgba(74,222,128,0.08)":"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${suppDragOver===s.id?"rgba(163,230,53,0.5)":todayChecked[s.id]?"rgba(74,222,128,0.28)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,transition:"background 0.3s,border 0.3s,box-shadow 0.3s",boxShadow:todayChecked[s.id]?"0 2px 16px rgba(74,222,128,0.12)":undefined,cursor:"grab",borderLeft:suppDragOver===s.id?`3px solid ${C.accent}`:"3px solid transparent"}}>
-      <button onClick={()=>toggle(s.id)} style={{width:30,height:30,borderRadius:"50%",border:`2px solid ${todayChecked[s.id]?C.green:C.border2}`,background:todayChecked[s.id]?`linear-gradient(135deg,${C.green},${C.teal})`:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:todayChecked[s.id]?"#0a0a0c":"transparent",transition:"all 0.25s",boxShadow:todayChecked[s.id]?`0 0 10px rgba(74,222,128,0.4)`:undefined}}>
+      style={{display:"flex",alignItems:"center",gap:12,padding:"13px 14px",background:todayChecked[s.id]?"color-mix(in srgb, var(--c-good) 8%, transparent)":"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${suppDragOver===s.id?"color-mix(in srgb, var(--c-action) 50%, transparent)":todayChecked[s.id]?"color-mix(in srgb, var(--c-good) 28%, transparent)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,transition:"background 0.3s,border 0.3s,box-shadow 0.3s",boxShadow:todayChecked[s.id]?"0 2px 16px color-mix(in srgb, var(--c-good) 12%, transparent)":undefined,cursor:"grab",borderLeft:suppDragOver===s.id?`3px solid ${C.accent}`:"3px solid transparent"}}>
+      <button onClick={()=>toggle(s.id)} style={{width:30,height:30,borderRadius:"50%",border:`2px solid ${todayChecked[s.id]?C.green:C.border2}`,background:todayChecked[s.id]?`linear-gradient(135deg,${C.green},${C.teal})`:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:todayChecked[s.id]?"var(--on-accent)":"transparent",transition:"all 0.25s",boxShadow:todayChecked[s.id]?`0 0 10px color-mix(in srgb, var(--c-good) 40%, transparent)`:undefined}}>
         {todayChecked[s.id]?"✓":""}
       </button>
       <div style={{flex:1}}>
@@ -2430,9 +2516,9 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
   return (
     <div>
       <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 16px",position:"relative",overflow:"hidden"}}>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.16) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.09) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
-        <div className="pill-badge" style={{marginBottom:10,position:"relative",background:"rgba(6,182,212,0.10)",border:"1px solid rgba(6,182,212,0.22)"}}>
+        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-3) 16%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-2) 9%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
+        <div className="pill-badge" style={{marginBottom:10,position:"relative",background:"color-mix(in srgb, var(--c-3) 10%, transparent)",border:"1px solid color-mix(in srgb, var(--c-3) 22%, transparent)"}}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 3 8 3Z"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Stack</span>
         </div>
@@ -2441,7 +2527,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
       </div>
 
       {/* Progress */}
-      <div style={{margin:"0 16px 16px",background:taken===total&&total>0?"rgba(251,191,36,0.08)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${taken===total&&total>0?"rgba(251,191,36,0.35)":"rgba(255,255,255,0.12)"}`,borderRadius:20,padding:"16px 18px",boxShadow:taken===total&&total>0?"0 8px 32px rgba(251,191,36,0.15),inset 0 1px 0 rgba(255,255,255,0.08)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
+      <div style={{margin:"0 16px 16px",background:taken===total&&total>0?"color-mix(in srgb, var(--c-primary) 8%, transparent)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${taken===total&&total>0?"color-mix(in srgb, var(--c-primary) 35%, transparent)":"rgba(255,255,255,0.12)"}`,borderRadius:20,padding:"16px 18px",boxShadow:taken===total&&total>0?"0 8px 32px color-mix(in srgb, var(--c-primary) 15%, transparent),inset 0 1px 0 rgba(255,255,255,0.08)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
           <div style={{fontSize:15,fontWeight:800,color:taken===total&&total>0?C.amber:C.text}}>
             {taken===total&&total>0?"✨ All done today!":taken+"/"+total+" taken"}
@@ -2449,7 +2535,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
           <div className="num-pop" style={{fontSize:26,fontWeight:900,color:taken===total&&total>0?C.amber:C.accent,letterSpacing:-1}}>{animPct}%</div>
         </div>
         <div style={{height:6,background:"rgba(255,255,255,0.08)",borderRadius:4,overflow:"hidden"}}>
-          <div style={{height:"100%",width:suppPct+"%",background:taken===total&&total>0?`linear-gradient(90deg,${C.amber},${C.orange})`:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:4,transition:"width 0.6s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:taken===total&&total>0?`0 0 12px rgba(251,191,36,0.5)`:undefined}}/>
+          <div style={{height:"100%",width:suppPct+"%",background:taken===total&&total>0?`linear-gradient(90deg,${C.amber},${C.orange})`:`linear-gradient(90deg,${C.teal},${C.accent})`,borderRadius:4,transition:"width 0.6s cubic-bezier(0.34,1.56,0.64,1)",boxShadow:taken===total&&total>0?`0 0 12px color-mix(in srgb, var(--c-primary) 50%, transparent)`:undefined}}/>
         </div>
       </div>
 
@@ -2484,7 +2570,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
       {/* Add supplement */}
       <div style={{padding:"0 16px",marginBottom:16}}>
         {!showAdd?(
-          <button onClick={()=>setShowAdd(true)} style={{width:"100%",background:"rgba(163,230,53,0.08)",backdropFilter:"blur(8px)",border:"1px solid rgba(163,230,53,0.2)",borderRadius:16,padding:"14px 0",fontSize:14,fontWeight:700,color:C.accent}}>
+          <button onClick={()=>setShowAdd(true)} style={{width:"100%",background:"color-mix(in srgb, var(--c-action) 8%, transparent)",backdropFilter:"blur(8px)",border:"1px solid color-mix(in srgb, var(--c-action) 20%, transparent)",borderRadius:16,padding:"14px 0",fontSize:14,fontWeight:700,color:C.accent}}>
             + Add Supplement
           </button>
         ):(
@@ -2494,7 +2580,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
             <input placeholder="Dose (e.g. 5g)" value={newDose} onChange={e=>setNewDose(e.target.value)} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(255,255,255,0.14)`,borderRadius:12,padding:"10px 12px",fontSize:14,color:C.text,marginBottom:10}}/>
             <div style={{display:"flex",gap:8,marginBottom:12}}>
               {["morning","evening"].map(t=>(
-                <button key={t} onClick={()=>setNewTime(t)} style={{flex:1,padding:"8px 0",borderRadius:12,border:`1px solid ${newTime===t?"rgba(163,230,53,0.4)":"rgba(255,255,255,0.10)"}`,background:newTime===t?"rgba(163,230,53,0.12)":"rgba(255,255,255,0.04)",color:newTime===t?C.accent:C.text2,fontSize:13,fontWeight:700}}>
+                <button key={t} onClick={()=>setNewTime(t)} style={{flex:1,padding:"8px 0",borderRadius:12,border:`1px solid ${newTime===t?"color-mix(in srgb, var(--c-action) 40%, transparent)":"rgba(255,255,255,0.10)"}`,background:newTime===t?"color-mix(in srgb, var(--c-action) 12%, transparent)":"rgba(255,255,255,0.04)",color:newTime===t?C.accent:C.text2,fontSize:13,fontWeight:700}}>
                   {t==="morning"?"🌅 Morning":"🌙 Evening"}
                 </button>
               ))}
@@ -2524,12 +2610,12 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked }) {
   return (
     <div style={{paddingBottom:110}}>
       {/* Header */}
-      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 0",background:`linear-gradient(180deg,#060608 0%,${C.bg} 100%)`,position:"relative",overflow:"hidden"}}>
+      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 0",background:`linear-gradient(180deg,var(--bg) 0%,${C.bg} 100%)`,position:"relative",overflow:"hidden"}}>
         <div className="scan-overlay"/>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.16) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:0,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,rgba(244,114,182,0.10) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-2) 16%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
+        <div className="orb-drift" style={{position:"absolute",top:0,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-pink) 10%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
         <div style={{position:"relative",zIndex:1}}>
-          <div className="pill-badge" style={{marginBottom:10,background:"rgba(139,92,246,0.10)",border:"1px solid rgba(139,92,246,0.22)"}}>
+          <div className="pill-badge" style={{marginBottom:10,background:"color-mix(in srgb, var(--c-2) 10%, transparent)",border:"1px solid color-mix(in srgb, var(--c-2) 22%, transparent)"}}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.violet} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill={C.violet} stroke="none"/></svg>
             <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Daily Rituals</span>
           </div>
@@ -2556,30 +2642,30 @@ function Nav({ page, setPage }) {
     {id:"habits",    label:"Habits"},
     {id:"supplements",label:"Stack"},
   ];
-  const TAB_COLORS = {home:"#F59E0B",fitness:"#10B981",habits:"#8B5CF6",supplements:"#06B6D4"};
-  const activeColor = TAB_COLORS[page] || "#F59E0B";
+  const TAB_COLORS = {home:"var(--tab-1)",fitness:"var(--tab-2)",habits:"var(--tab-3)",supplements:"var(--tab-4)"};
+  const activeColor = TAB_COLORS[page] || "var(--c-primary)";
 
   const icons = {
     home: (active) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"var(--ink-3)"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V16H9V21H4C3.45 21 3 20.55 3 20V9.5Z"/>
       </svg>
     ),
     fitness: (active) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"var(--ink-3)"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/>
         <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>
       </svg>
     ),
     habits: (active) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"var(--ink-3)"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="9"/>
         <circle cx="12" cy="12" r="4.5"/>
-        <circle cx="12" cy="12" r="1" fill={active?activeColor:"#3A4260"} stroke="none"/>
+        <circle cx="12" cy="12" r="1" fill={active?activeColor:"var(--ink-3)"} stroke="none"/>
       </svg>
     ),
     supplements: (active) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"#3A4260"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active?activeColor:"var(--ink-3)"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
         <path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 6 8 3Z"/>
         <line x1="4" y1="12" x2="20" y2="12"/>
       </svg>
@@ -2587,7 +2673,7 @@ function Nav({ page, setPage }) {
   };
 
   return (
-    <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(6,8,16,0.97)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.06)",zIndex:100,padding:"0 0 calc(env(safe-area-inset-bottom))"}}>
+    <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"color-mix(in srgb, var(--bg) 97%, transparent)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",borderTop:"1px solid rgba(255,255,255,0.06)",zIndex:100,padding:"0 0 calc(env(safe-area-inset-bottom))"}}>
       <div style={{display:"flex",alignItems:"stretch",position:"relative"}}>
         {tabs.map(tab=>{
           const isActive = page===tab.id;
@@ -2597,13 +2683,13 @@ function Nav({ page, setPage }) {
               <div style={{transition:"transform 0.18s cubic-bezier(0.34,1.56,0.64,1),filter 0.18s",transform:isActive?"scale(1.08)":"scale(1)",filter:isActive?`drop-shadow(0 0 6px ${col}88)`:"none"}}>
                 {icons[tab.id](isActive)}
               </div>
-              <span style={{fontFamily:"'Space Grotesk',sans-serif",fontSize:10,fontWeight:isActive?700:500,letterSpacing:0.3,color:isActive?col:"#3A4260",transition:"color 0.18s",lineHeight:1}}>{tab.label}</span>
+              <span style={{fontFamily:"'Space Grotesk',sans-serif",fontSize:10,fontWeight:isActive?700:500,letterSpacing:0.3,color:isActive?col:"var(--ink-3)",transition:"color 0.18s",lineHeight:1}}>{tab.label}</span>
             </button>
           );
         })}
         {/* Single indicator that slides to the active tab, adopting its color */}
         <div aria-hidden="true" style={{position:"absolute",bottom:0,left:0,width:`${100/tabs.length}%`,transform:`translateX(${Math.max(0,tabs.findIndex(t=>t.id===page))*100}%)`,display:"flex",justifyContent:"center",pointerEvents:"none",transition:"transform 0.34s cubic-bezier(0.34,1.56,0.64,1)"}}>
-          <div style={{width:"60%",height:2,borderRadius:"2px 2px 0 0",background:TAB_COLORS[page]||"#F59E0B",boxShadow:`0 0 8px ${TAB_COLORS[page]||"#F59E0B"}`,transition:"background 0.25s"}}/>
+          <div style={{width:"60%",height:2,borderRadius:"2px 2px 0 0",background:TAB_COLORS[page]||"var(--c-primary)",boxShadow:`0 0 8px ${TAB_COLORS[page]||"var(--c-primary)"}`,transition:"background 0.25s"}}/>
         </div>
       </div>
     </div>
@@ -2619,23 +2705,48 @@ function Nav({ page, setPage }) {
 // Page routing is a simple string — no router library.
 // Bottom sheet for picking the accent theme. Swatches show each theme's real
 // colors; OG shows the original four-color mix, others a single accent.
+// Stacked toasts, auto-dismiss. Listens on the module-level toast() bus.
+function ToastHost() {
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    const add = (msg, kind) => {
+      const id = Math.random().toString(36).slice(2);
+      setItems(p => [...p.slice(-2), { id, msg, kind }]);
+      setTimeout(() => setItems(p => p.filter(t => t.id !== id)), 2400);
+    };
+    _toastFns.add(add);
+    return () => _toastFns.delete(add);
+  }, []);
+  const tint = k => k === "success" ? "var(--c-good)" : k === "error" ? "var(--c-bad)" : "var(--c-primary)";
+  return (
+    <div style={{position:"fixed",top:"calc(env(safe-area-inset-top,12px) + 12px)",left:0,right:0,zIndex:300,display:"flex",flexDirection:"column",alignItems:"center",gap:8,pointerEvents:"none"}}>
+      {items.map(t => (
+        <div key={t.id} style={{display:"flex",alignItems:"center",gap:9,maxWidth:"86%",padding:"10px 16px",borderRadius:14,background:"color-mix(in srgb, var(--bg-2) 92%, transparent)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:`1px solid ${tint(t.kind)}`,boxShadow:`0 10px 30px rgba(0,0,0,0.45), 0 0 18px color-mix(in srgb, ${tint(t.kind)} 22%, transparent)`,animation:"toastIn 0.34s cubic-bezier(0.22,1,0.36,1)"}}>
+          <span style={{width:7,height:7,borderRadius:"50%",background:tint(t.kind),flexShrink:0,boxShadow:`0 0 8px ${tint(t.kind)}`}}/>
+          <span style={{fontSize:13,fontWeight:700,color:C.text,letterSpacing:0.2,fontFamily:"'Space Grotesk',sans-serif"}}>{t.msg}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ThemeSheet({ theme, setTheme, onClose }) {
   return (
-    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(2px)",WebkitBackdropFilter:"blur(2px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"rgba(12,15,27,0.98)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 22px)",animation:"slideUp 0.3s cubic-bezier(0.22,1,0.36,1)"}}>
+    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(3px)",WebkitBackdropFilter:"blur(3px)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"backdropFade 0.25s ease"}}>
+      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"color-mix(in srgb, var(--bg-1) 98%, transparent)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 22px)",animation:"sheetUp 0.38s cubic-bezier(0.22,1,0.36,1)"}}>
         <div style={{width:38,height:4,borderRadius:2,background:"rgba(255,255,255,0.16)",margin:"0 auto 16px"}}/>
-        <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:C.text,marginBottom:2}}>Accent theme</div>
-        <div style={{fontSize:12,color:C.text2,marginBottom:16}}>Recolor the app's highlight. OG keeps the original mix.</div>
+        <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:C.text,marginBottom:2}}>Theme</div>
+        <div style={{fontSize:12,color:C.text2,marginBottom:16}}>Repaint the whole app. OG is the original mix; the rest are single-color families.</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
           {Object.keys(THEMES).map(k=>{
-            const t = THEMES[k], active = theme===k;
+            const t = THEMES[k], active = theme===k, sw = t.swatch[Math.min(1,t.swatch.length-1)];
             return (
-              <button key={k} className="tap" onClick={()=>{ haptic(); setTheme(k); onClose(); }} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",borderRadius:14,background:active?"rgba(255,255,255,0.07)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?t.accent:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 18px ${t.glow}`:"none",transition:"border 0.2s,box-shadow 0.2s"}}>
+              <button key={k} className="tap" onClick={()=>{ haptic(12); setTheme(k); toast(t.label+" theme","info"); onClose(); }} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",borderRadius:14,background:active?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?sw:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 20px ${sw}55`:"none",transition:"border 0.2s,box-shadow 0.2s,background 0.2s"}}>
                 <div style={{display:"flex",flexShrink:0}}>
-                  {t.swatch.map((c,i)=>(<div key={i} style={{width:16,height:16,borderRadius:"50%",background:c,marginLeft:i?-6:0,border:"2px solid rgba(12,15,27,0.95)"}}/>))}
+                  {t.swatch.map((c,i)=>(<div key={i} style={{width:16,height:16,borderRadius:"50%",background:c,marginLeft:i?-6:0,border:"2px solid color-mix(in srgb, var(--bg-1) 95%, transparent)"}}/>))}
                 </div>
                 <span style={{fontSize:14,fontWeight:700,color:active?C.text:C.text2}}>{t.label}</span>
-                {active && <span style={{marginLeft:"auto",color:t.accent,fontSize:14,fontWeight:900}}>✓</span>}
+                {active && <span style={{marginLeft:"auto",color:sw,fontSize:14,fontWeight:900}}>✓</span>}
               </button>
             );
           })}
@@ -2664,7 +2775,7 @@ function App() {
   const [prayerChecked, setPrayerChecked] = useState(()=>ld("dos_prayer_checked_v1",{}));
   const [prLog, setPrLog] = useState(()=>ld("dos_pr_v1",{}));
   const [showBwModal, setShowBwModal] = useState(false);
-  const [theme, setTheme] = useState(()=>ld("dos_theme_v1","OG"));
+  const [theme, setTheme] = useState(()=>normTheme(ld("dos_theme_v1","og")));
   const [showThemeSheet, setShowThemeSheet] = useState(false);
   useEffect(()=>{ applyTheme(theme); sv("dos_theme_v1",theme); },[theme]);
 
@@ -2707,6 +2818,7 @@ function App() {
         {page==="supplements" && <SupplementsPage supps={supps} setSupps={setSupps} checked={suppChecked} setChecked={setSuppChecked}/>}
       </div>
       <Nav page={page} setPage={setPage}/>
+      <ToastHost/>
     </div>
   );
 }
