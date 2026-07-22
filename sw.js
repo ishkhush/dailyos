@@ -5,7 +5,7 @@
 // drop the old cache on next activate, which is how you push a forced update.
 // Only index.html and sw.js are deployed (see deploy.sh); nothing else is served.
 
-const CACHE = 'dailyos-1784751692';
+const CACHE = 'dailyos-1784751897';
 
 // On install: pre-cache './' so the app loads instantly from cache next visit.
 // skipWaiting() makes the new SW take control immediately instead of waiting
@@ -41,10 +41,21 @@ self.addEventListener('activate', function(e) {
 // network first, and only the CDN scripts get cached — API calls are
 // never cached because they require auth headers.
 self.addEventListener('fetch', function(e) {
-  // Only handle same-origin navigation requests (the app itself)
+  // Only handle same-origin navigation requests (the app itself).
+  // cache:'no-cache' forces revalidation past the CDN/HTTP cache (GitHub
+  // Pages serves max-age=600, which otherwise hands back stale HTML for up
+  // to 10 minutes). Fresh copies also refresh the offline fallback, which
+  // install() only seeds once. fetch(url, init) instead of fetch(e.request,
+  // init) because navigate-mode Requests can't be reconstructed with an init.
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request).catch(function() {
+      fetch(e.request.url, { cache: 'no-cache' }).then(function(resp) {
+        if (resp && resp.status === 200) {
+          var clone = resp.clone();
+          caches.open(CACHE).then(function(cache) { cache.put('./', clone); });
+        }
+        return resp;
+      }).catch(function() {
         return caches.match('./');
       })
     );
