@@ -535,6 +535,70 @@ const toast = (msg, kind = "info") => { _toastFns.forEach(fn => fn(msg, kind)); 
 applyTheme(ld("dos_theme_v1", "OG"));
 const getQuote = () => { const d = new Date(); return QUOTES[(d.getFullYear()*366+d.getMonth()*31+d.getDate())%QUOTES.length]; };
 
+// ── BACKUP / RESTORE ──────────────────────────────────────────────────────────
+// Full-device backup: every dos_* localStorage key (raw strings, verbatim) plus
+// body-progress photos from IndexedDB as base64 JPEG, in one version-agnostic
+// JSON envelope. Secrets (API keys) are excluded at export AND refused at import.
+const BACKUP_META_KEY = "dos_backup_meta_v1";
+const BACKUP_EXCLUDE = new Set(["dos_api_key", "dos_el_key_v1", BACKUP_META_KEY]);
+const BACKUP_STALE_MS = 7 * 24 * 60 * 60 * 1000;
+const BACKUP_SCHEMA = 1;
+const blobToB64 = (blob) => new Promise((resolve, reject) => {
+  const r = new FileReader();
+  r.onload = () => resolve(String(r.result).split(",")[1]);
+  r.onerror = () => reject(r.error);
+  r.readAsDataURL(blob);
+});
+async function buildBackup() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith("dos_") && !BACKUP_EXCLUDE.has(k)) data[k] = localStorage.getItem(k);
+  }
+  const photos = [];
+  const recs = await idbGetAll();
+  for (const rec of recs) photos.push({ date: rec.date, ts: rec.ts, b64: await blobToB64(rec.blob) });
+  return { app: "dailyos", schemaVersion: BACKUP_SCHEMA, exportedAt: new Date().toISOString(), localStorage: data, photos };
+}
+async function downloadBackup() {
+  try {
+    const env = await buildBackup();
+    const url = URL.createObjectURL(new Blob([JSON.stringify(env)], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = "dailyos-backup-" + tdk() + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    sv(BACKUP_META_KEY, { lastBackup: Date.now() });
+    toast("Backup downloaded", "info");
+  } catch (e) { toast("Backup failed", "error"); }
+}
+async function importBackup(file) {
+  let env;
+  try { env = JSON.parse(await file.text()); } catch { toast("Not a valid backup file", "error"); return; }
+  if (!env || env.app !== "dailyos" || typeof env.localStorage !== "object" || !env.localStorage) {
+    toast("Not a DailyOS backup", "error"); return;
+  }
+  const photos = Array.isArray(env.photos) ? env.photos : [];
+  const when = env.exportedAt ? env.exportedAt.slice(0, 10) : "unknown date";
+  if (!confirm(`Restore backup from ${when}? ${photos.length} photo${photos.length === 1 ? "" : "s"}. This replaces current data.`)) return;
+  // Photos first: idbPut keyed by date is idempotent, so a failure here leaves
+  // localStorage untouched and a re-import is safe.
+  try {
+    for (const p of photos) {
+      const blob = await (await fetch("data:image/jpeg;base64," + p.b64)).blob();
+      await idbPut({ date: p.date, ts: p.ts || Date.now(), blob });
+    }
+  } catch (e) { toast("Photo restore failed — nothing else changed", "error"); return; }
+  const failed = [];
+  for (const [k, v] of Object.entries(env.localStorage)) {
+    if (!k.startsWith("dos_") || BACKUP_EXCLUDE.has(k)) continue;
+    try { localStorage.setItem(k, typeof v === "string" ? v : JSON.stringify(v)); } catch { failed.push(k); }
+  }
+  if (photos.length) sv("dos_body_index_v1", photos.map(p => ({ date: p.date, ts: p.ts })));
+  sv(BACKUP_META_KEY, { lastBackup: Date.now() });
+  toast(failed.length ? `Restored with ${failed.length} failed keys — reloading…` : "Restored — reloading…", failed.length ? "error" : "info");
+  setTimeout(() => location.reload(), 600);
+}
 
 // ── SPEECH ────────────────────────────────────────────────────────────────────
 // Voice selection: prefer cloud/neural voices (non-localService) which sound
@@ -897,6 +961,7 @@ function ApiKeyScreen({ onSave }) {
   const [key, setKey] = useState("");
   const [testing, setTesting] = useState(false);
   const [error, setError] = useState("");
+  const restoreRef = useRef(null);
   const test = async () => {
     const t = key.trim();
     if (!t.startsWith("sk-ant-")) { setError("API key should start with 'sk-ant-'"); return; }
@@ -928,6 +993,10 @@ function ApiKeyScreen({ onSave }) {
           Stored only on this device.
         </div>
       </div>
+      {/* Restore path for a fresh device: backups exclude the API key, so import must be reachable before key entry. */}
+      <button className="tap" onClick={()=>restoreRef.current && restoreRef.current.click()} style={{display:"block",margin:"18px auto 0",background:"none",border:"none",fontSize:13,fontWeight:700,color:C.teal}}>Restoring a device? Import backup</button>
+      <input ref={restoreRef} type="file" accept="application/json,.json" style={{display:"none"}} onChange={e=>{ const f=e.target.files && e.target.files[0]; e.target.value=""; if (f) importBackup(f); }}/>
+      <ToastHost/>
     </div>
   );
 }
@@ -1619,7 +1688,7 @@ function WxIcon({code,size=28,color="var(--ink)"}) {
   );
 }
 
-function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal, setShowThemeSheet, water, setWater, energy, setEnergy, prayerChecked={}, setPrayerChecked, dayOverrides={} }) {
+function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog, setShowBwModal, setShowThemeSheet, setShowBackupSheet, water, setWater, energy, setEnergy, prayerChecked={}, setPrayerChecked, dayOverrides={} }) {
   const today = new Date(); today.setHours(0,0,0,0);
   const dKey = tdk();
   const info = effDayInfo(today, dayOverrides);
@@ -1699,6 +1768,11 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
         {setShowThemeSheet && (
           <button aria-label="Change accent theme" className="tap" onClick={()=>{ haptic(); setShowThemeSheet(true); }} style={{position:"absolute",top:"calc(env(safe-area-inset-top,20px) + 14px)",right:14,zIndex:5,width:34,height:34,borderRadius:11,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,0.12)",display:"flex",alignItems:"center",justifyContent:"center"}}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={C.text} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        )}
+        {setShowBackupSheet && (
+          <button aria-label="Backup and restore" className="tap" onClick={()=>{ haptic(); setShowBackupSheet(true); }} style={{position:"absolute",top:"calc(env(safe-area-inset-top,20px) + 14px)",right:56,zIndex:5,width:34,height:34,borderRadius:11,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,0.12)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={C.text} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
         )}
 
@@ -2813,6 +2887,31 @@ function ThemeSheet({ theme, setTheme, onClose }) {
   );
 }
 
+function BackupSheet({ onClose }) {
+  const fileRef = useRef(null);
+  const meta = ld(BACKUP_META_KEY, null);
+  const last = meta && meta.lastBackup ? new Date(meta.lastBackup).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}) : null;
+  const btnStyle = (accent) => ({display:"flex",alignItems:"center",gap:10,width:"100%",padding:"13px 14px",borderRadius:14,background:"rgba(255,255,255,0.03)",border:`1.5px solid ${accent?C.teal:"rgba(255,255,255,0.10)"}`,color:C.text,fontSize:14,fontWeight:700,marginBottom:10,transition:"background 0.2s"});
+  return (
+    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(3px)",WebkitBackdropFilter:"blur(3px)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"backdropFade 0.25s ease"}}>
+      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"color-mix(in srgb, var(--bg-1) 98%, transparent)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 22px)",animation:"sheetUp 0.38s cubic-bezier(0.22,1,0.36,1)"}}>
+        <div style={{width:38,height:4,borderRadius:2,background:"rgba(255,255,255,0.16)",margin:"0 auto 16px"}}/>
+        <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:C.text,marginBottom:2}}>Backup</div>
+        <div style={{fontSize:12,color:C.text2,marginBottom:16}}>{last ? `Last backup: ${last}` : "Never backed up"} · everything stays on your device</div>
+        <button className="tap" onClick={()=>{ haptic(12); downloadBackup(); onClose(); }} style={btnStyle(true)}>
+          <span style={{fontSize:16}}>⬇️</span> Back up now
+          <span style={{marginLeft:"auto",fontSize:11,fontWeight:600,color:C.text2}}>data + photos</span>
+        </button>
+        <button className="tap" onClick={()=>{ haptic(12); fileRef.current && fileRef.current.click(); }} style={btnStyle(false)}>
+          <span style={{fontSize:16}}>📂</span> Import backup
+        </button>
+        <input ref={fileRef} type="file" accept="application/json,.json" style={{display:"none"}} onChange={e=>{ const f=e.target.files && e.target.files[0]; e.target.value=""; if (f) importBackup(f); }}/>
+        <div style={{fontSize:11,color:C.text2,marginTop:6,lineHeight:1.5}}>API keys are not included — re-enter them after restoring on a new device.</div>
+      </div>
+    </div>
+  );
+}
+
 // ── BODY PROGRESS ─────────────────────────────────────────────────────────────
 // Full-screen photo viewer: swipe/arrow between progress shots, download a copy,
 // or delete (two-tap to confirm). Photos are passed in already sorted ascending.
@@ -2879,7 +2978,7 @@ function PhotoSourceSheet({ title, onCamera, onLibrary, onClose }) {
   );
 }
 
-function ProgressPage({ bwLog }) {
+function ProgressPage({ bwLog, setShowBackupSheet }) {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewerDate, setViewerDate] = useState(null);
@@ -3067,7 +3166,7 @@ function ProgressPage({ bwLog }) {
           </div>
         )}
 
-        <div style={{fontSize:11,color:C.text3,textAlign:"center",marginTop:16,lineHeight:1.5}}>🔒 Stored on this device only — never uploaded.<br/>Add to Home Screen and download key photos to keep a backup.</div>
+        <div style={{fontSize:11,color:C.text3,textAlign:"center",marginTop:16,lineHeight:1.5}}>🔒 Stored on this device only — never uploaded.<br/>{setShowBackupSheet ? <button className="tap" onClick={()=>{ haptic(); setShowBackupSheet(true); }} style={{background:"none",border:"none",padding:0,fontSize:11,fontWeight:700,color:C.teal}}>Back up everything →</button> : "Add to Home Screen and download key photos to keep a backup."}</div>
       </div>
 
       {viewerDate && <ProgressViewer photos={photos} startDate={viewerDate} weightByDate={weightByDate} onClose={()=>setViewerDate(null)} onDelete={removePhoto}/>}
@@ -3096,7 +3195,21 @@ function App() {
   const [showBwModal, setShowBwModal] = useState(false);
   const [theme, setTheme] = useState(()=>normTheme(ld("dos_theme_v1","og")));
   const [showThemeSheet, setShowThemeSheet] = useState(false);
+  const [showBackupSheet, setShowBackupSheet] = useState(false);
   useEffect(()=>{ applyTheme(theme); sv("dos_theme_v1",theme); },[theme]);
+
+  // Auto-backup when stale (>7 days). iOS blocks downloads without a user
+  // gesture, so there we open the sheet instead — one tap from "Back up now".
+  useEffect(()=>{
+    if (!apiKey) return;
+    const meta = ld(BACKUP_META_KEY, null);
+    if (meta && meta.lastBackup && Date.now() - meta.lastBackup < BACKUP_STALE_MS) return;
+    const t = setTimeout(()=>{
+      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) setShowBackupSheet(true);
+      else downloadBackup();
+    }, 1500);
+    return ()=>clearTimeout(t);
+  },[]);
 
   useEffect(()=>{ const k=tdk(); setUsage(prev=>{const u={...prev,[k]:(prev[k]||0)+1};sv("dos_usage_v7",u);return u;}); },[]);
   useEffect(()=>{ sv("dos_meals_v7",meals); },[meals]);
@@ -3129,13 +3242,14 @@ function App() {
     <div>
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
       {showThemeSheet&&<ThemeSheet theme={theme} setTheme={setTheme} onClose={()=>setShowThemeSheet(false)}/>}
+      {showBackupSheet&&<BackupSheet onClose={()=>setShowBackupSheet(false)}/>}
       {/* key=page triggers page-enter animation on every tab switch */}
       <div key={page} className="page-enter">
-        {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal} setShowThemeSheet={setShowThemeSheet} water={water} setWater={setWater} energy={energy} setEnergy={setEnergy} prayerChecked={prayerChecked} setPrayerChecked={setPrayerChecked} dayOverrides={dayOverrides}/>}
+        {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal} setShowThemeSheet={setShowThemeSheet} setShowBackupSheet={setShowBackupSheet} water={water} setWater={setWater} energy={energy} setEnergy={setEnergy} prayerChecked={prayerChecked} setPrayerChecked={setPrayerChecked} dayOverrides={dayOverrides}/>}
         {page==="fitness"     && <FitnessPage   meals={meals} setMeals={setMeals} attend={attend} setAttend={setAttend} apiKey={apiKey} favorites={favorites} setFavorites={setFavorites} bwLog={bwLog} setBwLog={setBwLog} dayOverrides={dayOverrides} setDayOverrides={setDayOverrides} prLog={prLog} setPrLog={setPrLog}/>}
         {page==="habits"      && <HabitsPage    habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked}/>}
         {page==="supplements" && <SupplementsPage supps={supps} setSupps={setSupps} checked={suppChecked} setChecked={setSuppChecked}/>}
-        {page==="progress"    && <ProgressPage bwLog={bwLog}/>}
+        {page==="progress"    && <ProgressPage bwLog={bwLog} setShowBackupSheet={setShowBackupSheet}/>}
       </div>
       <Nav page={page} setPage={setPage}/>
       <ToastHost/>
