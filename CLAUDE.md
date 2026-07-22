@@ -46,7 +46,11 @@ PROFILE    = { currentWeight: 157, goalWeight: 165, height: "5'10\"" }
 
 ## localStorage key conventions
 
-Keys are versioned (e.g. `dos_meals_v7`). If you need to change the shape of stored data in a breaking way, bump the version suffix so old data is ignored rather than misread. Keys: `dos_api_key`, `dos_meals_v7`, `dos_attend_v7`, `dos_usage_v7`, `dos_vocab_v7_<YYYY-MM-DD>`, `dos_learned_v7`, `dos_favorites_v1`, `dos_supps_v1`, `dos_supp_checked_v1`, `dos_bw_log_v1`, `dos_rl` (rate limiter).
+Keys are versioned (e.g. `dos_meals_v7`). If you need to change the shape of stored data in a breaking way, bump the version suffix so old data is ignored rather than misread. Keys: `dos_api_key`, `dos_meals_v7`, `dos_attend_v7`, `dos_usage_v7`, `dos_vocab_v7_<YYYY-MM-DD>`, `dos_learned_v7`, `dos_favorites_v1`, `dos_supps_v1`, `dos_supp_checked_v1`, `dos_bw_log_v1`, `dos_theme_v1` (accent theme), `dos_emoji_recent_v1` (emoji picker recents), `dos_body_index_v1` (body-progress photo date index), `dos_backup_meta_v1` (last-backup timestamp), `dos_rl` (rate limiter).
+
+Full backup/restore: `buildBackup`/`downloadBackup`/`importBackup` (utils, after the storage section) + `BackupSheet` (bottom sheet, after `ThemeSheet`). Exports every `dos_*` key verbatim (raw strings) plus IndexedDB photos as base64 into one JSON envelope `{app:"dailyos", schemaVersion, exportedAt, localStorage, photos}`. `BACKUP_EXCLUDE` keeps `dos_api_key`/`dos_el_key_v1` out of exports AND refuses them on import — never weaken this. Auto-backup fires on app open when stale >7 days (direct download on desktop/Android; opens BackupSheet on iOS, which blocks gestureless downloads). Restore entry point also on `ApiKeyScreen` for fresh devices.
+
+Body-progress photos themselves are **not** in localStorage — they're stored as JPEG blobs in **IndexedDB** (`dailyos` DB, `bodyPhotos` store, keyPath `date`). `dos_body_index_v1` mirrors just the dates for instant calendar paint. Helpers: `idbPut`/`idbGetAll`/`idbGet`/`idbDel` + `fileToProgressBlob` (canvas resize). Photos never leave the device.
 
 ## AI calls
 

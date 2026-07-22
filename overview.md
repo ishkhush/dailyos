@@ -231,8 +231,16 @@ All global state lives here:
 | `supps` | `dos_supps_v1` | `DEFAULT_SUPPLEMENTS` |
 | `suppChecked` | `dos_supp_checked_v1` | `{}` |
 | `bwLog` | `dos_bw_log_v1` | `[]` |
+| `theme` | `dos_theme_v1` | `"OG"` |
+| emoji recents (EmojiSheet-local) | `dos_emoji_recent_v1` | first 16 of `HABIT_EMOJIS` |
+| body photos (index) | `dos_body_index_v1` | `[]` |
+| last backup (module-level) | `dos_backup_meta_v1` | — |
 
 Every state variable has a corresponding `useEffect` that calls `sv()` to persist it on every change. Usage counter is incremented once per page load.
+
+**Body-progress photos** are the one exception to the localStorage rule: JPEG blobs live in **IndexedDB** (`dailyos` DB → `bodyPhotos` store, keyPath `date`), too large for localStorage. `dos_body_index_v1` holds just the `[{date, ts}]` index. The `ProgressPage`/`ProgressViewer` components own this state via `idbGetAll`/`idbPut`/`idbDel`; `fileToProgressBlob` resizes captures to ~1080px JPEG. Photos never leave the device (no AI, no upload).
+
+**Backup/restore**: `buildBackup`/`downloadBackup`/`importBackup` utils (after the storage section) export every `dos_*` localStorage key verbatim plus IndexedDB photos as base64 into one JSON envelope; `BackupSheet` (after `ThemeSheet`) is the UI, opened from a HomePage hero icon, the ProgressPage footer link, or auto-opened on iOS when the last backup (`dos_backup_meta_v1`) is >7 days stale (non-iOS auto-downloads directly). `BACKUP_EXCLUDE` keeps `dos_api_key`/`dos_el_key_v1` out of exports and refuses them at import. `ApiKeyScreen` has an import entry point for fresh-device restores.
 
 **Gate**: If `!apiKey`, renders `<ApiKeyScreen>` instead of the app.
 
