@@ -48,17 +48,25 @@
       ctx.strokeStyle = 'rgba(196,181,253,0.18)';
       ctx.lineWidth = Math.max(1,size*0.006);
       rr(ctx,size*0.03,size*0.03,size*0.94,size*0.94,r*0.88); ctx.stroke();
-      // dominant "D" monogram, purple gradient
-      var g = ctx.createLinearGradient(size*0.2,size*0.18,size*0.85,size*0.82);
+      // "DailyOS" wordmark, purple gradient; letterSpacing setter throws on old engines
+      var g = ctx.createLinearGradient(size*0.2,size*0.30,size*0.85,size*0.62);
       g.addColorStop(0,'#d6c9ff'); g.addColorStop(0.5,'#8B5CF6'); g.addColorStop(1,'#6d28d9');
-      ctx.fillStyle = g;
-      ctx.font = '900 '+Math.round(size*0.48)+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('D', size*0.5, size*0.42);
-      // wordmark
-      ctx.fillStyle = 'rgba(255,255,255,0.94)';
-      ctx.font = '800 '+Math.round(size*0.135)+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
-      ctx.fillText('DailyOS', size*0.5, size*0.745);
+      try { ctx.letterSpacing = (-size*0.008)+'px'; } catch(e) {}
+      var fs = Math.round(size*0.17);
+      ctx.font = '800 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
+      // shrink until the wordmark fits inside the safe area
+      while (fs > size*0.10 && ctx.measureText('DailyOS').width > size*0.86) {
+        fs -= 1; ctx.font = '800 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
+      }
+      ctx.fillStyle = g;
+      ctx.fillText('DailyOS', size*0.5, size*0.47);
+      // "by ish" byline
+      try { ctx.letterSpacing = (size*0.006)+'px'; } catch(e) {}
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.font = '500 '+Math.round(size*0.085)+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
+      ctx.fillText('by ish', size*0.5, size*0.62);
+      try { ctx.letterSpacing = '0px'; } catch(e) {}
       return c.toDataURL('image/png');
     } catch(e) { return ''; }
   }
@@ -81,7 +89,7 @@
 <script crossorigin integrity="sha512-8Q6Y9XnTbOE+JNvjBQwJ2H8S+UV4uA6hiRykhdtIyDYZ2TprdNmWOUaKdGzOhyr4dCyk287OejbPvwl7lrfqrQ==" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin integrity="sha512-MOCpqoRoisCTwJ8vQQiciZv0qcpROCidek3GTFS6KTk2+y7munJIlKCVkFCYY+p3ErYFXCjmFjnfTTRSC1OHWQ==" src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin integrity="sha512-aKni+N2bgewoe8CGZlB9c0IDLU5LQaMEZFNjP6FbDK8gZhdTdNKhYKgZaY/EYL9GKJeJigN/wA7WDAOJShgMAQ==" src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js"></script>
-<script crossorigin integrity="sha384-Rv68Y7adOjMMJc1/xFMcdNvXre/HF51to4GZjBALmXr7ABnVl5V4UajJwBu7zbhN" src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script crossorigin integrity="sha384-sPwMflxqfAN+Q5mvlkLmHiX3PORGbZSXHiSGPTXT9VHCD/AB+b+r+vJWsqprv+7k" src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Space Grotesk","Barlow",-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
@@ -155,10 +163,64 @@
   --tab-1:hsl(220 16% 84%); --tab-2:hsl(220 14% 72%); --tab-3:hsl(220 12% 60%); --tab-4:hsl(220 12% 48%); --tab-5:hsl(220 14% 66%);
   --amb-1:hsl(220 30% 52% / 0.08); --amb-2:hsl(220 20% 50% / 0.05); --amb-3:hsl(220 20% 50% / 0.04);
 }
-[data-theme="crimson"],[data-theme="solar"],[data-theme="aqua"],[data-theme="violet"],[data-theme="emerald"],[data-theme="graphite"]{--c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2)}
+[data-theme="midnight"]{
+  --bg:#000000; --bg-1:hsl(220 30% 6%); --bg-2:hsl(219 28% 9%); --bg-3:hsl(218 26% 13%);
+  --ink:hsl(217 40% 97%); --ink-2:hsl(218 24% 72%); --ink-3:hsl(219 26% 45%);
+  --c-primary:hsl(217 95% 62%); --c-2:hsl(207 90% 72%); --c-3:hsl(230 80% 66%); --c-good:hsl(210 95% 66%); --c-action:hsl(213 96% 68%); --c-bad:hsl(235 70% 52%);
+  --on-accent:hsl(220 70% 8%);
+  --glow:hsl(217 95% 62% / 0.30); --glow-strong:hsl(217 95% 62% / 0.44);
+  --tab-1:hsl(207 90% 74%); --tab-2:hsl(213 92% 66%); --tab-3:hsl(220 86% 58%); --tab-4:hsl(228 76% 50%); --tab-5:hsl(211 90% 62%);
+  --amb-1:hsl(217 90% 55% / 0.10); --amb-2:hsl(230 80% 50% / 0.06); --amb-3:hsl(207 80% 48% / 0.04);
+}
+[data-theme="sakura"]{
+  --bg:hsl(338 38% 6%); --bg-1:hsl(338 30% 9%); --bg-2:hsl(337 28% 13%); --bg-3:hsl(336 26% 18%);
+  --ink:hsl(340 42% 97%); --ink-2:hsl(339 24% 74%); --ink-3:hsl(338 24% 49%);
+  --c-primary:hsl(340 80% 70%); --c-2:hsl(350 85% 80%); --c-3:hsl(330 65% 60%); --c-good:hsl(345 85% 72%); --c-action:hsl(342 88% 74%); --c-bad:hsl(325 60% 48%);
+  --on-accent:hsl(338 55% 10%);
+  --glow:hsl(340 80% 70% / 0.30); --glow-strong:hsl(340 80% 70% / 0.44);
+  --tab-1:hsl(350 88% 82%); --tab-2:hsl(342 82% 72%); --tab-3:hsl(334 74% 62%); --tab-4:hsl(326 64% 52%); --tab-5:hsl(346 80% 70%);
+  --amb-1:hsl(340 80% 62% / 0.13); --amb-2:hsl(330 70% 55% / 0.08); --amb-3:hsl(350 65% 55% / 0.05);
+}
+[data-theme="ember"]{
+  --bg:hsl(20 34% 5%); --bg-1:hsl(21 30% 8%); --bg-2:hsl(22 28% 12%); --bg-3:hsl(23 26% 17%);
+  --ink:hsl(26 40% 96%); --ink-2:hsl(24 24% 72%); --ink-3:hsl(22 26% 47%);
+  --c-primary:hsl(22 88% 55%); --c-2:hsl(32 85% 66%); --c-3:hsl(12 75% 50%); --c-good:hsl(28 90% 60%); --c-action:hsl(25 92% 62%); --c-bad:hsl(6 70% 45%);
+  --on-accent:hsl(20 65% 7%);
+  --glow:hsl(22 88% 55% / 0.30); --glow-strong:hsl(22 88% 55% / 0.44);
+  --tab-1:hsl(32 88% 68%); --tab-2:hsl(25 86% 58%); --tab-3:hsl(17 80% 50%); --tab-4:hsl(10 72% 44%); --tab-5:hsl(28 84% 56%);
+  --amb-1:hsl(22 85% 52% / 0.12); --amb-2:hsl(12 75% 48% / 0.08); --amb-3:hsl(32 70% 48% / 0.05);
+}
+[data-theme="synthwave"]{
+  --bg:hsl(275 45% 6%); --bg-1:hsl(278 38% 9%); --bg-2:hsl(280 34% 13%); --bg-3:hsl(282 30% 18%);
+  --ink:hsl(300 45% 97%); --ink-2:hsl(290 26% 74%); --ink-3:hsl(285 26% 50%);
+  --c-primary:hsl(315 90% 60%); --c-2:hsl(185 95% 60%); --c-3:hsl(265 85% 68%); --c-good:hsl(185 95% 56%); --c-action:hsl(320 95% 66%); --c-bad:hsl(345 80% 54%);
+  --on-accent:hsl(280 60% 8%);
+  --glow:hsl(315 90% 60% / 0.32); --glow-strong:hsl(315 90% 60% / 0.46);
+  --tab-1:hsl(315 92% 68%); --tab-2:hsl(185 92% 60%); --tab-3:hsl(265 85% 68%); --tab-4:hsl(330 85% 62%); --tab-5:hsl(200 90% 64%);
+  --amb-1:hsl(315 85% 55% / 0.14); --amb-2:hsl(185 90% 50% / 0.08); --amb-3:hsl(265 80% 55% / 0.06);
+}
+[data-theme="aurora"]{
+  --bg:hsl(200 45% 4%); --bg-1:hsl(190 38% 7%); --bg-2:hsl(180 32% 10%); --bg-3:hsl(172 28% 14%);
+  --ink:hsl(165 40% 96%); --ink-2:hsl(170 24% 72%); --ink-3:hsl(180 26% 46%);
+  --c-primary:hsl(170 85% 55%); --c-2:hsl(140 75% 62%); --c-3:hsl(195 85% 58%); --c-good:hsl(150 85% 58%); --c-action:hsl(165 90% 60%); --c-bad:hsl(210 70% 50%);
+  --on-accent:hsl(190 60% 6%);
+  --glow:hsl(170 85% 55% / 0.30); --glow-strong:hsl(170 85% 55% / 0.44);
+  --tab-1:hsl(140 78% 66%); --tab-2:hsl(160 82% 58%); --tab-3:hsl(178 84% 52%); --tab-4:hsl(196 80% 50%); --tab-5:hsl(150 80% 60%);
+  --amb-1:hsl(160 85% 50% / 0.16); --amb-2:hsl(195 85% 50% / 0.10); --amb-3:hsl(140 75% 50% / 0.07);
+}
+/* aurora only: the ambient orb field slowly drifts like northern lights */
+[data-theme="aurora"] body::before{background-size:170% 170%,170% 170%,170% 170%;animation:auroraDrift 26s ease-in-out infinite alternate}
+@keyframes auroraDrift{0%{background-position:0% 0%,100% 100%,50% 50%}50%{background-position:70% 30%,30% 60%,20% 80%}100%{background-position:100% 10%,0% 90%,80% 20%}}
+/* theme-switch circular reveal: JS animates clip-path on the new snapshot */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:0}
+::view-transition-new(root){z-index:1}
+[data-theme="crimson"],[data-theme="solar"],[data-theme="aqua"],[data-theme="violet"],[data-theme="emerald"],[data-theme="graphite"],[data-theme="midnight"],[data-theme="sakura"],[data-theme="ember"],[data-theme="synthwave"],[data-theme="aurora"]{--c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2)}
 html{background:var(--bg);-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
 body{background:var(--bg);color:var(--ink);min-height:100vh;position:relative;transition:background 0.45s ease,color 0.45s ease}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 0%,var(--amb-1) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 85% 95%,var(--amb-2) 0%,transparent 50%),radial-gradient(ellipse 40% 30% at 60% 45%,var(--amb-3) 0%,transparent 40%);pointer-events:none;z-index:-1}
+/* static film grain — kills gradient banding, adds texture on every theme */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.03;pointer-events:none;z-index:-1}
 #root{max-width:430px;margin:0 auto;padding-bottom:100px;min-height:100vh}
 button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit;transition:transform 0.13s cubic-bezier(0.34,1.56,0.64,1),opacity 0.13s}
 button:active:not(:disabled){transform:scale(0.93)}
@@ -196,11 +258,15 @@ video,img{display:block}
 @keyframes bigNumPop{0%{opacity:0;transform:scale(0.5) translateY(12px)}65%{transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes dotDance{0%,100%{transform:translateY(0)}33%{transform:translateY(-5px)}66%{transform:translateY(2px)}}
 @keyframes ambientPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--c-primary) 18%, transparent)}50%{box-shadow:0 0 32px 4px color-mix(in srgb, var(--c-primary) 8%, transparent)}}
-@keyframes toastIn{from{opacity:0;transform:translateY(-16px) scale(0.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastIn{0%{opacity:0;transform:translateY(-18px) scale(0.92)}65%{opacity:1;transform:translateY(2px) scale(1.01)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px) scale(0.96)}}
 @keyframes backdropFade{from{opacity:0}to{opacity:1}}
 @keyframes sheetUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 @keyframes sparkDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes checkDraw{to{stroke-dashoffset:0}}
+@keyframes checkRipple{0%{opacity:0.7;transform:scale(0.6)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes barGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes bottleFill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.10);border-top-color:var(--c-primary);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
 .fade-in{animation:fadeIn 0.28s cubic-bezier(0.34,1.56,0.64,1)}
 .slide-up{animation:slideUp 0.34s cubic-bezier(0.22,1,0.36,1)}
@@ -316,10 +382,28 @@ const THEMES = {
   violet:   { label:"Violet",   swatch:["hsl(274 82% 78%)","hsl(262 86% 68%)","hsl(248 70% 52%)"] },
   emerald:  { label:"Emerald",  swatch:["hsl(166 74% 64%)","hsl(156 80% 52%)","hsl(142 68% 40%)"] },
   graphite: { label:"Graphite", swatch:["hsl(220 16% 84%)","hsl(220 13% 64%)","hsl(220 12% 46%)"] },
+  midnight: { label:"Midnight", swatch:["hsl(207 90% 74%)","hsl(217 95% 62%)","hsl(228 76% 50%)"] },
+  sakura:   { label:"Sakura",   swatch:["hsl(350 88% 82%)","hsl(340 80% 70%)","hsl(326 64% 52%)"] },
+  ember:    { label:"Ember",    swatch:["hsl(32 88% 68%)","hsl(22 88% 55%)","hsl(10 72% 44%)"] },
+  synthwave:{ label:"Synthwave",swatch:["hsl(315 90% 62%)","hsl(265 85% 68%)","hsl(185 95% 58%)"] },
+  aurora:   { label:"Aurora",   swatch:["hsl(140 78% 66%)","hsl(170 85% 55%)","hsl(196 80% 50%)"] },
 };
 const THEME_ALIAS = { OG:"og", Teal:"aqua", Violet:"violet", Crimson:"crimson" };
 const normTheme = k => THEMES[k] ? k : (THEME_ALIAS[k] || "og");
-const applyTheme = (key) => { document.documentElement.dataset.theme = normTheme(key); };
+// animate=true runs a circular clip-path reveal via the View Transitions API
+// (user-initiated switches only — never the pre-paint restore on boot).
+const applyTheme = (key, animate) => {
+  const set = () => { document.documentElement.dataset.theme = normTheme(key); };
+  if (animate && document.startViewTransition && !_reduceMotion()) {
+    const vt = document.startViewTransition(set);
+    vt.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: ["circle(0% at 88% 5%)", "circle(150% at 88% 5%)"] },
+        { duration: 540, easing: "cubic-bezier(0.22,1,0.36,1)", pseudoElement: "::view-transition-new(root)" }
+      );
+    }).catch(() => {});
+  } else set();
+};
 
 
 // ── PROFILE PHOTO ───────────────────────────────────────────────────────────
@@ -383,6 +467,66 @@ const HABIT_EMOJIS = [
   "☀️","🥤","🫁","💊","🌊","🏔️","🎸","🖊️","🧩","🫶","🌱","⏰",
   "🧬","🥩","📿","🎨","🧹","🪴","🫐","🥦","🏅","⚽","🎾","🎤",
 ];
+
+// Full emoji catalog, generated at runtime from Unicode ranges — zero payload,
+// automatically limited to what the device's emoji font can render. `extras`
+// are curated ZWJ/VS16 sequences ranges can't produce; `flagCodes` are ISO
+// country codes expanded to regional-indicator pairs.
+const EMOJI_CATEGORIES = [
+  { label:"Smileys",  icon:"😀", ranges:[[0x1F600,0x1F64F],[0x1F910,0x1F92F],[0x1F970,0x1F97A],[0x1FAE0,0x1FAE8],[0x1F493,0x1F49F]], extras:["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❤️‍🔥","❤️‍🩹","☺️"] },
+  { label:"People",   icon:"🙋", ranges:[[0x1F440,0x1F487],[0x1F930,0x1F93E],[0x1F9B0,0x1F9DD],[0x1FAC0,0x1FAC5],[0x1FAF0,0x1FAF8]], extras:["✌️","☝️","✍️","💪","🙏","🤳","👨‍👩‍👧‍👦","👩‍👧","🧑‍💻","🧑‍🍳","🧑‍🎓","🕵️‍♂️","💁‍♀️","🤷‍♂️","🤦‍♀️"] },
+  { label:"Nature",   icon:"🐻", ranges:[[0x1F400,0x1F43F],[0x1F980,0x1F9AE],[0x1FAB0,0x1FABD],[0x1F300,0x1F32C],[0x1F330,0x1F344]], extras:["☀️","☁️","⛅","❄️","☔","⚡","⭐"] },
+  { label:"Food",     icon:"🍔", ranges:[[0x1F32D,0x1F32F],[0x1F345,0x1F37F],[0x1F950,0x1F96F],[0x1F9C0,0x1F9CB],[0x1FAD0,0x1FADB]], extras:["☕"] },
+  { label:"Activity", icon:"⚽", ranges:[[0x1F3A0,0x1F3D3],[0x1F945,0x1F94F],[0x1F0CF,0x1F0CF]], extras:["⚽","⚾","⛳","⛸️","🎖️","🏋️‍♂️","🏋️‍♀️","🤸‍♂️","🏊‍♂️","🚴‍♂️","⛹️‍♂️","🤾‍♀️","🧗‍♀️","🏄‍♂️"] },
+  { label:"Travel",   icon:"✈️", ranges:[[0x1F680,0x1F6FF],[0x1F3D4,0x1F3FA],[0x1F5FA,0x1F5FF]], extras:["✈️","⛰️","⛺","⛩️","⛲","⚓","⛵"] },
+  { label:"Objects",  icon:"💡", ranges:[[0x1F4A0,0x1F4FF],[0x1F380,0x1F39F],[0x1F9E0,0x1F9FF],[0x1FA70,0x1FAAF],[0x1F550,0x1F567]], extras:["⌚","⏰","⏱️","⚙️","🖊️","🖋️","✏️","✂️","🖥️","🖨️","🖱️","☎️","⚖️","🛠️","🗝️"] },
+  { label:"Symbols",  icon:"❇️", ranges:[[0x2600,0x26FF],[0x2700,0x27BF],[0x1F500,0x1F53D],[0x1F7E0,0x1F7EB]], extras:["🆒","🆕","🆗","🆙","🆓","⭕","⭐"] },
+  { label:"Flags",    icon:"🏁", ranges:[], extras:["🏁","🚩","🎌","🏴","🏳️","🏳️‍🌈","🏳️‍⚧️","🏴‍☠️"],
+    flagCodes:"US GB CA MX BR AR CL CO PE FR DE IT ES PT NL BE CH AT SE NO DK FI IE IS PL CZ SK HU RO BG GR TR RU UA SA AE QA KW BH OM JO LB SY IQ YE EG MA DZ TN LY SD SO ET KE NG GH ZA PK IN BD LK NP AF IR CN JP KR TW HK SG MY TH VN PH ID AU NZ FJ PS IL AZ KZ UZ" },
+];
+
+// Support check: hash the alpha channel of a 20×20 canvas render and compare
+// against the .notdef (tofu) glyph — blank or tofu-identical means unsupported.
+// Works for monochrome emoji (🖤 ⚫) where a "has color pixels" test fails.
+let _emCtx = null, _tofuHash = null;
+const _emHash = (e) => {
+  if (!_emCtx) {
+    const c = document.createElement("canvas"); c.width = c.height = 20;
+    _emCtx = c.getContext("2d", { willReadFrequently: true });
+    _emCtx.textBaseline = "top"; _emCtx.font = "16px system-ui, sans-serif";
+  }
+  _emCtx.clearRect(0, 0, 20, 20);
+  _emCtx.fillText(e, 0, 0);
+  const d = _emCtx.getImageData(0, 0, 20, 20).data;
+  let h = 0;
+  for (let i = 3; i < d.length; i += 16) h = (h * 31 + d[i]) | 0;
+  return h;
+};
+const _emojiSupported = (e) => {
+  if (_tofuHash === null) _tofuHash = _emHash(String.fromCodePoint(0x10FFFE));
+  const h = _emHash(e);
+  return h !== 0 && h !== _tofuHash;
+};
+
+const _emojiCache = new Map();
+const buildEmojiCategory = (idx) => {
+  if (_emojiCache.has(idx)) return _emojiCache.get(idx);
+  const cat = EMOJI_CATEGORIES[idx], s = new Set();
+  (cat.extras || []).forEach(e => s.add(e));
+  (cat.flagCodes ? cat.flagCodes.split(" ") : []).forEach(cc => {
+    s.add(String.fromCodePoint(...[...cc].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65)));
+  });
+  (cat.ranges || []).forEach(([a, b]) => {
+    for (let cp = a; cp <= b; cp++) {
+      if (!_emojiSupported(String.fromCodePoint(cp))) continue;
+      // below the emoji plane, VS16 forces emoji presentation over text glyphs
+      s.add(cp < 0x1F000 ? String.fromCodePoint(cp) + "\uFE0F" : String.fromCodePoint(cp));
+    }
+  });
+  const list = Array.from(s);
+  _emojiCache.set(idx, list);
+  return list;
+};
 
 function habitStreak(habitId, habitChecked) {
   let s = 0;
@@ -1289,7 +1433,7 @@ function WeeklyHistory({ meals }) {
                   {day.cal>0?(day.cal>=1000?Math.round(day.cal/100)/10+"k":day.cal):""}
                 </div>
                 <div style={{width:"100%",height:54,background:"rgba(255,255,255,0.06)",borderRadius:4,overflow:"hidden",display:"flex",alignItems:"flex-end"}}>
-                  <div style={{width:"100%",height:barH+"px",background:barColor,borderRadius:4,transition:"height 0.4s"}}/>
+                  <div style={{width:"100%",height:barH+"px",background:barColor,borderRadius:4,transition:"height 0.4s",transformOrigin:"bottom",animation:"barGrow 0.55s cubic-bezier(0.22,1,0.36,1) both",animationDelay:(i*45)+"ms"}}/>
                 </div>
                 <div style={{fontSize:8,color:day.isToday?C.accent:C.text3,fontWeight:day.isToday?700:400}}>
                   {DAYS_S[day.d.getDay()]}
@@ -1428,6 +1572,51 @@ function CalorieRing({ consumed, target }) {
   );
 }
 
+// ── EMOJI PICKER ─────────────────────────────────────────────────────────────
+// Bottom sheet over the full runtime-generated catalog (EMOJI_CATEGORIES).
+// Only the active category's grid mounts at once; recents persist in
+// dos_emoji_recent_v1; the input row accepts anything the native keyboard has.
+function EmojiSheet({ onPick, onClose }) {
+  const [cat, setCat] = useState(0);
+  const [recents, setRecents] = useState(() => ld("dos_emoji_recent_v1", HABIT_EMOJIS.slice(0, 16)));
+  const [typed, setTyped] = useState("");
+  const list = buildEmojiCategory(cat);
+  const pick = (e) => {
+    const next = [e, ...recents.filter(x => x !== e)].slice(0, 16);
+    setRecents(next); sv("dos_emoji_recent_v1", next);
+    haptic(); onPick(e); onClose();
+  };
+  const cell = (e) => (
+    <button key={e} className="tap" onClick={()=>pick(e)} style={{height:40,borderRadius:10,fontSize:24,lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center"}}>{e}</button>
+  );
+  return (
+    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(3px)",WebkitBackdropFilter:"blur(3px)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"backdropFade 0.25s ease"}}>
+      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"color-mix(in srgb, var(--bg-1) 98%, transparent)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 18px)",animation:"sheetUp 0.38s cubic-bezier(0.22,1,0.36,1)"}}>
+        <div style={{width:38,height:4,borderRadius:2,background:"rgba(255,255,255,0.16)",margin:"0 auto 14px"}}/>
+        <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:C.text,marginBottom:10}}>Pick an emoji</div>
+        <div style={{display:"flex",gap:2,overflowX:"auto",marginBottom:10,paddingBottom:4,WebkitOverflowScrolling:"touch"}}>
+          {EMOJI_CATEGORIES.map((c,i)=>(
+            <button key={c.label} aria-label={c.label} onClick={()=>setCat(i)} style={{flexShrink:0,padding:"6px 10px 7px",borderRadius:"10px 10px 0 0",fontSize:17,background:cat===i?"color-mix(in srgb, var(--c-action) 12%, transparent)":"transparent",borderBottom:cat===i?"2px solid var(--c-primary)":"2px solid transparent"}}>{c.icon}</button>
+          ))}
+        </div>
+        {recents.length>0 && (
+          <div style={{marginBottom:8}}>
+            <div style={{fontSize:10,fontWeight:600,letterSpacing:1.5,textTransform:"uppercase",color:C.text3,marginBottom:4}}>Recent</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(8,1fr)",gap:2}}>{recents.map(cell)}</div>
+          </div>
+        )}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(8,1fr)",gap:2,maxHeight:"38vh",overflowY:"auto",WebkitOverflowScrolling:"touch",paddingBottom:4}}>
+          {list.map(cell)}
+        </div>
+        <div style={{display:"flex",gap:8,marginTop:12}}>
+          <input value={typed} onChange={e=>setTyped(e.target.value)} onKeyDown={e=>{ if(e.key==="Enter"&&typed.trim()) pick(typed.trim()); }} placeholder="…or type any emoji" style={{flex:1,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:12,padding:"10px 12px",fontSize:14,color:C.text}}/>
+          <button onClick={()=>typed.trim()&&pick(typed.trim())} disabled={!typed.trim()} style={{background:"color-mix(in srgb, var(--c-action) 14%, transparent)",border:"1px solid color-mix(in srgb, var(--c-action) 30%, transparent)",borderRadius:12,padding:"10px 16px",fontSize:14,fontWeight:700,color:C.accent,opacity:typed.trim()?1:0.4,flexShrink:0}}>Use</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── HABIT SECTION ────────────────────────────────────────────────────────────
 // Rendered inside HomePage. habits = list of {id,name,emoji,color}.
 // habitChecked = per-day map. All state lives in App and is passed down.
@@ -1436,6 +1625,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEmoji, setNewEmoji] = useState("🎯");
+  const [showEmojiSheet, setShowEmojiSheet] = useState(false);
 
   const toggle = (id) => {
     setHabitChecked(prev => {
@@ -1528,8 +1718,11 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
               style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:isDragging?"color-mix(in srgb, var(--c-2) 16%, transparent)":done?"color-mix(in srgb, var(--c-good) 6%, transparent)":"rgba(255,255,255,0.01)",boxShadow:isDragging?"0 14px 32px rgba(0,0,0,0.55)":"none",transform:xform,position:"relative",zIndex:isDragging?20:1,transition:isDragging?"none":"transform 0.34s cubic-bezier(0.34,1.46,0.5,1),background 0.25s,box-shadow 0.25s"}}>
               {/* Grab handle — drag to reorder */}
               <div onPointerDown={(e)=>startDrag(e,i)} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} style={{color:isDragging?C.violet:C.text3,fontSize:16,flexShrink:0,opacity:isDragging?1:0.5,letterSpacing:-1,userSelect:"none",cursor:"grab",touchAction:"none",padding:"6px 3px",margin:"-6px -1px"}}>⠿</div>
-              <button onClick={()=>toggle(h.id)} style={{width:34,height:34,borderRadius:"50%",flexShrink:0,border:`2px solid ${done?"var(--c-primary)":C.border2}`,background:done?"color-mix(in srgb, var(--c-primary) 13%, transparent)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,transition:"all 0.25s",animation:done?"habitCheck 0.35s ease":undefined,boxShadow:done?"0 0 14px color-mix(in srgb, var(--c-primary) 40%, transparent)":undefined}}>
-                {done ? <span style={{fontSize:14,fontWeight:900,color:"var(--c-primary)"}}>✓</span> : <span style={{fontSize:18}}>{h.emoji}</span>}
+              <button onClick={()=>toggle(h.id)} style={{position:"relative",width:34,height:34,borderRadius:"50%",flexShrink:0,border:`2px solid ${done?"var(--c-primary)":C.border2}`,background:done?"color-mix(in srgb, var(--c-primary) 13%, transparent)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,transition:"all 0.25s",animation:done?"habitCheck 0.35s ease":undefined,boxShadow:done?"0 0 14px color-mix(in srgb, var(--c-primary) 40%, transparent)":undefined}}>
+                {done ? <>
+                  <span aria-hidden="true" style={{position:"absolute",inset:-3,borderRadius:"50%",border:"2px solid var(--c-primary)",animation:"checkRipple 0.55s cubic-bezier(0.22,1,0.36,1) forwards"}}/>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" style={{strokeDasharray:26,strokeDashoffset:26,animation:"checkDraw 0.4s cubic-bezier(0.22,1,0.36,1) 0.05s forwards"}}/></svg>
+                </> : <span style={{fontSize:18}}>{h.emoji}</span>}
               </button>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:14,fontWeight:600,color:done?C.text3:C.text,textDecoration:done?"line-through":"none",transition:"all 0.25s",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.name}</div>
@@ -1542,17 +1735,14 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked }) {
 
         {showAdd && (
           <div style={{padding:"14px 16px",borderTop:`1px solid rgba(255,255,255,0.08)`,background:"rgba(255,255,255,0.03)"}}>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:10}}>
-              {HABIT_EMOJIS.map(e=>(
-                <button key={e} onClick={()=>setNewEmoji(e)} style={{width:34,height:34,borderRadius:10,background:newEmoji===e?"color-mix(in srgb, var(--c-action) 18%, transparent)":C.bg4,border:newEmoji===e?"1px solid color-mix(in srgb, var(--c-action) 40%, transparent)":"1px solid rgba(255,255,255,0.06)",fontSize:18}}>{e}</button>
-              ))}
-            </div>
             <div style={{display:"flex",gap:8}}>
+              <button aria-label="Choose emoji" onClick={()=>setShowEmojiSheet(true)} style={{width:44,borderRadius:12,background:"color-mix(in srgb, var(--c-action) 12%, transparent)",border:"1px solid color-mix(in srgb, var(--c-action) 30%, transparent)",fontSize:22,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>{newEmoji}</button>
               <input value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addHabit()} placeholder="Habit name…" style={{flex:1,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(8px)",border:`1px solid rgba(255,255,255,0.14)`,borderRadius:12,padding:"10px 12px",fontSize:14,color:C.text}} autoFocus/>
               <button onClick={addHabit} style={{background:`linear-gradient(135deg,${C.accent},${C.teal})`,borderRadius:12,padding:"10px 16px",fontSize:14,fontWeight:700,color:"white",flexShrink:0}}>Add</button>
             </div>
           </div>
         )}
+        {showEmojiSheet && <EmojiSheet onPick={setNewEmoji} onClose={()=>setShowEmojiSheet(false)}/>}
       </div>
     </div>
   );
@@ -1937,7 +2127,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
                 <svg width="22" height="34" viewBox="0 0 24 38" fill="none" stroke={filled?C.blue:C.text3} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 2h6"/>
                   <path d="M9 2v4.2a3 3 0 01-.7 1.9L6.6 10A4 4 0 005.8 12.4V32a4 4 0 004 4h4.4a4 4 0 004-4V12.4a4 4 0 00-.8-2.4l-1.7-1.9a3 3 0 01-.7-1.9V2"/>
-                  {filled&&<path d="M6 20h12V32a3 3 0 01-3 3H9a3 3 0 01-3-3z" fill={C.blue} stroke="none" opacity="0.85"/>}
+                  {filled&&<path d="M6 20h12V32a3 3 0 01-3 3H9a3 3 0 01-3-3z" fill={C.blue} stroke="none" opacity="0.85" style={{transformBox:"fill-box",transformOrigin:"center bottom",animation:"bottleFill 0.5s cubic-bezier(0.22,1,0.36,1)"}}/>}
                 </svg>
               </button>
             );
@@ -2455,7 +2645,7 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
           const curMult = m._mult || 1;
           const isFav = favorites.some(f=>f.name===(m._base||m).name||f.name===m.name.replace(/ ×[\d.]+$/,""));
           return (
-          <div key={m.id} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"color-mix(in srgb, var(--c-action) 28%, transparent)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s"}}>
+          <div key={m.id} style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${isExp?"color-mix(in srgb, var(--c-action) 28%, transparent)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,overflow:"hidden",transition:"border 0.2s",animation:"cardRise 0.45s cubic-bezier(0.22,1,0.36,1) both",animationDelay:(Math.min(i,8)*40)+"ms"}}>
             {/* Tap header to expand */}
             <div onClick={()=>{setExpandedMeal(isExp?null:m.id);setCustomServ("");}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 14px",cursor:"pointer"}}>
               <div style={{flex:1,minWidth:0}}>
@@ -2818,9 +3008,12 @@ function Nav({ page, setPage }) {
             </button>
           );
         })}
-        {/* Single indicator that slides to the active tab, adopting its color */}
+        {/* Sliding pill + underline that track the active tab, adopting its color */}
+        <div aria-hidden="true" style={{position:"absolute",top:6,bottom:8,left:0,width:`${100/tabs.length}%`,transform:`translateX(${Math.max(0,tabs.findIndex(t=>t.id===page))*100}%)`,display:"flex",alignItems:"stretch",justifyContent:"center",pointerEvents:"none",transition:"transform 0.34s cubic-bezier(0.34,1.56,0.64,1)"}}>
+          <div style={{width:"74%",borderRadius:14,background:`color-mix(in srgb, ${activeColor} 9%, transparent)`,boxShadow:`inset 0 0 0 1px color-mix(in srgb, ${activeColor} 16%, transparent), 0 0 14px color-mix(in srgb, ${activeColor} 10%, transparent)`,transition:"background 0.25s,box-shadow 0.25s"}}/>
+        </div>
         <div aria-hidden="true" style={{position:"absolute",bottom:0,left:0,width:`${100/tabs.length}%`,transform:`translateX(${Math.max(0,tabs.findIndex(t=>t.id===page))*100}%)`,display:"flex",justifyContent:"center",pointerEvents:"none",transition:"transform 0.34s cubic-bezier(0.34,1.56,0.64,1)"}}>
-          <div style={{width:"60%",height:2,borderRadius:"2px 2px 0 0",background:TAB_COLORS[page]||"var(--c-primary)",boxShadow:`0 0 8px ${TAB_COLORS[page]||"var(--c-primary)"}`,transition:"background 0.25s"}}/>
+          <div style={{width:"60%",height:2,borderRadius:"2px 2px 0 0",background:activeColor,boxShadow:`0 0 8px ${activeColor}`,transition:"background 0.25s"}}/>
         </div>
       </div>
     </div>
@@ -3196,7 +3389,8 @@ function App() {
   const [theme, setTheme] = useState(()=>normTheme(ld("dos_theme_v1","og")));
   const [showThemeSheet, setShowThemeSheet] = useState(false);
   const [showBackupSheet, setShowBackupSheet] = useState(false);
-  useEffect(()=>{ applyTheme(theme); sv("dos_theme_v1",theme); },[theme]);
+  const themeMounted = useRef(false);
+  useEffect(()=>{ applyTheme(theme, themeMounted.current); themeMounted.current = true; sv("dos_theme_v1",theme); },[theme]);
 
   // Auto-backup when stale (>7 days). iOS blocks downloads without a user
   // gesture, so there we open the sheet instead — one tap from "Back up now".
