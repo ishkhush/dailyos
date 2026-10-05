@@ -19,49 +19,27 @@
 -->
 <script>
 (function(){
-  function rr(ctx,x,y,w,h,rad){
-    ctx.beginPath();
-    ctx.moveTo(x+rad,y);
-    ctx.lineTo(x+w-rad,y); ctx.arcTo(x+w,y,x+w,y+rad,rad);
-    ctx.lineTo(x+w,y+h-rad); ctx.arcTo(x+w,y+h,x+w-rad,y+h,rad);
-    ctx.lineTo(x+rad,y+h); ctx.arcTo(x,y+h,x,y+h-rad,rad);
-    ctx.lineTo(x,y+rad); ctx.arcTo(x,y,x+rad,y,rad);
-    ctx.closePath();
-  }
   function makeIcon(size) {
     try {
       var c = document.createElement('canvas');
       c.width = c.height = size;
       var ctx = c.getContext('2d');
-      var r = size * 0.22;
-      // near-black base with faint purple cast
-      ctx.fillStyle = '#08070e';
-      rr(ctx,0,0,size,size,r); ctx.fill();
-      // purple radial glow, upper-left
-      var glow = ctx.createRadialGradient(size*0.34,size*0.30,0,size*0.34,size*0.30,size*0.85);
-      glow.addColorStop(0,'rgba(139,92,246,0.55)');
-      glow.addColorStop(0.45,'rgba(139,92,246,0.14)');
-      glow.addColorStop(1,'rgba(139,92,246,0)');
-      ctx.fillStyle = glow;
-      rr(ctx,0,0,size,size,r); ctx.fill();
-      // hairline inner stroke
-      ctx.strokeStyle = 'rgba(196,181,253,0.18)';
-      ctx.lineWidth = Math.max(1,size*0.006);
-      rr(ctx,size*0.03,size*0.03,size*0.94,size*0.94,r*0.88); ctx.stroke();
+      var background=ctx.createLinearGradient(0,0,size,size);
+      background.addColorStop(0,'#cbddea');
+      background.addColorStop(0.55,'#e3dceb');
+      background.addColorStop(1,'#f0e5da');
+      ctx.fillStyle=background;ctx.fillRect(0,0,size,size);
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      var fs = Math.round(size*0.28);
-      ctx.font = '900 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
-      while (ctx.measureText('Daily').width > size*0.70 && fs > size*0.10) {
-        fs -= 1; ctx.font = '900 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
+      var face='ui-rounded,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif';
+      var fs = Math.round(size*0.27);
+      ctx.font = '700 '+fs+'px '+face;
+      while (ctx.measureText('Daily').width > size*0.68 && fs > size*0.10) {
+        fs -= 1; ctx.font = '700 '+fs+'px '+face;
       }
-      ctx.fillStyle = '#f5f3ff';
+      ctx.fillStyle = '#27384a';
       ctx.fillText('Daily', size*0.5, size*0.40);
-      var g = ctx.createLinearGradient(size*0.25,size*0.52,size*0.75,size*0.76);
-      g.addColorStop(0,'#e9d5ff'); g.addColorStop(1,'#a78bfa');
-      ctx.font = '900 '+Math.round(size*0.30)+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
-      ctx.shadowColor = 'rgba(167,139,250,0.45)'; ctx.shadowBlur = size*0.035;
-      ctx.fillStyle = g;
-      ctx.fillText('OS', size*0.5, size*0.65);
+      ctx.font = '700 '+Math.round(size*0.29)+'px '+face;
+      ctx.fillText('OS', size*0.5, size*0.64);
       return c.toDataURL('image/png');
     } catch(e) { return ''; }
   }
@@ -307,8 +285,6 @@ video,img{display:block}
 .prayer-slot[data-emphasized="true"] .prayer-card{animation:prayerWiggle .68s ease-in-out infinite,prayerNext 3s ease-in-out infinite;box-shadow:0 0 16px color-mix(in srgb,var(--c-2) 35%,transparent)}
 .prayer-outline{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;filter:drop-shadow(0 0 3px var(--c-2))}
 .prayer-outline rect{animation:prayerOutline 2.4s ease-in-out infinite alternate}
-.app-wordmark{font-family:"Syne","Space Grotesk",sans-serif;font-weight:800;font-size:clamp(21px,5.7vw,26px);letter-spacing:-.8px;line-height:1.2;white-space:nowrap;color:var(--ink);margin-bottom:12px}
-.app-wordmark-accent{color:var(--c-primary);text-shadow:0 0 18px var(--glow-strong)}
 @keyframes prayerWiggle{0%,80%,100%{transform:translateX(0)}16%,48%{transform:translateX(-2px)}32%,64%{transform:translateX(2px)}}
 @keyframes prayerOutline{from{stroke-dashoffset:0}to{stroke-dashoffset:-360}}
 .tap{transition:transform .12s cubic-bezier(.22,1,.36,1),filter .12s ease}
@@ -664,6 +640,18 @@ const timeMinutes = t => t ? Number(t.slice(0,2))*60+Number(t.slice(3,5)) : null
 const timeLabel = t => { if(!t)return "";const [h,m]=t.split(":").map(Number);return `${h%12||12}:${String(m).padStart(2,"0")} ${h>=12?"PM":"AM"}`; };
 const timeRange = (start,end) => start&&end ? `${timeLabel(start)} – ${timeLabel(end)}` : start ? `From ${timeLabel(start)}` : end ? `Until ${timeLabel(end)}` : "Any time";
 const validTimeRange = (start,end) => !start||!end||timeMinutes(end)>timeMinutes(start);
+const shiftDateKey=(key,n)=>{const d=new Date(key+"T12:00:00");d.setDate(d.getDate()+n);return dk(d);};
+const weekStartKey=key=>shiftDateKey(key,-((new Date(key+"T12:00:00").getDay()+6)%7));
+const reminderBounds=r=>r.scope==="everyday"||!r.scope?null:[r.startDate,r.scope==="day"?r.startDate:r.endDate];
+function reminderViewDates(r,date,view) {
+  const start=view==="week"?weekStartKey(date):date,end=view==="week"?shiftDateKey(start,6):date,bounds=reminderBounds(r);
+  const first=bounds&&bounds[0]>start?bounds[0]:start,last=bounds&&bounds[1]<end?bounds[1]:end;
+  const dates=[];for(let key=first;key<=last;key=shiftDateKey(key,1))dates.push(key);
+  return dates;
+}
+const reminderComplete=(r,dates)=>dates.length>0&&dates.every(date=>r.completedDates?.[date]??r.done??false);
+const reminderDateLabel=key=>new Date(key+"T12:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",...(key.slice(0,4)!==String(new Date().getFullYear())?{year:"numeric"}:{})});
+const reminderScopeLabel=r=>r.scope==="day"?reminderDateLabel(r.startDate):r.scope==="week"?`Week of ${reminderDateLabel(r.startDate)}`:r.scope==="range"?`${reminderDateLabel(r.startDate)} – ${reminderDateLabel(r.endDate)}`:"Every day";
 // Lightweight toast bus: toast(msg, kind) → any mounted ToastHost renders it.
 const _toastFns = new Set();
 const toast = (msg, kind = "info") => { _toastFns.forEach(fn => fn(msg, kind)); };
@@ -1093,10 +1081,6 @@ async function analyzePhotoWithKey(apiKey, b64, mime) {
 // Gate component — App renders this instead of the main UI when dos_api_key
 // is empty. On successful save, App's setApiKey() is called, which triggers
 // the normal render path. The key is never sent anywhere except Anthropic.
-function AppWordmark() {
-  return <div role="img" aria-label="Daily OS" className="app-wordmark">Daily <span className="app-wordmark-accent">OS</span></div>;
-}
-
 function ApiKeyScreen({ onSave }) {
   const [key, setKey] = useState("");
   const [testing, setTesting] = useState(false);
@@ -1113,7 +1097,6 @@ function ApiKeyScreen({ onSave }) {
   };
   return (
     <div style={{padding:"60px 24px 40px",maxWidth:400,margin:"0 auto"}}>
-      <div style={{textAlign:"center"}}><AppWordmark/></div>
       <div style={{fontSize:40,marginBottom:16,textAlign:"center"}}>🔑</div>
       <div style={{fontSize:24,fontWeight:800,letterSpacing:-0.5,marginBottom:8,textAlign:"center"}}>Connect Claude AI</div>
       <div style={{fontSize:14,color:C.text2,lineHeight:1.6,marginBottom:32,textAlign:"center"}}>
@@ -1925,7 +1908,6 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
 
         <div className="hero-row" style={{position:"relative",padding:"calc(env(safe-area-inset-top,20px) + 18px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:6}}>
           <div style={{flex:1,minWidth:0}}>
-            <AppWordmark/>
             <div style={{fontSize:12,fontWeight:500,color:C.text2,letterSpacing:0.3,marginBottom:4,fontFamily:"'Space Grotesk',sans-serif"}}>{DAYS_L[today.getDay()]} · {MONTHS_L[today.getMonth()]} {today.getDate()}</div>
             <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:23,fontWeight:800,letterSpacing:1,lineHeight:1,color:C.text2,paddingRight:6}}>WELCOME,<br/><span style={{display:"inline-block",fontSize:48,fontWeight:900,letterSpacing:-1.5,lineHeight:0.95,marginTop:3,background:"linear-gradient(105deg,var(--ink),var(--c-primary))",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent",paddingRight:4}}>ISH</span></div>
             <div style={{marginTop:14,display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
@@ -2755,7 +2737,7 @@ function GoalSheet({ children, onClose, title, returnTo }) {
     const keydown=e=>{
       if(e.key==="Escape"){e.preventDefault();onClose();}
       if(e.key==="Tab"){
-        const controls=[...panel.current.querySelectorAll('button:not(:disabled),input:not(:disabled)')];
+        const controls=[...panel.current.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled)')];
         const first=controls[0],last=controls[controls.length-1];
         if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
         else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
@@ -2790,7 +2772,7 @@ function CopyIcon() {
   return <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M15 9V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4"/></svg>;
 }
 
-function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, setPlanner, clipboard, setClipboard }) {
+function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, setPlanner, clipboard, setClipboard, setReminderView }) {
   const date=new Date(selectedDate+"T12:00:00");
   const shift = (key,n) => {const d=new Date(key+"T12:00:00");d.setDate(d.getDate()+n);return dk(d);};
   const monday=shift(selectedDate,-((date.getDay()+6)%7));
@@ -2850,15 +2832,15 @@ function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, set
   const rangeDate=key=>new Date(key+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric",...(key.slice(0,4)!==days[6].slice(0,4)?{year:"numeric"}:{})});
   return <section aria-label="Weekly planner" style={{margin:"12px 20px 0",padding:16,borderRadius:20,border:`1px solid ${C.border2}`,background:"rgba(255,255,255,0.04)"}}>
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:6}}>
-      <button className="planner-action" aria-label="Previous week" onClick={()=>{onSelect(shift(selectedDate,-7));playCue("select");}}>‹</button>
+      <button className="planner-action" aria-label="Previous week" onClick={()=>{onSelect(shift(selectedDate,-7));setReminderView("week");playCue("select");}}>‹</button>
       <div style={{textAlign:"center",flex:1,minWidth:0}}><div style={{fontSize:10,fontWeight:500,color:C.text2,marginBottom:6}}>Weekly planner</div><div style={{fontSize:20,fontWeight:800,color:C.text,lineHeight:1.3,letterSpacing:-.5}}>{rangeDate(days[0])} – {rangeDate(days[6])}, {new Date(days[6]+"T12:00:00").getFullYear()}</div></div>
-      <button className="planner-action" aria-label="Next week" onClick={()=>{onSelect(shift(selectedDate,7));playCue("select");}}>›</button>
+      <button className="planner-action" aria-label="Next week" onClick={()=>{onSelect(shift(selectedDate,7));setReminderView("week");playCue("select");}}>›</button>
     </div>
     <div role="group" aria-label="Days of the week" style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",gap:4,marginTop:14}}>
       {days.map(key=>{const d=new Date(key+"T12:00:00"),active=key===selectedDate,count=planner[key]?.tasks?.length||0;return <button key={key} aria-label={d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})} aria-pressed={active} onClick={()=>{onSelect(key);playCue("select");}} style={{minWidth:0,padding:"9px 0 7px",borderRadius:11,background:active?"color-mix(in srgb, var(--c-2) 18%, transparent)":"rgba(255,255,255,0.02)",border:`1px solid ${active?C.violet:key===tdk()?C.border2:"transparent"}`,color:active?C.text:C.text2}}><span style={{display:"block",fontSize:11,fontWeight:700}}>{DAYS_L[d.getDay()].slice(0,3)}</span><span style={{display:"block",fontSize:23,fontWeight:800,marginTop:5}}>{d.getDate()}</span><span style={{display:"block",width:3,height:3,borderRadius:9,margin:"5px auto 0",background:count?C.violet:"transparent"}}/></button>;})}
     </div>
     <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:12}}>
-      <button className="planner-action planner-secondary" onClick={()=>{onSelect(tdk());playCue("select");}}>Today</button>
+      <button className="planner-action planner-secondary" onClick={()=>{onSelect(tdk());setReminderView("day");playCue("select");}}>Today</button>
       <button className="planner-action planner-secondary" aria-label="Copy day" title="Copy day" onClick={()=>copy(null)} style={{minWidth:44,display:"flex",alignItems:"center",justifyContent:"center"}}><CopyIcon/></button>
       <button className="planner-action planner-secondary" disabled={!clipboard||(clipboard.kind!=="habit"&&clipboard.from===selectedDate)} onClick={paste}>{clipboard?.kind==="habit"?"Paste habit":clipboard?.kind==="goal"?"Paste goal":"Paste day"}</button>
     </div>
@@ -2889,29 +2871,63 @@ function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, set
   </section>;
 }
 
-function UrgentReminders({ reminders, setReminders }) {
+function UrgentReminders({ reminders, setReminders, selectedDate, view, setView }) {
   const [form,setForm]=useState(null),[text,setText]=useState("");
+  const [scope,setScope]=useState("day"),[start,setStart]=useState(selectedDate),[end,setEnd]=useState(selectedDate),[error,setError]=useState("");
   const trigger=useRef(null);
-  const open=(item,button)=>{trigger.current=button;setForm(item?.id||"new");setText(item?.text||"");};
+  const visible=reminders.map(r=>({reminder:r,dates:reminderViewDates(r,selectedDate,view)})).filter(r=>r.dates.length);
+  const open=(item,button)=>{
+    trigger.current=button;setForm(item?.id||"new");setText(item?.text||"");setScope(item?.scope||(item?"everyday":view==="week"?"week":"day"));
+    setStart(item?.startDate||selectedDate);setEnd(item?.endDate||selectedDate);setError("");
+  };
   const save=e=>{
     e.preventDefault();if(!text.trim())return;
-    setReminders(prev=>form==="new"?[...prev,{id:crypto.randomUUID(),text:text.trim(),done:false}]:prev.map(r=>r.id===form?{...r,text:text.trim()}:r));
+    if(scope!=="everyday"&&(!start||(scope==="range"&&!end))){setError("Choose the reminder dates.");return;}
+    if(scope==="range"&&end<start){setError("End date must be on or after the start date.");return;}
+    const first=scope==="week"?weekStartKey(start):start;
+    const item={text:text.trim(),scope,startDate:scope==="everyday"?"":first,endDate:scope==="everyday"?"":scope==="week"?shiftDateKey(first,6):scope==="range"?end:first};
+    setReminders(prev=>form==="new"?[...prev,{...item,id:crypto.randomUUID(),done:false}]:prev.map(r=>r.id===form?{...r,...item}:r));
     setForm(null);haptic();playCue("save");
   };
-  return <section aria-label="Urgent Reminders" style={{margin:"16px 20px 0",padding:16,borderRadius:18,background:"#290d15",border:"2px solid #fb7185",boxShadow:"0 6px 24px rgba(251,113,133,.12)"}}>
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}><div><h2 style={{fontSize:18,fontWeight:900,letterSpacing:1.2,color:"#fda4af"}}><span aria-hidden="true">⚠️</span> URGENT</h2><div style={{fontSize:11,color:"#fecdd3",marginTop:4}}>Urgent Reminders · {reminders.filter(r=>!r.done).length} pending</div></div><button aria-label="Add urgent reminder" onClick={e=>open(null,e.currentTarget)} style={{minHeight:44,padding:"8px 10px",border:"1px solid #fb7185",borderRadius:10,fontSize:12,fontWeight:700,color:"#fff",background:"#4c1523"}}>+ Add</button></div>
-    {!reminders.length&&<p style={{fontSize:12,color:"#fecdd3",marginTop:12}}>Nothing urgent right now.</p>}
-    {reminders.map(r=><div key={r.id} style={{display:"flex",alignItems:"center",gap:8,paddingTop:12,marginTop:12,borderTop:"1px solid rgba(251,113,133,.25)",opacity:r.done?0.65:1}}>
-      <button role="checkbox" aria-checked={r.done} aria-label={`Complete urgent reminder ${r.text}`} onClick={()=>{setReminders(prev=>prev.map(x=>x.id===r.id?{...x,done:!x.done}:x));haptic();playCue(r.done?"select":"complete");}} style={{width:44,height:44,flexShrink:0,border:"1px solid #fb7185",borderRadius:10,color:"#fff",fontSize:20}}>{r.done?"✓":<span aria-hidden="true">⚠️</span>}</button>
-      <span style={{flex:1,minWidth:0,fontSize:14,fontWeight:800,textTransform:"uppercase",overflowWrap:"anywhere",lineHeight:1.5,color:"#fff",textDecoration:r.done?"line-through":"none"}}>{r.text}</span>
-      <button aria-label={`Edit urgent reminder ${r.text}`} onClick={e=>open(r,e.currentTarget)} style={{minWidth:44,minHeight:44,fontSize:11,color:"#fecdd3"}}>Edit</button><button aria-label={`Delete urgent reminder ${r.text}`} onClick={()=>{setReminders(prev=>prev.filter(x=>x.id!==r.id));haptic();}} style={{minWidth:44,minHeight:44,fontSize:22,color:"#fecdd3"}}>×</button>
-    </div>)}
-    {form&&<GoalSheet title={form==="new"?"Add urgent reminder":"Edit urgent reminder"} returnTo={trigger.current} onClose={()=>setForm(null)}><form onSubmit={save}><label>Reminder<input className="planner-title" aria-label="Urgent reminder text" value={text} onChange={e=>setText(e.target.value)} placeholder="What needs your attention?" required/></label><div style={{display:"flex",gap:8,marginTop:14}}><button className="planner-action" type="submit">Save reminder</button><button className="planner-action planner-secondary" type="button" onClick={()=>setForm(null)}>Cancel</button></div></form></GoalSheet>}
-  </section>;
+  const toggle=(r,dates)=>{
+    const done=reminderComplete(r,dates);
+    setReminders(prev=>prev.map(x=>x.id===r.id?{...x,completedDates:{...(x.completedDates||{}),...Object.fromEntries(dates.map(date=>[date,!done]))}}:x));
+    haptic();playCue(done?"select":"complete");
+  };
+  return <>
+    <div role="group" aria-label="Reminder view" style={{display:"flex",alignItems:"center",gap:4,margin:"12px 20px 0",minHeight:44}}>
+      <span style={{fontSize:11,color:C.text2,marginRight:4}}>Reminders</span>
+      {["day","week"].map(mode=><button key={mode} className="planner-action planner-secondary" aria-label={`Show reminders for ${mode}`} aria-pressed={view===mode} onClick={()=>setView(mode)} style={{background:view===mode?"rgba(255,255,255,.07)":"transparent",color:view===mode?C.text:C.text2}}>{mode==="day"?"Day":"Week"}</button>)}
+      {!visible.length&&<button aria-label="Add urgent reminder" className="planner-action planner-secondary" onClick={e=>open(null,e.currentTarget)} style={{marginLeft:"auto",color:"#fda4af"}}>⚠ + Reminder</button>}
+    </div>
+    {visible.length>0&&<section aria-label="Urgent Reminders" style={{margin:"8px 20px 0",padding:16,borderRadius:18,background:"#290d15",border:"2px solid #fb7185",boxShadow:"0 6px 24px rgba(251,113,133,.12)"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}><div><h2 style={{fontSize:18,fontWeight:900,letterSpacing:1.2,color:"#fda4af"}}><span aria-hidden="true">⚠️</span> URGENT</h2><div style={{fontSize:11,color:"#fecdd3",marginTop:4}}>Urgent Reminders · {visible.filter(({reminder:r,dates})=>!reminderComplete(r,dates)).length} pending</div></div><button aria-label="Add urgent reminder" onClick={e=>open(null,e.currentTarget)} style={{minHeight:44,padding:"8px 10px",border:"1px solid #fb7185",borderRadius:10,fontSize:12,fontWeight:700,color:"#fff",background:"#4c1523"}}>+ Add</button></div>
+      {visible.map(({reminder:r,dates})=>{
+        const done=reminderComplete(r,dates),count=dates.filter(date=>r.completedDates?.[date]??r.done??false).length;
+        return <div key={r.id} style={{display:"flex",alignItems:"center",gap:8,paddingTop:12,marginTop:12,borderTop:"1px solid rgba(251,113,133,.25)",opacity:done?0.65:1}}>
+          <button role="checkbox" aria-checked={done} aria-label={`Complete urgent reminder ${r.text}`} onClick={()=>toggle(r,dates)} style={{width:44,height:44,flexShrink:0,border:"1px solid #fb7185",borderRadius:10,color:"#fff",fontSize:20}}>{done?"✓":<span aria-hidden="true">⚠️</span>}</button>
+          <div style={{flex:1,minWidth:0}}><span style={{fontSize:14,fontWeight:800,textTransform:"uppercase",overflowWrap:"anywhere",lineHeight:1.5,color:"#fff",textDecoration:done?"line-through":"none"}}>{r.text}</span><div style={{fontSize:10,color:"#fecdd3",marginTop:4,lineHeight:1.5,overflowWrap:"anywhere"}}>{reminderScopeLabel(r)}{view==="week"&&dates.length>1?` · ${count}/${dates.length} days done`:""}</div></div>
+          <button aria-label={`Edit urgent reminder ${r.text}`} onClick={e=>open(r,e.currentTarget)} style={{minWidth:44,minHeight:44,fontSize:11,color:"#fecdd3"}}>Edit</button><button aria-label={`Delete urgent reminder ${r.text}`} onClick={()=>{setReminders(prev=>prev.filter(x=>x.id!==r.id));haptic();}} style={{minWidth:44,minHeight:44,fontSize:22,color:"#fecdd3"}}>×</button>
+        </div>;
+      })}
+    </section>}
+    {form&&<GoalSheet title={form==="new"?"Add urgent reminder":"Edit urgent reminder"} returnTo={trigger.current} onClose={()=>setForm(null)}>
+      <form onSubmit={save}>
+        <label>Reminder<input className="planner-title" aria-label="Urgent reminder text" value={text} onChange={e=>setText(e.target.value)} placeholder="What needs your attention?" required/></label>
+        <label style={{display:"block",marginTop:12}}>Applies to<select className="planner-title" aria-label="Reminder scope" value={scope} onChange={e=>{setScope(e.target.value);setError("");}}><option value="day">A specific day</option><option value="week">A specific week</option><option value="range">Custom duration</option><option value="everyday">Every day</option></select></label>
+        {scope!=="everyday"&&<label style={{display:"block",marginTop:12}}>{scope==="week"?"Choose any date in the week":scope==="range"?"Start date":"Date"}<input type="date" className="planner-title" aria-label={scope==="week"?"Reminder week date":"Reminder start date"} value={start} onChange={e=>{setStart(e.target.value);setError("");}} required/></label>}
+        {scope==="week"&&start&&<p style={{fontSize:11,color:C.text2,marginTop:8}}>{reminderDateLabel(weekStartKey(start))} – {reminderDateLabel(shiftDateKey(weekStartKey(start),6))} · Monday–Sunday</p>}
+        {scope==="range"&&<label style={{display:"block",marginTop:12}}>End date<input type="date" className="planner-title" aria-label="Reminder end date" value={end} onChange={e=>{setEnd(e.target.value);setError("");}} required/></label>}
+        {error&&<p role="alert" style={{fontSize:12,color:"#fda4af",marginTop:10}}>{error}</p>}
+        <div style={{display:"flex",gap:8,marginTop:14}}><button className="planner-action" type="submit">Save reminder</button><button className="planner-action planner-secondary" type="button" onClick={()=>setForm(null)}>Cancel</button></div>
+      </form>
+    </GoalSheet>}
+  </>;
 }
 
 function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked, planner, setPlanner, urgent, setUrgent }) {
   const [selectedDate,setSelectedDate]=useState(tdk);
+  const [reminderView,setReminderView]=useState("day");
   const [clipboard,setClipboard]=useState(null);
   const today = selectedDate;
   const dailyHabits=habitsForDay(habits,planner[today]);
@@ -2941,8 +2957,8 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked, planner,
           )}
         </div>
       </div>
-      <UrgentReminders reminders={urgent} setReminders={setUrgent}/>
-      <WeeklyPlanner selectedDate={selectedDate} onSelect={setSelectedDate} habits={habits} setHabits={setHabits} planner={planner} setPlanner={setPlanner} clipboard={clipboard} setClipboard={setClipboard}/>
+      <UrgentReminders reminders={urgent} setReminders={setUrgent} selectedDate={selectedDate} view={reminderView} setView={setReminderView}/>
+      <WeeklyPlanner selectedDate={selectedDate} onSelect={key=>{setSelectedDate(key);setReminderView("day");}} habits={habits} setHabits={setHabits} planner={planner} setPlanner={setPlanner} clipboard={clipboard} setClipboard={setClipboard} setReminderView={setReminderView}/>
       <div style={{fontSize:11,color:C.text2,margin:"18px 20px 0"}}>{selectedDate===tdk()?"Today":new Date(selectedDate+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"})} · Daily habits</div>
       <HabitSection key={selectedDate} habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked} dateKey={selectedDate} planner={planner} setPlanner={setPlanner} onCopy={copyHabit}/>
     </div>
@@ -3424,7 +3440,7 @@ function App() {
   const [bwLog, setBwLog] = useState(()=>ld("dos_bw_log_v1",[]));
   const [habits, setHabits] = useState(()=>ld("dos_habits_v1", DEFAULT_HABITS));
   const [planner, setPlanner] = useState(()=>ld("dos_planner_v1",{}));
-  const [urgent,setUrgent]=useState(()=>ld("dos_urgent_v1",[]));
+  const [urgent,setUrgent]=useState(()=>ld("dos_urgent_v1",[]).map(r=>r.scope?r:{...r,scope:"everyday"}));
   const [soundEnabled,setSoundEnabled] = useState(()=>ld("dos_sound_v1",true));
   const [habitChecked, setHabitChecked] = useState(()=>ld("dos_habit_checked_v1",{}));
   const [dayOverrides, setDayOverrides] = useState(()=>ld("dos_day_overrides_v1",{}));
