@@ -1570,7 +1570,52 @@ function TimeFields({ start, end, onStart, onEnd, prefix }) {
   </div>;
 }
 
-function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKey=tdk(), planner, setPlanner }) {
+function usePointerReorder(items, onReorder, onStart) {
+  const rowEls=useRef([]), dragRef=useRef(null);
+  const [drag,setDrag]=useState(null);
+  const cancelDrag=()=>{dragRef.current=null;setDrag(null);};
+  const startDrag=(e,i)=>{
+    onStart?.();haptic();
+    const row=rowEls.current[i];
+    const h=row?row.getBoundingClientRect().height+(parseFloat(getComputedStyle(row).marginBottom)||0):56;
+    dragRef.current={idx:i,target:i,startY:e.clientY,h};setDrag({idx:i,target:i,dy:0,h});
+    try{e.currentTarget.setPointerCapture(e.pointerId);}catch{}
+  };
+  const moveDrag=e=>{
+    const d=dragRef.current;if(!d)return;
+    e.preventDefault();let target=d.idx;
+    rowEls.current.slice(0,items.length).forEach((el,j)=>{
+      if(!el||j===d.idx)return;
+      const r=el.getBoundingClientRect(),mid=r.top+r.height/2;
+      if(j<d.idx&&e.clientY<mid)target=Math.min(target,j);
+      else if(j>d.idx&&e.clientY>mid)target=Math.max(target,j);
+    });
+    dragRef.current={...d,target};setDrag({idx:d.idx,target,dy:e.clientY-d.startY,h:d.h});
+  };
+  const endDrag=()=>{
+    const d=dragRef.current;
+    if(d&&d.target!==d.idx){const next=[...items];const [item]=next.splice(d.idx,1);next.splice(d.target,0,item);onReorder(next);haptic(12);}
+    cancelDrag();
+  };
+  const rowStyle=i=>{
+    const active=drag?.idx===i;
+    let ty=0;
+    if(drag&&!active){
+      if(drag.target>drag.idx&&i>drag.idx&&i<=drag.target)ty=-drag.h;
+      else if(drag.target<drag.idx&&i>=drag.target&&i<drag.idx)ty=drag.h;
+    }
+    return {transform:active?`translateY(${drag.dy}px) scale(1.03)`:`translateY(${ty}px)`,position:"relative",zIndex:active?20:1,transition:active?"none":"transform 0.34s cubic-bezier(0.34,1.46,0.5,1),background 0.25s,box-shadow 0.25s",...(active?{background:"color-mix(in srgb, var(--c-2) 16%, transparent)",boxShadow:"0 14px 32px rgba(0,0,0,0.55)"}:{})};
+  };
+  const handle=(i,name)=><button type="button" aria-label={`Reorder ${name}`} onPointerDown={e=>startDrag(e,i)} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag} style={{color:drag?.idx===i?C.violet:C.text3,fontSize:16,flexShrink:0,opacity:drag?.idx===i?1:0.5,letterSpacing:-1,userSelect:"none",cursor:"grab",touchAction:"none",padding:"6px 3px",margin:"-6px -1px",minHeight:44}}>⠿</button>;
+  return {rowEls,rowStyle,handle};
+}
+
+const habitsForDay=(habits,day={})=>{
+  const list=[...habits,...(day.habits||[])],order=new Map((day.habitOrder||[]).map((id,i)=>[id,i]));
+  return list.sort((a,b)=>(order.get(a.id)??list.length)-(order.get(b.id)??list.length));
+};
+
+function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKey=tdk(), planner, setPlanner, onCopy }) {
   const today = dateKey;
   const [editTime, setEditTime] = useState(null);
   const [draftStart, setDraftStart] = useState("");
@@ -1590,69 +1635,34 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKe
       return { ...prev, [today]: { ...day, [id]: !day[id] } };
     });
   };
-  const removeHabit = (id) => setHabits(prev => prev.filter(h => h.id !== id));
+  const list=habitsForDay(habits,planner?.[today]);
+  const removeHabit = id => {
+    if(habits.some(h=>h.id===id))setHabits(prev=>prev.filter(h=>h.id!==id));
+    else setPlanner(prev=>({...prev,[today]:{...(prev[today]||{}),habits:(prev[today]?.habits||[]).filter(h=>h.id!==id)}}));
+  };
+  const reorder=next=>{
+    const globals=new Set(habits.map(h=>h.id)),rank=new Map(next.map((h,i)=>[h.id,i]));
+    setHabits(prev=>[...prev].sort((a,b)=>(rank.get(a.id)??next.length)-(rank.get(b.id)??next.length)));
+    setPlanner(prev=>({...prev,[today]:{...(prev[today]||{}),habits:next.filter(h=>!globals.has(h.id)),habitOrder:next.map(h=>h.id)}}));
+  };
+  const {rowEls,rowStyle,handle}=usePointerReorder(list,reorder,()=>setEditTime(null));
   const todayChecked = habitChecked[today] || {};
-  const allDone = habits.length > 0 && habits.every(h => todayChecked[h.id]);
-  // Pointer-based reordering — works on touch (phone PWA) where HTML5 drag-and-drop never fires.
-  // The dragged row follows the finger; the others ease open a gap (no live array
-  // splice mid-drag), so the motion is smooth and springy. Commit once on release.
-  const rowEls = useRef([]);
-  const dragRef = useRef(null);
-  const [drag, setDrag] = useState(null); // { idx, target, dy, h }
-  const startDrag = (e, i) => {
-    setEditTime(null);
-    const h = rowEls.current[i]?.getBoundingClientRect().height || 56;
-    dragRef.current = { idx:i, target:i, startY:e.clientY, h };
-    setDrag({ idx:i, target:i, dy:0, h });
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch(_) {}
-  };
-  const moveDrag = (e) => {
-    const d = dragRef.current; if (!d) return;
-    e.preventDefault();
-    const y = e.clientY;
-    const els = rowEls.current;
-    let target = d.idx;
-    for (let j = 0; j < els.length; j++) {
-      const el = els[j]; if (!el || j === d.idx) continue;
-      const r = el.getBoundingClientRect();
-      const mid = r.top + r.height / 2;
-      if (j < d.idx && y < mid) target = Math.min(target, j);
-      else if (j > d.idx && y > mid) target = Math.max(target, j);
-    }
-    dragRef.current = { ...d, target };
-    setDrag({ idx:d.idx, target, dy:y - d.startY, h:d.h });
-  };
-  const endDrag = () => {
-    const d = dragRef.current; dragRef.current = null;
-    if (d && d.target !== d.idx) {
-      setHabits(prev => { const n = [...prev]; const [it] = n.splice(d.idx, 1); n.splice(d.target, 0, it); return n; });
-    }
-    setDrag(null);
-  };
-
+  const allDone = list.length > 0 && list.every(h => todayChecked[h.id]);
   return (
     <div style={{margin:"12px 20px 0"}}>
       <div style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${allDone?"color-mix(in srgb, var(--c-good) 30%, transparent)":C.border}`,borderRadius:20,overflow:"hidden",boxShadow:allDone?"0 0 24px color-mix(in srgb, var(--c-good) 12%, transparent),inset 0 1px 0 rgba(255,255,255,0.07)":"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07)",transition:"all 0.4s"}}>
-        {habits.length === 0 && (
+        {list.length === 0 && (
           <div style={{padding:"20px 16px",textAlign:"center",color:C.text3,fontSize:13}}>No daily habits yet — use Add goal and choose Repeat daily.</div>
         )}
-        {habits.map((h, i) => {
+        {list.map((h, i) => {
           const done = !!todayChecked[h.id];
           const slot=scheduled(h);
           const streak = habitStreak(h.id, habitChecked);
-          const isDragging = drag && drag.idx===i;
-          let ty = 0;
-          if (drag && !isDragging) {
-            if (drag.target > drag.idx && i > drag.idx && i <= drag.target) ty = -drag.h;
-            else if (drag.target < drag.idx && i >= drag.target && i < drag.idx) ty = drag.h;
-          }
-          const xform = isDragging ? `translateY(${drag.dy}px) scale(1.03)` : `translateY(${ty}px)`;
           return (
             <React.Fragment key={h.id}><div
               ref={el=>rowEls.current[i]=el}
-              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<habits.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:isDragging?"color-mix(in srgb, var(--c-2) 16%, transparent)":done?"color-mix(in srgb, var(--c-good) 6%, transparent)":"rgba(255,255,255,0.01)",boxShadow:isDragging?"0 14px 32px rgba(0,0,0,0.55)":"none",transform:xform,position:"relative",zIndex:isDragging?20:1,transition:isDragging?"none":"transform 0.34s cubic-bezier(0.34,1.46,0.5,1),background 0.25s,box-shadow 0.25s"}}>
-              {/* Grab handle — drag to reorder */}
-              <div onPointerDown={(e)=>startDrag(e,i)} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={()=>{dragRef.current=null;setDrag(null);}} style={{color:isDragging?C.violet:C.text3,fontSize:16,flexShrink:0,opacity:isDragging?1:0.5,letterSpacing:-1,userSelect:"none",cursor:"grab",touchAction:"none",padding:"6px 3px",margin:"-6px -1px"}}>⠿</div>
+              style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<list.length-1?`1px solid rgba(255,255,255,0.07)`:"none",background:done?"color-mix(in srgb, var(--c-good) 6%, transparent)":"rgba(255,255,255,0.01)",...rowStyle(i)}}>
+              {handle(i,h.name)}
               <button aria-label={`Mark ${h.name}`} aria-pressed={done} onClick={()=>toggle(h.id)} style={{position:"relative",width:44,height:44,borderRadius:"50%",flexShrink:0,border:`2px solid ${done?"var(--c-primary)":C.border2}`,background:done?"color-mix(in srgb, var(--c-primary) 13%, transparent)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,transition:"all 0.25s",animation:done?"habitCheck 0.35s ease":undefined,boxShadow:done?"0 0 14px color-mix(in srgb, var(--c-primary) 40%, transparent)":undefined}}>
                 {done ? <>
                   <span aria-hidden="true" style={{position:"absolute",inset:-3,borderRadius:"50%",border:"2px solid var(--c-primary)",animation:"checkRipple 0.55s cubic-bezier(0.22,1,0.36,1) forwards"}}/>
@@ -1660,8 +1670,8 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKe
                 </> : <span style={{fontSize:18}}>{h.emoji||"🎯"}</span>}
               </button>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:14,fontWeight:600,color:done?C.text3:C.text,textDecoration:done?"line-through":"none",transition:"all 0.25s",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{done&&<span aria-hidden="true" style={{marginRight:6}}>{h.emoji||"🎯"}</span>}{h.name}</div>
-                <button aria-label={`Edit schedule for ${h.name}`} onClick={()=>{setEditTime(h.id);setDraftStart(slot.start);setDraftEnd(slot.end);setTimeError("");}} style={{fontSize:11,color:C.text2,minHeight:44,padding:"5px 0",textAlign:"left"}}>{slot.start||slot.end?timeRange(slot.start,slot.end):"＋ Set time"}</button>
+                <div style={{fontSize:14,fontWeight:600,color:done?C.text3:C.text,transition:"all 0.25s",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{done&&<span aria-hidden="true" style={{marginRight:6}}>{h.emoji||"🎯"}</span>}<span style={{textDecoration:done?"line-through":"none"}}>{h.name}</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:4}}><button aria-label={`Edit schedule for ${h.name}`} onClick={()=>{setEditTime(h.id);setDraftStart(slot.start);setDraftEnd(slot.end);setTimeError("");}} style={{fontSize:11,color:C.text2,minHeight:44,padding:"5px 0",textAlign:"left"}}>{slot.start||slot.end?timeRange(slot.start,slot.end):"＋ Set time"}</button><button className="planner-secondary" aria-label={`Copy habit ${h.name}`} title="Copy habit" onClick={()=>onCopy(h,slot)} style={{minWidth:44,minHeight:44,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",padding:6}}><CopyIcon/></button></div>
                 {streak > 0 && <div style={{fontSize:11,color:C.amber,fontWeight:700,marginTop:1}}>🔥 {streak} {streak===1?"day":"days"}</div>}
               </div>
               <button aria-label={`Remove ${h.name}`} onClick={()=>removeHabit(h.id)} style={{color:C.text3,fontSize:16,minWidth:44,minHeight:44,padding:"4px 6px",flexShrink:0,opacity:0.5}}>×</button>
@@ -2567,6 +2577,24 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
 // state (dos_supp_checked_v1 keyed by "YYYY-MM-DD"). Each day starts fresh —
 // checked[tdk()] is empty until the user marks items. Both are persisted in App.
 // The confetti burst fires when taken === total (all supplements checked off).
+function SupplementList({ items, onReorder, todayChecked, toggle, removeSupp }) {
+  const {rowEls,rowStyle,handle}=usePointerReorder(items,onReorder);
+  return items.map((s,i)=>(
+    <div key={s.id} ref={el=>rowEls.current[i]=el}
+      style={{display:"flex",alignItems:"center",gap:12,padding:"13px 14px",background:todayChecked[s.id]?"color-mix(in srgb, var(--c-good) 8%, transparent)":"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${todayChecked[s.id]?"color-mix(in srgb, var(--c-good) 28%, transparent)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,transition:"background 0.3s,border 0.3s,box-shadow 0.3s",boxShadow:todayChecked[s.id]?"0 2px 16px color-mix(in srgb, var(--c-good) 12%, transparent)":undefined,borderLeft:"3px solid transparent",...rowStyle(i)}}>
+      {handle(i,s.name)}
+      <button aria-label={`Mark ${s.name} ${todayChecked[s.id]?"not taken":"taken"}`} aria-pressed={!!todayChecked[s.id]} onClick={()=>toggle(s.id)} style={{width:44,height:44,borderRadius:"50%",border:`2px solid ${todayChecked[s.id]?C.green:C.border2}`,background:todayChecked[s.id]?`linear-gradient(135deg,${C.green},${C.teal})`:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:todayChecked[s.id]?"var(--on-accent)":"transparent",transition:"all 0.25s",boxShadow:todayChecked[s.id]?`0 0 10px color-mix(in srgb, var(--c-good) 40%, transparent)`:undefined}}>
+        {todayChecked[s.id]?"✓":""}
+      </button>
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{fontSize:14,fontWeight:600,color:todayChecked[s.id]?C.text3:C.text,textDecoration:todayChecked[s.id]?"line-through":"none",transition:"color 0.2s"}}>{s.name}</div>
+        <div style={{fontSize:11,color:C.text3,marginTop:2}}>{s.dose}</div>
+      </div>
+      <button aria-label={`Remove ${s.name}`} onClick={()=>removeSupp(s.id)} style={{color:C.text3,fontSize:18,padding:"0 6px",minWidth:44,minHeight:44,lineHeight:1}}>×</button>
+    </div>
+  ));
+}
+
 function SupplementsPage({ supps, setSupps, checked, setChecked }) {
   const today = tdk();
   const total = supps.length;
@@ -2598,39 +2626,11 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
     }
   }, [taken, total]);
 
-  // Drag-and-drop reordering
-  const suppDragId = React.useRef(null);
-  const [suppDragOver, setSuppDragOver] = useState(null);
-  const moveSupp = (fromId, toId) => {
-    setSupps(prev => {
-      const from = prev.findIndex(s => s.id === fromId);
-      const to   = prev.findIndex(s => s.id === toId);
-      if (from === -1 || to === -1 || from === to) return prev;
-      const next = [...prev];
-      const [item] = next.splice(from, 1);
-      next.splice(to, 0, item);
-      return next;
-    });
-  };
+  const reorderSupps=ordered=>setSupps(prev=>{
+    const ids=new Set(ordered.map(s=>s.id)),byId=new Map(prev.map(s=>[s.id,s]));
+    let i=0;return prev.map(s=>ids.has(s.id)?byId.get(ordered[i++].id):s);
+  });
 
-  const renderSuppItem = (s) => (
-    <div
-      draggable
-      onDragStart={()=>{ suppDragId.current=s.id; setSuppDragOver(null); }}
-      onDragEnd={()=>{ suppDragId.current=null; setSuppDragOver(null); }}
-      onDragOver={e=>{ e.preventDefault(); setSuppDragOver(s.id); }}
-      onDrop={e=>{ e.preventDefault(); if(suppDragId.current&&suppDragId.current!==s.id) moveSupp(suppDragId.current,s.id); setSuppDragOver(null); }}
-      style={{display:"flex",alignItems:"center",gap:12,padding:"13px 14px",background:todayChecked[s.id]?"color-mix(in srgb, var(--c-good) 8%, transparent)":"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${suppDragOver===s.id?"color-mix(in srgb, var(--c-action) 50%, transparent)":todayChecked[s.id]?"color-mix(in srgb, var(--c-good) 28%, transparent)":"rgba(255,255,255,0.09)"}`,borderRadius:16,marginBottom:8,transition:"background 0.3s,border 0.3s,box-shadow 0.3s",boxShadow:todayChecked[s.id]?"0 2px 16px color-mix(in srgb, var(--c-good) 12%, transparent)":undefined,cursor:"grab",borderLeft:suppDragOver===s.id?`3px solid ${C.accent}`:"3px solid transparent"}}>
-      <button aria-label={`Mark ${s.name} ${todayChecked[s.id]?"not taken":"taken"}`} aria-pressed={!!todayChecked[s.id]} onClick={()=>toggle(s.id)} style={{width:44,height:44,borderRadius:"50%",border:`2px solid ${todayChecked[s.id]?C.green:C.border2}`,background:todayChecked[s.id]?`linear-gradient(135deg,${C.green},${C.teal})`:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:todayChecked[s.id]?"var(--on-accent)":"transparent",transition:"all 0.25s",boxShadow:todayChecked[s.id]?`0 0 10px color-mix(in srgb, var(--c-good) 40%, transparent)`:undefined}}>
-        {todayChecked[s.id]?"✓":""}
-      </button>
-      <div style={{flex:1}}>
-        <div style={{fontSize:14,fontWeight:600,color:todayChecked[s.id]?C.text3:C.text,textDecoration:todayChecked[s.id]?"line-through":"none",transition:"color 0.2s"}}>{s.name}</div>
-        <div style={{fontSize:11,color:C.text3,marginTop:2}}>{s.dose}</div>
-      </div>
-      <button aria-label={`Remove ${s.name}`} onClick={()=>removeSupp(s.id)} style={{color:C.text3,fontSize:18,padding:"0 6px",minWidth:44,minHeight:44,lineHeight:1}}>×</button>
-    </div>
-  );
 
   return (
     <div>
@@ -2668,7 +2668,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
               <span style={{fontSize:11,color:C.text3}}>{takenM}/{morning.length}</span>
             </div>
           </div>
-          {morning.map(s=><React.Fragment key={s.id}>{renderSuppItem(s)}</React.Fragment>)}
+          <SupplementList items={morning} onReorder={reorderSupps} todayChecked={todayChecked} toggle={toggle} removeSupp={removeSupp}/>
         </div>
       )}
 
@@ -2682,7 +2682,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
               <span style={{fontSize:11,color:C.text3}}>{takenE}/{evening.length}</span>
             </div>
           </div>
-          {evening.map(s=><React.Fragment key={s.id}>{renderSuppItem(s)}</React.Fragment>)}
+          <SupplementList items={evening} onReorder={reorderSupps} todayChecked={todayChecked} toggle={toggle} removeSupp={removeSupp}/>
         </div>
       )}
 
@@ -2749,6 +2749,7 @@ function GoalSheet({ children, onClose, title, returnTo }) {
     window.addEventListener("resize",resize);
     document.addEventListener("keydown",keydown);
     panel.current.addEventListener("focusin",reveal);
+    panel.current.querySelector("button")?.focus({preventScroll:true});
     resize();
     return ()=>{
       cancelAnimationFrame(frame);
@@ -2762,7 +2763,7 @@ function GoalSheet({ children, onClose, title, returnTo }) {
   },[]);
   return ReactDOM.createPortal(<div onClick={onClose} style={{position:"fixed",top:viewport.top,left:0,right:0,height:viewport.height,zIndex:200,background:"rgba(0,0,0,.65)",display:"flex",alignItems:"flex-end",justifyContent:"center",paddingTop:12}}>
     <div ref={panel} role="dialog" aria-modal="true" aria-labelledby="goal-sheet-title" className="goal-sheet" onClick={e=>e.stopPropagation()}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:12}}><h2 id="goal-sheet-title" className="syne" style={{fontSize:22,fontWeight:800}}>{title}</h2><button type="button" aria-label="Close goal editor" onClick={onClose} style={{width:44,height:44,fontSize:24,color:C.text2}}>×</button></div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:12}}><h2 id="goal-sheet-title" className="syne" style={{fontSize:22,fontWeight:800}}>{title}</h2><button type="button" aria-label={title.includes("reminder")?"Close reminder editor":"Close goal editor"} onClick={onClose} style={{width:44,height:44,fontSize:24,color:C.text2}}>×</button></div>
       {children}
     </div>
   </div>,document.body);
@@ -2805,22 +2806,28 @@ function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, set
       playCue("save");toast("Goal copied — choose a day to paste","success");return;
     }
     const habitTimes=Object.fromEntries(habits.map(h=>[h.id,day.habitTimes?.[h.id]||{start:h.startTime||"",end:h.endTime||""}]));
-    setClipboard({from:selectedDate,kind:"day",tasks:tasks.map(t=>({title:t.title,emoji:t.emoji||"🎯",start:t.start||"",end:t.end||""})),habitTimes});
+    const copies=(day.habits||[]).map(h=>({...h,startTime:day.habitTimes?.[h.id]?.start??h.startTime??"",endTime:day.habitTimes?.[h.id]?.end??h.endTime??""}));
+    setClipboard({from:selectedDate,kind:"day",tasks:tasks.map(t=>({title:t.title,emoji:t.emoji||"🎯",start:t.start||"",end:t.end||""})),habitTimes,habits:copies});
     playCue("save");toast("Goals and habit times copied","success");
   };
   const paste=()=>{
     if(!clipboard)return;
     setPlanner(prev=>{
       const target=prev[selectedDate]||{},list=target.tasks||[];
+      if(clipboard.kind==="habit")return {...prev,[selectedDate]:{...target,habits:[...(target.habits||[]),{...clipboard.habit,id:crypto.randomUUID(),done:false}]}};
       const signature=t=>JSON.stringify([t.title,t.emoji||"🎯",t.start||"",t.end||""]);
       const seen=new Set(list.map(signature)),added=[];
       clipboard.tasks.forEach(t=>{const key=signature(t);if(!seen.has(key)){seen.add(key);added.push({...t,id:crypto.randomUUID(),done:false});}});
       const times=Object.fromEntries(Object.entries(clipboard.habitTimes).filter(([id])=>habits.some(h=>h.id===id)));
-      return {...prev,[selectedDate]:{...target,tasks:[...list,...added],habitTimes:{...(target.habitTimes||{}),...times}}};
+      const habitSignature=h=>JSON.stringify([h.name,h.emoji||"🎯",target.habitTimes?.[h.id]?.start??h.startTime??"",target.habitTimes?.[h.id]?.end??h.endTime??""]);
+      const existingCounts=new Map(),copyCounts=new Map(),addedHabits=[];
+      (target.habits||[]).forEach(h=>{const key=habitSignature(h);existingCounts.set(key,(existingCounts.get(key)||0)+1);});
+      (clipboard.habits||[]).forEach(h=>{const key=JSON.stringify([h.name,h.emoji||"🎯",h.startTime||"",h.endTime||""]),count=(copyCounts.get(key)||0)+1;copyCounts.set(key,count);if(count>(existingCounts.get(key)||0))addedHabits.push({...h,id:crypto.randomUUID(),done:false});});
+      return {...prev,[selectedDate]:{...target,tasks:[...list,...added],habitTimes:{...(target.habitTimes||{}),...times},...(addedHabits.length?{habits:[...(target.habits||[]),...addedHabits]}:{})}};
     });
-    playCue("save");toast(clipboard.kind==="goal"?"Goal pasted":"Plan pasted — ready for a fresh day","success");
+    playCue("save");toast(clipboard.kind==="habit"?"Habit pasted — unchecked":clipboard.kind==="goal"?"Goal pasted":"Plan pasted — ready for a fresh day","success");
   };
-  const slots=[...tasks,...habits.map(h=>day.habitTimes?.[h.id]||{start:h.startTime||"",end:h.endTime||""})].filter(t=>t.start&&t.end&&validTimeRange(t.start,t.end)).map(t=>[timeMinutes(t.start),timeMinutes(t.end)]).sort((a,b)=>a[0]-b[0]);
+  const slots=[...tasks,...habitsForDay(habits,day).map(h=>day.habitTimes?.[h.id]||{start:h.startTime||"",end:h.endTime||""})].filter(t=>t.start&&t.end&&validTimeRange(t.start,t.end)).map(t=>[timeMinutes(t.start),timeMinutes(t.end)]).sort((a,b)=>a[0]-b[0]);
   const overlap=slots.some((s,i)=>slots.slice(0,i).some(p=>p[1]>s[0]));
   const minutes=slots.reduce((sum,s)=>sum+s[1]-s[0],0);
   const rangeDate=key=>new Date(key+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric",...(key.slice(0,4)!==days[6].slice(0,4)?{year:"numeric"}:{})});
@@ -2836,9 +2843,9 @@ function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, set
     <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:12}}>
       <button className="planner-action planner-secondary" onClick={()=>{onSelect(tdk());playCue("select");}}>Today</button>
       <button className="planner-action planner-secondary" aria-label="Copy day" title="Copy day" onClick={()=>copy(null)} style={{minWidth:44,display:"flex",alignItems:"center",justifyContent:"center"}}><CopyIcon/></button>
-      <button className="planner-action planner-secondary" disabled={!clipboard||clipboard.from===selectedDate} onClick={paste}>{clipboard?.kind==="goal"?"Paste goal":"Paste day"}</button>
+      <button className="planner-action planner-secondary" disabled={!clipboard||(clipboard.kind!=="habit"&&clipboard.from===selectedDate)} onClick={paste}>{clipboard?.kind==="habit"?"Paste habit":clipboard?.kind==="goal"?"Paste goal":"Paste day"}</button>
     </div>
-    {clipboard&&<p style={{fontSize:10,lineHeight:1.5,color:C.text2,marginTop:4}}>{clipboard.kind==="goal"?`Copied ${clipboard.tasks[0].emoji} ${clipboard.tasks[0].title}`:`Copied ${rangeDate(clipboard.from)}`} · choose a day to paste.</p>}
+    {clipboard&&<p style={{fontSize:10,lineHeight:1.5,color:C.text2,marginTop:4,overflowWrap:"anywhere"}}>{clipboard.kind==="habit"?`Copied ${clipboard.habit.emoji||"🎯"} ${clipboard.habit.name}`:clipboard.kind==="goal"?`Copied ${clipboard.tasks[0].emoji} ${clipboard.tasks[0].title}`:`Copied ${rangeDate(clipboard.from)}`} · {clipboard.kind==="habit"?"paste here or choose another day.":"choose a day to paste."}</p>}
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:18,marginBottom:8,gap:8}}>
       <div><div style={{fontSize:12,fontWeight:700,color:C.text}}>{date.toLocaleDateString("en-US",{weekday:"long"})}'s Goals</div><div style={{fontSize:10,color:C.text2,marginTop:3}}>{tasks.filter(t=>t.done).length}/{tasks.length} complete{minutes?` · ${minutes} min planned`:""}</div></div>
       <button className="planner-action" onClick={e=>openForm(null,e.currentTarget)}>+ Add goal</button>
@@ -2847,13 +2854,13 @@ function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, set
     {!tasks.length&&<p style={{fontSize:12,color:C.text2,lineHeight:1.6,padding:"8px 0"}}>A little space for what matters. Add a goal for this day.</p>}
     {[...tasks].sort((a,b)=>(timeMinutes(a.start)??1440)-(timeMinutes(b.start)??1440)).map(task=><div key={task.id} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 0",borderTop:`1px solid ${C.border}`}}>
       <button role="checkbox" aria-checked={task.done} aria-label={`Complete ${task.title}`} onClick={()=>{playCue(task.done?"select":"complete");haptic();updateTasks(list=>list.map(t=>t.id===task.id?{...t,done:!t.done}:t));}} style={{width:44,height:44,flexShrink:0,borderRadius:10,border:`1px solid ${task.done?C.green:C.border2}`,background:task.done?"color-mix(in srgb, var(--c-good) 12%, transparent)":"transparent",color:C.green}}>{task.done?<CheckIcon size={15}/>:<span style={{fontSize:22}}>{task.emoji||"🎯"}</span>}</button>
-      <div style={{flex:1,minWidth:0}}><div style={{fontSize:13,fontWeight:600,color:task.done?C.text2:C.text,textDecoration:task.done?"line-through":"none",overflowWrap:"anywhere"}}><span aria-hidden="true" style={{marginRight:6}}>{task.done?(task.emoji||"🎯"):""}</span>{task.title}</div><div style={{display:"flex",alignItems:"center",gap:4,marginTop:4}}><span style={{fontSize:10,color:C.text2,flex:1}}>{timeRange(task.start,task.end)}</span><button className="planner-secondary" aria-label={`Copy goal ${task.title}`} title="Copy goal" onClick={()=>copy(task)} style={{minWidth:44,display:"flex",alignItems:"center",justifyContent:"center",padding:6,borderRadius:10}}><CopyIcon/></button></div></div>
+      <div style={{flex:1,minWidth:0}}><div style={{fontSize:13,fontWeight:600,color:task.done?C.text2:C.text,overflowWrap:"anywhere"}}><span aria-hidden="true" style={{marginRight:6}}>{task.done?(task.emoji||"🎯"):""}</span><span style={{textDecoration:task.done?"line-through":"none"}}>{task.title}</span></div><div style={{display:"flex",alignItems:"center",gap:4,marginTop:4}}><span style={{fontSize:10,color:C.text2,flex:1}}>{timeRange(task.start,task.end)}</span><button className="planner-secondary" aria-label={`Copy goal ${task.title}`} title="Copy goal" onClick={()=>copy(task)} style={{minWidth:44,display:"flex",alignItems:"center",justifyContent:"center",padding:6,borderRadius:10}}><CopyIcon/></button></div></div>
       <button aria-label={`Edit ${task.title}`} onClick={e=>openForm(task,e.currentTarget)} style={{fontSize:11,color:C.text2,minWidth:44,minHeight:44,padding:"8px 3px"}}>Edit</button>
       <button aria-label={`Remove goal ${task.title}`} onClick={()=>{updateTasks(list=>list.filter(t=>t.id!==task.id));playCue("select");}} style={{fontSize:18,color:C.text2,minWidth:44,minHeight:44,padding:"8px 3px"}}>×</button>
     </div>)}
     {form&&<GoalSheet title={form==="new"?"Add goal":"Edit goal"} returnTo={editorTrigger.current} onClose={()=>{setForm(null);setError("");}}>
       <form onSubmit={e=>{e.preventDefault();save();}}>
-      <label>Goal<input className="planner-title" aria-label="Goal title" placeholder="What matters on this day?" value={title} onChange={e=>setTitle(e.target.value)} autoFocus required/></label>
+      <label>Goal<input className="planner-title" aria-label="Goal title" placeholder="What matters on this day?" value={title} onChange={e=>setTitle(e.target.value)} required/></label>
       <label style={{display:"block",marginTop:12}}>Emoji<input className="planner-title" aria-label="Goal emoji" placeholder="🎯" value={emoji} onChange={e=>setEmoji(e.target.value)} autoComplete="off" spellCheck={false} aria-describedby="goal-emoji-help"/></label>
       <p id="goal-emoji-help" style={{fontSize:11,color:C.text2,marginTop:6,lineHeight:1.5}}>Use any emoji from your keyboard. Leave blank for 🎯.</p>
       {form==="new"&&<label style={{display:"flex",alignItems:"center",gap:10,minHeight:44,marginTop:8}}><input type="checkbox" checked={repeat} onChange={e=>setRepeat(e.target.checked)} style={{width:22,height:22,accentColor:"var(--c-primary)"}}/>Repeat daily as a habit</label>}
@@ -2865,12 +2872,35 @@ function WeeklyPlanner({ selectedDate, onSelect, habits, setHabits, planner, set
   </section>;
 }
 
-function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked, planner, setPlanner }) {
+function UrgentReminders({ reminders, setReminders }) {
+  const [form,setForm]=useState(null),[text,setText]=useState("");
+  const trigger=useRef(null);
+  const open=(item,button)=>{trigger.current=button;setForm(item?.id||"new");setText(item?.text||"");};
+  const save=e=>{
+    e.preventDefault();if(!text.trim())return;
+    setReminders(prev=>form==="new"?[...prev,{id:crypto.randomUUID(),text:text.trim(),done:false}]:prev.map(r=>r.id===form?{...r,text:text.trim()}:r));
+    setForm(null);haptic();playCue("save");
+  };
+  return <section aria-label="Urgent Reminders" style={{margin:"16px 20px 0",padding:16,borderRadius:18,background:"#290d15",border:"2px solid #fb7185",boxShadow:"0 6px 24px rgba(251,113,133,.12)"}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}><div><h2 style={{fontSize:18,fontWeight:900,letterSpacing:1.2,color:"#fda4af"}}><span aria-hidden="true">⚠️</span> URGENT</h2><div style={{fontSize:11,color:"#fecdd3",marginTop:4}}>Urgent Reminders · {reminders.filter(r=>!r.done).length} pending</div></div><button aria-label="Add urgent reminder" onClick={e=>open(null,e.currentTarget)} style={{minHeight:44,padding:"8px 10px",border:"1px solid #fb7185",borderRadius:10,fontSize:12,fontWeight:700,color:"#fff",background:"#4c1523"}}>+ Add</button></div>
+    {!reminders.length&&<p style={{fontSize:12,color:"#fecdd3",marginTop:12}}>Nothing urgent right now.</p>}
+    {reminders.map(r=><div key={r.id} style={{display:"flex",alignItems:"center",gap:8,paddingTop:12,marginTop:12,borderTop:"1px solid rgba(251,113,133,.25)",opacity:r.done?0.65:1}}>
+      <button role="checkbox" aria-checked={r.done} aria-label={`Complete urgent reminder ${r.text}`} onClick={()=>{setReminders(prev=>prev.map(x=>x.id===r.id?{...x,done:!x.done}:x));haptic();playCue(r.done?"select":"complete");}} style={{width:44,height:44,flexShrink:0,border:"1px solid #fb7185",borderRadius:10,color:"#fff",fontSize:20}}>{r.done?"✓":<span aria-hidden="true">⚠️</span>}</button>
+      <span style={{flex:1,minWidth:0,fontSize:14,fontWeight:800,textTransform:"uppercase",overflowWrap:"anywhere",lineHeight:1.5,color:"#fff",textDecoration:r.done?"line-through":"none"}}>{r.text}</span>
+      <button aria-label={`Edit urgent reminder ${r.text}`} onClick={e=>open(r,e.currentTarget)} style={{minWidth:44,minHeight:44,fontSize:11,color:"#fecdd3"}}>Edit</button><button aria-label={`Delete urgent reminder ${r.text}`} onClick={()=>{setReminders(prev=>prev.filter(x=>x.id!==r.id));haptic();}} style={{minWidth:44,minHeight:44,fontSize:22,color:"#fecdd3"}}>×</button>
+    </div>)}
+    {form&&<GoalSheet title={form==="new"?"Add urgent reminder":"Edit urgent reminder"} returnTo={trigger.current} onClose={()=>setForm(null)}><form onSubmit={save}><label>Reminder<input className="planner-title" aria-label="Urgent reminder text" value={text} onChange={e=>setText(e.target.value)} placeholder="What needs your attention?" required/></label><div style={{display:"flex",gap:8,marginTop:14}}><button className="planner-action" type="submit">Save reminder</button><button className="planner-action planner-secondary" type="button" onClick={()=>setForm(null)}>Cancel</button></div></form></GoalSheet>}
+  </section>;
+}
+
+function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked, planner, setPlanner, urgent, setUrgent }) {
   const [selectedDate,setSelectedDate]=useState(tdk);
   const [clipboard,setClipboard]=useState(null);
   const today = selectedDate;
-  const done = habits.filter(h => (habitChecked[today]||{})[h.id]).length;
-  const allDone = habits.length > 0 && done === habits.length;
+  const dailyHabits=habitsForDay(habits,planner[today]);
+  const done = dailyHabits.filter(h => (habitChecked[today]||{})[h.id]).length;
+  const allDone = dailyHabits.length > 0 && done === dailyHabits.length;
+  const copyHabit=(habit,slot)=>{setClipboard({from:selectedDate,kind:"habit",habit:{...habit,startTime:slot.start,endTime:slot.end}});haptic();playCue("save");toast("Habit copied — paste here or choose a day","success");};
   return (
     <div style={{paddingBottom:110}}>
       {/* Header */}
@@ -2887,16 +2917,17 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked, planner,
             Your{" "}
             <span style={{background:`linear-gradient(100deg,${C.violet},${C.pink})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Habits</span>
           </div>
-          {habits.length > 0 && (
+          {dailyHabits.length > 0 && (
             <div style={{fontSize:13,color:allDone?C.green:C.text3,fontWeight:600,marginBottom:16,transition:"color 0.4s"}}>
-              {allDone ? "✅ All habits complete!" : `${done} / ${habits.length} habits completed`}
+              {allDone ? "✅ All habits complete!" : `${done} / ${dailyHabits.length} habits completed`}
             </div>
           )}
         </div>
       </div>
+      <UrgentReminders reminders={urgent} setReminders={setUrgent}/>
       <WeeklyPlanner selectedDate={selectedDate} onSelect={setSelectedDate} habits={habits} setHabits={setHabits} planner={planner} setPlanner={setPlanner} clipboard={clipboard} setClipboard={setClipboard}/>
       <div style={{fontSize:11,color:C.text2,margin:"18px 20px 0"}}>{selectedDate===tdk()?"Today":new Date(selectedDate+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"})} · Daily habits</div>
-      <HabitSection key={selectedDate} habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked} dateKey={selectedDate} planner={planner} setPlanner={setPlanner}/>
+      <HabitSection key={selectedDate} habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked} dateKey={selectedDate} planner={planner} setPlanner={setPlanner} onCopy={copyHabit}/>
     </div>
   );
 }
@@ -3376,6 +3407,7 @@ function App() {
   const [bwLog, setBwLog] = useState(()=>ld("dos_bw_log_v1",[]));
   const [habits, setHabits] = useState(()=>ld("dos_habits_v1", DEFAULT_HABITS));
   const [planner, setPlanner] = useState(()=>ld("dos_planner_v1",{}));
+  const [urgent,setUrgent]=useState(()=>ld("dos_urgent_v1",[]));
   const [soundEnabled,setSoundEnabled] = useState(()=>ld("dos_sound_v1",true));
   const [habitChecked, setHabitChecked] = useState(()=>ld("dos_habit_checked_v1",{}));
   const [dayOverrides, setDayOverrides] = useState(()=>ld("dos_day_overrides_v1",{}));
@@ -3411,6 +3443,7 @@ function App() {
   useEffect(()=>{ sv("dos_bw_log_v1",bwLog); },[bwLog]);
   useEffect(()=>{ sv("dos_habits_v1",habits); },[habits]);
   useEffect(()=>{ sv("dos_planner_v1",planner); },[planner]);
+  useEffect(()=>{ sv("dos_urgent_v1",urgent); },[urgent]);
   useEffect(()=>{ sv("dos_sound_v1",soundEnabled); },[soundEnabled]);
   useEffect(()=>{ sv("dos_habit_checked_v1",habitChecked); },[habitChecked]);
   useEffect(()=>{ sv("dos_day_overrides_v1",dayOverrides); },[dayOverrides]);
@@ -3440,7 +3473,7 @@ function App() {
       <div key={page} className="page-enter">
         {page==="home"        && <HomePage      meals={meals} usage={usage} supps={supps} suppChecked={suppChecked} setPage={setPage} scrollY={scrollY} bwLog={bwLog} setShowBwModal={setShowBwModal} setShowThemeSheet={setShowThemeSheet} setShowBackupSheet={setShowBackupSheet} water={water} setWater={setWater} energy={energy} setEnergy={setEnergy} prayerChecked={prayerChecked} setPrayerChecked={setPrayerChecked} dayOverrides={dayOverrides}/>}
         {page==="fitness"     && <FitnessPage   meals={meals} setMeals={setMeals} attend={attend} setAttend={setAttend} apiKey={apiKey} favorites={favorites} setFavorites={setFavorites} bwLog={bwLog} setBwLog={setBwLog} dayOverrides={dayOverrides} setDayOverrides={setDayOverrides}/>}
-        {page==="habits"      && <HabitsPage    habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked} planner={planner} setPlanner={setPlanner}/>}
+        {page==="habits"      && <HabitsPage    habits={habits} setHabits={setHabits} habitChecked={habitChecked} setHabitChecked={setHabitChecked} planner={planner} setPlanner={setPlanner} urgent={urgent} setUrgent={setUrgent}/>}
         {page==="supplements" && <SupplementsPage supps={supps} setSupps={setSupps} checked={suppChecked} setChecked={setSuppChecked}/>}
         {page==="progress"    && <ProgressPage bwLog={bwLog} setShowBackupSheet={setShowBackupSheet}/>}
       </div>
