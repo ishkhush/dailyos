@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DailyOS">
+<meta name="apple-mobile-web-app-title" content="Daily OS">
 <meta name="theme-color" content="#060810">
-<title>DailyOS</title>
+<title>Daily OS</title>
 
 <!--
   PWA BOOTSTRAP — runs before React loads.
@@ -48,31 +48,27 @@
       ctx.strokeStyle = 'rgba(196,181,253,0.18)';
       ctx.lineWidth = Math.max(1,size*0.006);
       rr(ctx,size*0.03,size*0.03,size*0.94,size*0.94,r*0.88); ctx.stroke();
-      // "DailyOS" wordmark, purple gradient; letterSpacing setter throws on old engines
-      var g = ctx.createLinearGradient(size*0.2,size*0.30,size*0.85,size*0.62);
-      g.addColorStop(0,'#d6c9ff'); g.addColorStop(0.5,'#8B5CF6'); g.addColorStop(1,'#6d28d9');
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      try { ctx.letterSpacing = (-size*0.008)+'px'; } catch(e) {}
-      var fs = Math.round(size*0.17);
-      ctx.font = '800 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
-      // shrink until the wordmark fits inside the safe area
-      while (fs > size*0.10 && ctx.measureText('DailyOS').width > size*0.86) {
-        fs -= 1; ctx.font = '800 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
+      var fs = Math.round(size*0.28);
+      ctx.font = '900 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
+      while (ctx.measureText('Daily').width > size*0.70 && fs > size*0.10) {
+        fs -= 1; ctx.font = '900 '+fs+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
       }
+      ctx.fillStyle = '#f5f3ff';
+      ctx.fillText('Daily', size*0.5, size*0.40);
+      var g = ctx.createLinearGradient(size*0.25,size*0.52,size*0.75,size*0.76);
+      g.addColorStop(0,'#e9d5ff'); g.addColorStop(1,'#a78bfa');
+      ctx.font = '900 '+Math.round(size*0.30)+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
+      ctx.shadowColor = 'rgba(167,139,250,0.45)'; ctx.shadowBlur = size*0.035;
       ctx.fillStyle = g;
-      ctx.fillText('DailyOS', size*0.5, size*0.47);
-      // "by ish" byline
-      try { ctx.letterSpacing = (size*0.006)+'px'; } catch(e) {}
-      ctx.fillStyle = 'rgba(255,255,255,0.55)';
-      ctx.font = '500 '+Math.round(size*0.085)+'px "Helvetica Neue",Helvetica,Arial,sans-serif';
-      ctx.fillText('by ish', size*0.5, size*0.62);
-      try { ctx.letterSpacing = '0px'; } catch(e) {}
+      ctx.fillText('OS', size*0.5, size*0.65);
       return c.toDataURL('image/png');
     } catch(e) { return ''; }
   }
-  var icon192 = makeIcon(192), icon512 = makeIcon(512);
-  if (icon192) { var al=document.createElement('link'); al.rel='apple-touch-icon'; al.href=icon192; document.head.appendChild(al); }
-  var manifest = { name:'DailyOS', short_name:'DailyOS', description:'Fitness, nutrition & daily OS', start_url:'./', scope:'./', display:'standalone', orientation:'any', background_color:'#08070e', theme_color:'#08070e', icons:[{src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:icon512,sizes:'512x512',type:'image/png',purpose:'any maskable'}] };
+  var icon180 = makeIcon(180), icon192 = makeIcon(192), icon512 = makeIcon(512);
+  if (icon180) { var al=document.createElement('link'); al.rel='apple-touch-icon'; al.sizes='180x180'; al.href=icon180; document.head.appendChild(al); }
+  var favicon=document.createElement('link'); favicon.rel='icon'; favicon.sizes='32x32'; favicon.href=makeIcon(32); document.head.appendChild(favicon);
+  var manifest = { name:'Daily OS', short_name:'Daily OS', description:'Fitness, nutrition & daily OS', start_url:'./', scope:'./', display:'standalone', orientation:'any', background_color:'#08070e', theme_color:'#08070e', icons:[{src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:icon512,sizes:'512x512',type:'image/png',purpose:'any maskable'}] };
   var ml=document.createElement('link'); ml.rel='manifest'; ml.href='data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)); document.head.appendChild(ml);
   // Register the SW, re-check for updates every time the PWA is foregrounded
   // (iOS suspends rather than quits, so 'load' alone almost never re-fires),
@@ -306,6 +302,15 @@ video,img{display:block}
 .section-rule span{font-family:"Space Grotesk",sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;color:var(--ink-3);text-transform:uppercase;white-space:nowrap}
 .cyber-card{background:rgba(255,255,255,0.03);border:1px solid color-mix(in srgb, var(--c-primary) 12%, transparent);border-radius:16px;position:relative;overflow:hidden}
 .prayer-active{animation:prayerNext 3s ease-in-out infinite}
+.prayer-slot{flex:1;min-width:0;transform:scale(1);transition:transform .22s ease;position:relative}
+.prayer-slot[data-emphasized="true"]{transform:scale(1.065);z-index:1}
+.prayer-slot[data-emphasized="true"] .prayer-card{animation:prayerWiggle .68s ease-in-out infinite,prayerNext 3s ease-in-out infinite;box-shadow:0 0 16px color-mix(in srgb,var(--c-2) 35%,transparent)}
+.prayer-outline{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;filter:drop-shadow(0 0 3px var(--c-2))}
+.prayer-outline rect{animation:prayerOutline 2.4s ease-in-out infinite alternate}
+.app-wordmark{font-family:"Syne","Space Grotesk",sans-serif;font-weight:800;font-size:clamp(21px,5.7vw,26px);letter-spacing:-.8px;line-height:1.2;white-space:nowrap;color:var(--ink);margin-bottom:12px}
+.app-wordmark-accent{color:var(--c-primary);text-shadow:0 0 18px var(--glow-strong)}
+@keyframes prayerWiggle{0%,80%,100%{transform:translateX(0)}16%,48%{transform:translateX(-2px)}32%,64%{transform:translateX(2px)}}
+@keyframes prayerOutline{from{stroke-dashoffset:0}to{stroke-dashoffset:-360}}
 .tap{transition:transform .12s cubic-bezier(.22,1,.36,1),filter .12s ease}
 .tap:active{transform:scale(.96)}
 @media (hover:hover){.tap:hover{filter:brightness(1.06)}}
@@ -360,6 +365,8 @@ html[data-motion-paused] .theme-motion *,html[data-motion-paused] body::before{a
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important}
   .theme-motion{animation:none}
+  .prayer-slot[data-emphasized="true"] .prayer-card{animation:none !important}
+  .prayer-outline rect{animation:none !important}
 }
 </style>
 </head>
@@ -1086,6 +1093,10 @@ async function analyzePhotoWithKey(apiKey, b64, mime) {
 // Gate component — App renders this instead of the main UI when dos_api_key
 // is empty. On successful save, App's setApiKey() is called, which triggers
 // the normal render path. The key is never sent anywhere except Anthropic.
+function AppWordmark() {
+  return <div role="img" aria-label="Daily OS" className="app-wordmark">Daily <span className="app-wordmark-accent">OS</span></div>;
+}
+
 function ApiKeyScreen({ onSave }) {
   const [key, setKey] = useState("");
   const [testing, setTesting] = useState(false);
@@ -1102,6 +1113,7 @@ function ApiKeyScreen({ onSave }) {
   };
   return (
     <div style={{padding:"60px 24px 40px",maxWidth:400,margin:"0 auto"}}>
+      <div style={{textAlign:"center"}}><AppWordmark/></div>
       <div style={{fontSize:40,marginBottom:16,textAlign:"center"}}>🔑</div>
       <div style={{fontSize:24,fontWeight:800,letterSpacing:-0.5,marginBottom:8,textAlign:"center"}}>Connect Claude AI</div>
       <div style={{fontSize:14,color:C.text2,lineHeight:1.6,marginBottom:32,textAlign:"center"}}>
@@ -1888,7 +1900,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
 
   const prayerList = prayers && !prayers.error ? PRAYER_KEYS.map((k,i)=>({key:k,name:PRAYER_NAMES[i],mins:parseTimeMins(prayers[k.toLowerCase()]||prayers[k])})) : [];
   const passedPrayers = prayerList.filter(p=>p.mins<=nowMins);
-  const currentPrayerKey = passedPrayers.length ? passedPrayers[passedPrayers.length-1].key : (prayerList.length ? prayerList[prayerList.length-1].key : null);
+  const currentPrayerKey = passedPrayers.length ? passedPrayers[passedPrayers.length-1].key : null;
   const todayPrayed = (prayerChecked && prayerChecked[dKey]) || {};
   const togglePrayer = (k)=> { haptic();playCue(todayPrayed[k]?"select":"complete"); setPrayerChecked && setPrayerChecked(prev=>({...prev,[dKey]:{...(prev[dKey]||{}),[k]:!((prev[dKey]||{})[k])}})); };
 
@@ -1913,6 +1925,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
 
         <div className="hero-row" style={{position:"relative",padding:"calc(env(safe-area-inset-top,20px) + 18px) 18px 0",display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:6}}>
           <div style={{flex:1,minWidth:0}}>
+            <AppWordmark/>
             <div style={{fontSize:12,fontWeight:500,color:C.text2,letterSpacing:0.3,marginBottom:4,fontFamily:"'Space Grotesk',sans-serif"}}>{DAYS_L[today.getDay()]} · {MONTHS_L[today.getMonth()]} {today.getDate()}</div>
             <div className="hero-title" style={{fontFamily:"'Syne',sans-serif",fontSize:23,fontWeight:800,letterSpacing:1,lineHeight:1,color:C.text2,paddingRight:6}}>WELCOME,<br/><span style={{display:"inline-block",fontSize:48,fontWeight:900,letterSpacing:-1.5,lineHeight:0.95,marginTop:3,background:"linear-gradient(105deg,var(--ink),var(--c-primary))",WebkitBackgroundClip:"text",backgroundClip:"text",WebkitTextFillColor:"transparent",paddingRight:4}}>ISH</span></div>
             <div style={{marginTop:14,display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
@@ -1977,19 +1990,23 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
           </div>
           {currentPrayerKey&&<div style={{fontSize:10,color:C.text2,fontWeight:500}}>Now: <span style={{color:C.violet,fontWeight:700}}>{PRAYER_NAMES[PRAYER_KEYS.indexOf(currentPrayerKey)]}</span></div>}
         </div>
-        <div style={{display:"flex",gap:4,justifyContent:"space-between"}}>
+        <div className="prayer-row" style={{display:"flex",gap:8,justifyContent:"space-between"}}>
           {prayers && !prayers.error ? PRAYER_KEYS.map((key,i)=>{
             const timeStr = prayers[key.toLowerCase()]||prayers[key];
             const isCurrent = currentPrayerKey===key;
             const prayed = !!todayPrayed[key];
+            const emphasized=isCurrent&&!prayed;
             return (
-              <button key={key} onClick={()=>togglePrayer(key)} aria-pressed={prayed} style={{flex:1,textAlign:"center",padding:"8px 4px",borderRadius:12,cursor:"pointer",position:"relative",background:prayed?"color-mix(in srgb, var(--c-good) 16%, transparent)":isCurrent?"color-mix(in srgb, var(--c-2) 20%, transparent)":"rgba(255,255,255,0.04)",border:prayed?"1px solid color-mix(in srgb, var(--c-good) 45%, transparent)":isCurrent?"1px solid color-mix(in srgb, var(--c-2) 45%, transparent)":"1px solid rgba(255,255,255,0.07)",animation:isCurrent&&!prayed?"prayerNext 3s ease-in-out infinite":undefined,transition:"background 0.2s,border-color 0.2s"}}>
+              <div key={key} className="prayer-slot" data-emphasized={emphasized}>
+              <button className="prayer-card" aria-label={`Mark ${PRAYER_NAMES[i]} ${prayed?"incomplete":"complete"}`} onClick={()=>togglePrayer(key)} aria-pressed={prayed} style={{width:"100%",minHeight:56,textAlign:"center",padding:"8px 4px",borderRadius:12,cursor:"pointer",position:"relative",background:prayed?"color-mix(in srgb, var(--c-good) 16%, transparent)":isCurrent?"color-mix(in srgb, var(--c-2) 20%, transparent)":"rgba(255,255,255,0.04)",border:prayed?"1px solid color-mix(in srgb, var(--c-good) 45%, transparent)":isCurrent?"1px solid color-mix(in srgb, var(--c-2) 45%, transparent)":"1px solid rgba(255,255,255,0.07)",transition:"background 0.2s,border-color 0.2s,transform 0.22s ease"}}>
+                {emphasized&&<svg className="prayer-outline" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none"><rect x="1" y="1" width="98" height="98" rx="18" stroke="var(--c-2)" strokeWidth="2" strokeDasharray="42 340" vectorEffect="non-scaling-stroke"/></svg>}
                 <div style={{position:"absolute",top:4,right:5,width:13,height:13,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:prayed?C.green:"transparent",border:prayed?"none":"1px solid rgba(255,255,255,0.18)"}}>
                   {prayed&&<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>}
                 </div>
                 <div style={{fontSize:9,fontWeight:700,color:prayed?C.green:isCurrent?C.violet:C.text2,letterSpacing:0.3,marginBottom:3,textTransform:"uppercase"}}>{PRAYER_NAMES[i]}</div>
                 <div style={{fontFamily:"'Syne',sans-serif",fontSize:11,fontWeight:800,color:prayed?C.green:isCurrent?C.violet:C.text,letterSpacing:-0.3}}>{formatTime12(timeStr)}</div>
               </button>
+              </div>
             );
           }) : (
             <div style={{width:"100%",textAlign:"center",padding:"8px 0",fontSize:11,color:C.text3}}>{prayers?.error?"Prayer times unavailable. Reopen Home to try again.":"Loading prayer times…"}</div>
