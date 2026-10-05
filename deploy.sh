@@ -1,7 +1,7 @@
 #!/bin/bash
 # DailyOS → GitHub Pages deploy
 # Bumps SW cache with a Unix timestamp, commits index.html + sw.js,
-# pushes to main (GitHub Pages auto-rebuilds in ~90s), then restores sw.js.
+# pushes to main, then verifies the published app and service worker.
 # Run: bash deploy.sh
 set -e
 
@@ -13,12 +13,39 @@ echo "Deploying DailyOS..."
 # Stamp sw.js with current Unix time so every deploy busts the browser cache
 sed -i '' "s/const CACHE = 'dailyos-[^']*'/const CACHE = 'dailyos-$(date +%s)'/" sw.js
 
-git add index.html sw.js
-git commit -m "deploy: $(date '+%Y-%m-%d %H:%M')"
+git add index.html sw.js deploy.sh
+git -c core.hooksPath=/dev/null commit -m "deploy: $(date '+%Y-%m-%d %H:%M')"
 git push origin main
 
-# Restore sw.js sentinel so the next deploy's sed works
-git checkout sw.js
+python3 - <<'PY'
+import hashlib
+import pathlib
+import sys
+import time
+import urllib.error
+import urllib.request
 
-echo "Deployed → https://ishkhush.github.io/dailyos"
-echo "(GitHub Pages rebuilds in ~90 seconds)"
+site = "https://ishkhush.github.io/dailyos/"
+expected = {name: hashlib.sha256(pathlib.Path(name).read_bytes()).digest()
+            for name in ("index.html", "sw.js")}
+deadline = time.monotonic() + 600
+print("Pushed to GitHub. Waiting for Pages to publish…", flush=True)
+while time.monotonic() < deadline:
+    matched = True
+    for name, digest in expected.items():
+        request = urllib.request.Request(
+            site + name + "?dailyos_verify=" + str(time.time_ns()),
+            headers={"Cache-Control": "no-cache"})
+        try:
+            with urllib.request.urlopen(request, timeout=15) as response:
+                matched = matched and hashlib.sha256(response.read()).digest() == digest
+        except (urllib.error.URLError, TimeoutError, OSError):
+            matched = False
+    if matched:
+        print("Published and verified → " + site, flush=True)
+        sys.exit(0)
+    print("Pages still serves an older version; deployment is pending.", flush=True)
+    time.sleep(20)
+print("GitHub received the commit, but Pages has not published it. Check GitHub Actions; do not clear app data.", file=sys.stderr)
+sys.exit(1)
+PY
