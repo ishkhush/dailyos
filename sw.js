@@ -5,7 +5,7 @@
 // drop the old cache on next activate, which is how you push a forced update.
 // Only index.html and sw.js are deployed (see deploy.sh); nothing else is served.
 
-const CACHE = 'dailyos-1791243597';
+const CACHE = 'dailyos-1791394333';
 
 // On install: pre-cache './' so the app loads instantly from cache next visit.
 // skipWaiting() makes the new SW take control immediately instead of waiting
@@ -13,7 +13,11 @@ const CACHE = 'dailyos-1791243597';
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE).then(function(cache) {
-      return cache.addAll(['./']);
+      return cache.addAll(['./','./dailyos-sync.js','./dailyos-xp.js','./dailyos-audio.js','./sync-config.js','./supabase.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js',
+        'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js']);
     }).then(function() {
       return self.skipWaiting();
     })
@@ -41,6 +45,8 @@ self.addEventListener('activate', function(e) {
 // network first, and only the CDN scripts get cached — API calls are
 // never cached because they require auth headers.
 self.addEventListener('fetch', function(e) {
+  const url = new URL(e.request.url);
+  if (e.request.method !== 'GET' || e.request.headers.has('Authorization') || url.hostname.endsWith('.supabase.co')) return;
   // Only handle same-origin navigation requests (the app itself).
   // cache:'no-cache' forces revalidation past the CDN/HTTP cache (GitHub
   // Pages serves max-age=600, which otherwise hands back stale HTML for up
@@ -65,7 +71,8 @@ self.addEventListener('fetch', function(e) {
   e.respondWith(
     fetch(e.request).then(function(resp) {
       // Cache a copy of successful responses
-      if (resp && resp.status === 200 && resp.type === 'basic') {
+      const publicAsset = url.origin === self.location.origin || ['cdnjs.cloudflare.com','cdn.jsdelivr.net','fonts.googleapis.com','fonts.gstatic.com'].includes(url.hostname);
+      if (publicAsset && resp && resp.status === 200 && ['basic','cors'].includes(resp.type)) {
         var clone = resp.clone();
         caches.open(CACHE).then(function(cache) {
           cache.put(e.request, clone);
