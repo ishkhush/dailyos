@@ -1,7 +1,16 @@
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
+let cleanup=async()=>{};
 (async()=>{
-  const target=await (await fetch('http://127.0.0.1:9224/json/new?about:blank',{method:'PUT'})).json();
+  const browser=await (await fetch('http://127.0.0.1:9224/json/version')).json();
+  const browserWs=new WebSocket(browser.webSocketDebuggerUrl);await new Promise(r=>browserWs.addEventListener('open',r,{once:true}));
+  let browserId=0;const browserPending=new Map();
+  browserWs.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id){const p=browserPending.get(m.id);browserPending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}});
+  const browserSend=(method,params={})=>new Promise((resolve,reject)=>{const id=++browserId;browserPending.set(id,{resolve,reject});browserWs.send(JSON.stringify({id,method,params}));});
+  const {browserContextId}=await browserSend('Target.createBrowserContext');
+  cleanup=async()=>{await browserSend('Target.disposeBrowserContext',{browserContextId});browserWs.close();};
+  const {targetId}=await browserSend('Target.createTarget',{url:'about:blank',browserContextId});
+  const target=(await (await fetch('http://127.0.0.1:9224/json/list')).json()).find(target=>target.id===targetId);
   const ws=new WebSocket(target.webSocketDebuggerUrl);await new Promise(r=>ws.addEventListener('open',r,{once:true}));
   let id=0;const pending=new Map(),errors=[];
   const send=(method,params={})=>new Promise((resolve,reject)=>{const key=++id;pending.set(key,{resolve,reject});ws.send(JSON.stringify({id:key,method,params}));});
@@ -98,4 +107,5 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   assert.deepEqual(errors,[],'No runtime exceptions');
   console.log('Passed: login privacy gate, habit/time/deletion/XP regressions, responsive photo thumbnails/cache, full-size viewer/date/arrows/Escape/outside/close, comparison and originals preserved, backup validation/export/restore/sync queue, session-loss gate, CSP and runtime checks.');
   ws.close();
-})().catch(e=>{console.error(e.message);process.exit(1);});
+  await cleanup();
+})().catch(async e=>{console.error(e.message);await cleanup().catch(()=>{});process.exit(1);});

@@ -4,7 +4,7 @@
 // Cache name is versioned — bumping the version here forces all clients to
 // drop the old cache on next activate, which is how you push a forced update.
 
-const CACHE = 'dailyos-1791398334';
+const CACHE = 'dailyos-1791398780';
 const PUBLIC_FILES = ['./','./index.html','./sw.js','./dailyos-sync.js','./dailyos-photos.js','./dailyos-xp.js','./dailyos-audio.js','./sync-config.js','./supabase.min.js'];
 const PUBLIC_SCRIPTS = [
   'https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js',
