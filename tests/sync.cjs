@@ -1,19 +1,20 @@
 const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),{webcrypto}=require('node:crypto');
-const {compare}=require('../dailyos-sync.js');
+const {compare,flatten,validRow}=require('../dailyos-sync.js');
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-const server={rows:{},channels:[],fail:false};
+const server={rows:{},channels:[],fail:false,mergeDelay:0,onMerge:null};
 class Storage {
   getItem(k){return this[k]??null;} setItem(k,v){this[k]=String(v);} removeItem(k){delete this[k];}
 }
-function device(storage=new Storage(),confirmed=false) {
-  const listeners={},nav={onLine:true};let session=confirmed?{user:{id:'same-user',email:'me@example.com'}}:null,activeChannel;
+function device(storage=new Storage(),confirmed=false,userId='same-user') {
+  const listeners={},nav={onLine:true};let session=confirmed?{user:{id:userId,email:'me@example.com'}}:null,activeChannel;
   storage.setItem('dos_sync_config_v1',JSON.stringify({url:'https://test.supabase.co',publishableKey:'sb_publishable_test'}));
   const client={
-    auth:{getSession:async()=>({data:{session}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signInWithPassword:async()=>{session={user:{id:'same-user',email:'me@example.com'}};return {data:{session}};},signOut:async()=>{session=null;return {}; }},
+    auth:{getSession:async()=>({data:{session}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signInWithPassword:async()=>{session={user:{id:userId,email:'me@example.com'}};return {data:{session}};},signOut:async()=>{session=null;return {}; }},
     channel:()=>{const c={on(event,filter,fn){c.callback=fn;return c;},subscribe(fn){server.channels.push(c);activeChannel=c;setTimeout(()=>fn('SUBSCRIBED'),0);return c;}};return c;},
     removeChannel:async c=>{server.channels=server.channels.filter(x=>x!==c);},removeAllChannels:async()=>{},
     from:()=>({select(){return this;},eq(){return this;},order(){return this;},range:async(a,b)=>({data:Object.values(server.rows).sort((x,y)=>x.path.localeCompare(y.path)).slice(a,b+1)})}),
     rpc:async(name,{changes})=>{
+      if(name==='dailyos_merge' && server.mergeDelay){server.onMerge?.();await wait(server.mergeDelay);}
       if(server.fail)return {error:{message:'Simulated lost connection'}};
       if(name==='dailyos_seed'){if(!Object.keys(server.rows).length)changes.forEach(r=>server.rows[r.path]=structuredClone(r));}
       else changes.forEach(r=>{if(compare(r,server.rows[r.path])>0)server.rows[r.path]=structuredClone(r);});
@@ -21,7 +22,7 @@ function device(storage=new Storage(),confirmed=false) {
       return {data:changes.map(r=>structuredClone(server.rows[r.path]))};
     },storage:{from:()=>({upload:async()=>({}),download:async()=>({data:new Blob()})})}
   };
-  const context={localStorage:storage,navigator:nav,crypto:webcrypto,location:{origin:'https://example.com',pathname:'/'},supabase:{createClient:()=>client},document:{addEventListener(){}},setTimeout,clearTimeout,setInterval:(fn,ms)=>{const t=setInterval(fn,ms);t.unref();return t;},atob};
+  const context={localStorage:storage,navigator:nav,crypto:webcrypto,Blob,location:{origin:'https://example.com',pathname:'/'},supabase:{createClient:()=>client},document:{addEventListener(){}},setTimeout,clearTimeout,setInterval:(fn,ms)=>{const t=setInterval(fn,ms);t.unref();return t;},atob};
   context.window=context;context.addEventListener=(event,fn)=>listeners[event]=fn;
   vm.runInNewContext(fs.readFileSync(require.resolve('../dailyos-sync.js'),'utf8'),context);
   const api=context.DailySync;
@@ -48,6 +49,41 @@ function device(storage=new Storage(),confirmed=false) {
   const restart=device(phone.storage);restart.nav.onLine=false;await restart.start();assert(restart.api.status().pending>0,'Offline queue persists across restart');restart.nav.onLine=true;await restart.api.login('me@example.com','password');await wait(650);assert.equal(laptop.read('dos_habit_checked_v1')['2026-10-07'].b,true);
   server.fail=true;restart.write('dos_planner_v1',{'2026-10-07':{hiddenHabits:{b:true}}});await wait(300);assert(restart.api.status().pending>0,'Failed upload retains queue');server.fail=false;await restart.api.retry();await wait(650);assert.equal(laptop.read('dos_planner_v1')['2026-10-07'].hiddenHabits.b,true);
   await assert.rejects(()=>restart.api.configure('https://test.supabase.co','sb_secret_bad'),/browser key/);
-  console.log('Passed: first-phone migration, second-device adoption, live marks, offline merge, deletion, durable restart queue, failed upload retry and secret-key rejection (mock backend).');
+  await assert.rejects(()=>restart.api.configure('https://another.supabase.co','sb_publishable_test'),/another project/);
+  await assert.rejects(()=>restart.api.login('other@example.com','password',true),/account creation is disabled/);
+  await assert.rejects(()=>restart.api.downloadPhoto('other-user/2026-10-07/photo.jpg'),/own photos/);
+  await assert.rejects(()=>restart.api.downloadPhoto('same-user/../other/photo.jpg'),/own photos/);
+  await assert.rejects(()=>restart.api.photo('2026-10-07',{blob:new Blob(['unsafe'],{type:'text/html'}),ts:Date.now()}),/JPEG/);
+  const wrongAccount=device(restart.storage,false,'other-user');await wrongAccount.start();await assert.rejects(()=>wrongAccount.api.login('other@example.com','password'),/another account/);assert.equal(wrongAccount.api.status().connected,false);
+  const tab=device(restart.storage,true);await tab.start();tab.nav.onLine=false;restart.nav.onLine=false;
+  restart.write('dos_habit_checked_v1',{'2026-10-08':{a:true}});
+  tab.write('dos_planner_v1',{'2026-10-08':{hiddenHabits:{b:true}}});
+  const queued=JSON.parse(restart.storage.getItem('dos_sync_meta_v1')).pending;
+  assert(Object.values(queued).some(r=>JSON.parse(r.path)[0]==='dos_habit_checked_v1'),'A second tab preserves the first tab’s queue');
+  assert(Object.values(queued).some(r=>JSON.parse(r.path)[0]==='dos_planner_v1'),'Both tab edits are queued');
+  restart.listeners.storage({key:'dos_sync_meta_v1',newValue:restart.storage.getItem('dos_sync_meta_v1')});await wait(20);
+  assert.equal(restart.read('dos_planner_v1')['2026-10-08'].hiddenHabits.b,true,'Metadata events apply cross-tab data');
+  assert(restart.api.status().pending>0,'Receiving another tab’s pending rows does not acknowledge them as cloud uploads');
+  restart.listeners.storage({key:'dos_planner_v1',newValue:'{invalid'});assert.match(restart.api.status().error,/JSON/,'Malformed cross-tab JSON is reported instead of escaping the event handler');
+  restart.nav.onLine=true;tab.nav.onLine=true;await restart.api.retry();await tab.api.retry();await wait(650);
+  let inFlight;const entered=new Promise(resolve=>inFlight=resolve);server.mergeDelay=250;server.onMerge=()=>inFlight();
+  restart.write('dos_habit_checked_v1',{'2026-10-09':{a:true}});await entered;
+  tab.nav.onLine=false;tab.write('dos_planner_v1',{'2026-10-09':{hiddenHabits:{a:true}}});
+  await wait(850);server.mergeDelay=0;server.onMerge=null;
+  assert.equal(server.rows['["dos_planner_v1","2026-10-09","hiddenHabits","a"]'].value.data,true,'Edits in a second tab survive an in-flight upload acknowledgement');
+  assert.equal(restart.api.status().pending,0,'Acknowledged disk pending entries are not resurrected');
+  tab.nav.onLine=true;
+  restart.nav.onLine=false;laptop.nav.onLine=false;
+  restart.write('dos_bw_log_v1',[{date:'2026-10-09',weight:80}]);laptop.write('dos_bw_log_v1',[{date:'2026-10-10',weight:79.5}]);
+  restart.nav.onLine=true;laptop.nav.onLine=true;await restart.api.retry();await laptop.api.retry();await wait(650);
+  assert.deepEqual(restart.read('dos_bw_log_v1').map(log=>log.date).sort(),['2026-10-09','2026-10-10'],'Concurrent weight logs on different days both survive');
+  assert(restart.read('dos_bw_log_v1').every(log=>!('id' in log)),'Date-keyed sync preserves the weight log shape');
+  const rootPath='["dos_planner_v1"]';server.rows[rootPath]={path:rootPath,value:null,deleted:true,stamp:Date.now()+5000,device:'server'};
+  await restart.api.retry();assert.deepEqual(restart.read('dos_planner_v1'),{},'A cloud root tombstone clears the local displayed document');
+  const invalid={path:'["dos_habit_checked_v1","__proto__"]',value:{type:'object'},stamp:1,device:'x',deleted:false};
+  assert.equal(validRow(invalid),false);assert.equal(validRow({...invalid,path:'["dos_api_key"]'}),false);
+  assert.throws(()=>flatten(JSON.parse('{"__proto__":{"polluted":true}}'),['dos_test_v1']),/Invalid sync data path/);assert.equal({}.polluted,undefined);
+  const badConfigStorage=new Storage();const badConfig=device(badConfigStorage);badConfigStorage.setItem('dos_sync_config_v1',JSON.stringify({url:'https://test.supabase.co',publishableKey:'sb_secret_bad'}));await assert.rejects(()=>badConfig.start(),/browser key/);
+  console.log('Passed: migration, realtime, offline merge/deletion/restart/retry; cross-tab queue/application/in-flight acknowledgement; concurrent weight logs; root tombstones; account/project/photo isolation; signup and stored secret-key rejection; prototype/path validation (mock backend).');
   process.exit(0);
 })().catch(e=>{console.error(e);process.exit(1);});

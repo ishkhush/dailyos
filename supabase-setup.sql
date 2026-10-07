@@ -11,7 +11,10 @@ alter table public.dailyos_records enable row level security;
 drop policy if exists dailyos_private on public.dailyos_records;
 create policy dailyos_private on public.dailyos_records for all to authenticated
 using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
-revoke all on public.dailyos_records from anon;
+drop policy if exists dailyos_owner_guard on public.dailyos_records;
+create policy dailyos_owner_guard on public.dailyos_records as restrictive for all to authenticated
+using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+revoke all on public.dailyos_records from public, anon;
 grant select, insert, update on public.dailyos_records to authenticated;
 
 create or replace function public.dailyos_merge(changes jsonb)
@@ -30,12 +33,20 @@ begin
   return query select * from public.dailyos_records
     where user_id=auth.uid() and path in (select r->>'path' from jsonb_array_elements(changes) r);
 end $$;
-insert into storage.buckets (id,name,public) values ('dailyos-photos','dailyos-photos',false)
-on conflict (id) do update set public=false;
+insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
+values ('dailyos-photos','dailyos-photos',false,10485760,array['image/jpeg'])
+on conflict (id) do update set public=false,file_size_limit=10485760,allowed_mime_types=array['image/jpeg'];
 drop policy if exists dailyos_photos_private on storage.objects;
 create policy dailyos_photos_private on storage.objects for all to authenticated
 using (bucket_id='dailyos-photos' and (storage.foldername(name))[1]=(select auth.uid())::text)
 with check (bucket_id='dailyos-photos' and (storage.foldername(name))[1]=(select auth.uid())::text);
+drop policy if exists dailyos_photos_owner_guard on storage.objects;
+create policy dailyos_photos_owner_guard on storage.objects as restrictive for all to authenticated
+using (bucket_id<>'dailyos-photos' or (storage.foldername(name))[1]=(select auth.uid())::text)
+with check (bucket_id<>'dailyos-photos' or (storage.foldername(name))[1]=(select auth.uid())::text);
+drop policy if exists dailyos_photos_anon_guard on storage.objects;
+create policy dailyos_photos_anon_guard on storage.objects as restrictive for all to anon
+using (bucket_id<>'dailyos-photos') with check (bucket_id<>'dailyos-photos');
 
 create or replace function public.dailyos_seed(changes jsonb)
 returns void language plpgsql security invoker set search_path = public as $$
