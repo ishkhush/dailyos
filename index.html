@@ -86,8 +86,9 @@
 <script src="./dailyos-xp.js"></script>
 <script src="./dailyos-audio.js"></script>
 <script src="./dailyos-photos.js"></script>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Barlow+Condensed:wght@400;600;700;800&amp;family=Barlow:wght@300;400;500;600;700&amp;display=swap">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Outfit:wght@400;600;700;800&amp;family=Libre+Baskerville:wght@400;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Noto+Sans:wght@400;500;600;700&amp;family=Noto+Serif+JP:wght@400;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;family=Marcellus&amp;family=Source+Sans+3:wght@400;500;600;700&amp;family=Fraunces:wght@400;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Space Grotesk","Barlow",-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 /* ── THEME TOKENS ─────────────────────────────────────────────────────────────
    Every themeable color routes through these. :root defaults = the original "OG"
@@ -213,6 +214,80 @@
 ::view-transition-new(root){z-index:1}
 [data-theme="crimson"],[data-theme="solar"],[data-theme="aqua"],[data-theme="violet"],[data-theme="emerald"],[data-theme="graphite"],[data-theme="midnight"],[data-theme="sakura"],[data-theme="ember"],[data-theme="synthwave"],[data-theme="aurora"]{--c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2)}
 html{background:var(--bg);-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+[data-theme="modern"]{
+ --bg:#101b25;--bg-1:#182833;--bg-2:#20343f;--bg-3:#283e49;--ink:#edf6f8;--ink-2:#c1d2d8;--ink-3:#a9c0c7;
+ --c-primary:#9cdecb;--c-2:#b5bfeb;--c-3:#a3d7ec;--c-good:#b4dfa7;--c-action:#9cdecb;--c-bad:#ffb4bd;--on-accent:#10252a;
+ --font-body:'Manrope',sans-serif;--font-display:'Outfit',sans-serif;--shape:12px;--button-shape:8px;--material-shadow:0 8px 28px #020c1438,inset 0 1px 0 #e7ffff12;
+ --material:linear-gradient(90deg,#bce9e809 1px,transparent 1px),linear-gradient(#bce9e809 1px,transparent 1px);--material-size:36px 36px;
+}
+[data-theme="vintage"]{
+ --bg:#28211e;--bg-1:#352c27;--bg-2:#40362e;--bg-3:#4a3e34;--ink:#fff0d9;--ink-2:#decab3;--ink-3:#d1b99c;
+ --c-primary:#e7bf8c;--c-2:#bcd2bc;--c-3:#d8bde4;--c-good:#c8d6a6;--c-action:#e7bf8c;--c-bad:#ffb7ad;--on-accent:#302216;
+ --font-body:'IBM Plex Mono',monospace;--font-display:'Libre Baskerville',serif;--shape:3px;--button-shape:3px;--material-shadow:4px 4px 0 #0f0c0a55,inset 0 0 24px #e1b5740a;
+ --material:radial-gradient(#ebcf9d24 .7px,transparent .9px),repeating-linear-gradient(0deg,transparent 0 4px,#ead6a704 4px 5px);--material-size:5px 5px,100% 100%;
+}
+[data-theme="zen"]{
+ --bg:#202820;--bg-1:#2b352a;--bg-2:#354132;--bg-3:#3e4b38;--ink:#f3f2dc;--ink-2:#d0d5b8;--ink-3:#bec8ab;
+ --c-primary:#c5d3a0;--c-2:#e8c29b;--c-3:#b7d6cd;--c-good:#c5d3a0;--c-action:#e8c29b;--c-bad:#ffb9aa;--on-accent:#24301d;
+ --font-body:'Noto Sans',sans-serif;--font-display:'Noto Serif JP',serif;--shape:24px 8px 24px 8px;--button-shape:16px 5px 16px 5px;--material-shadow:0 7px 20px #101a1238,inset 0 1px 0 #ffffdb0a;
+ --material:repeating-radial-gradient(ellipse at 0 100%,transparent 0 18px,#e4dfb510 19px 20px,transparent 21px 28px);--material-size:320px 240px;
+}
+[data-theme="lagoon"]{
+ --bg:#10282d;--bg-1:#18343b;--bg-2:#213e48;--bg-3:#294954;--ink:#e6f6f2;--ink-2:#bad5d5;--ink-3:#acc8cf;
+ --c-primary:#9edcd1;--c-2:#f1beb2;--c-3:#bdd1ee;--c-good:#adddc0;--c-action:#f1beb2;--c-bad:#ffb4be;--on-accent:#123034;
+ --font-body:'DM Sans',sans-serif;--font-display:'Marcellus',serif;--shape:28px;--button-shape:22px;--material-shadow:0 8px 32px #061b2855,inset 0 1px 0 #d3f7ff20;
+ --material:radial-gradient(ellipse at 20% 30%,transparent 32%,#bdece714 33%,transparent 35%),radial-gradient(ellipse at 70% 80%,transparent 37%,#b0dfe71a 38%,transparent 40%);--material-size:190px 130px,230px 170px;
+}
+[data-theme="dunes"]{
+ --bg:#30232d;--bg-1:#3e2e38;--bg-2:#493740;--bg-3:#554249;--ink:#fff0e3;--ink-2:#e4c8bc;--ink-3:#d5b9b1;
+ --c-primary:#efbc9d;--c-2:#d0c4e8;--c-3:#bed3bb;--c-good:#c8d5ad;--c-action:#f0d19d;--c-bad:#ffb7bb;--on-accent:#3a2530;
+ --font-body:'Source Sans 3',sans-serif;--font-display:'Fraunces',serif;--shape:22px 22px 6px 6px;--button-shape:16px 16px 4px 4px;--material-shadow:0 8px 0 #20182033,0 12px 24px #1c132333;
+ --material:repeating-linear-gradient(30deg,#ffd6ad0b 0 1px,transparent 1px 8px),repeating-linear-gradient(150deg,#cdbad90b 0 1px,transparent 1px 8px);--material-size:16px 16px;
+}
+[data-theme="observatory"]{
+ --bg:#211f35;--bg-1:#2d2942;--bg-2:#37324c;--bg-3:#423c57;--ink:#f4f0ff;--ink-2:#d4cde8;--ink-3:#c1b9d6;
+ --c-primary:#d6c8ef;--c-2:#e8ce9f;--c-3:#afd8dd;--c-good:#beddbf;--c-action:#e8ce9f;--c-bad:#ffb9c9;--on-accent:#282139;
+ --font-body:'Inter',sans-serif;--font-display:'Cormorant Garamond',serif;--shape:16px;--button-shape:7px;--material-shadow:0 0 0 3px #e8ce9f07,0 9px 28px #100b2350;
+ --material:radial-gradient(circle at 12px 18px,#e8ce9f55 .7px,transparent 1px),radial-gradient(circle at 52px 64px,#bfcde52b .8px,transparent 1.2px),linear-gradient(45deg,transparent 49.7%,#dbc4ee08 50%,transparent 50.3%);--material-size:91px 107px,137px 149px,180px 180px;
+}
+html[data-identity="rich"],[data-preview="rich"]{
+ --c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2);--glow:color-mix(in srgb,var(--c-primary) 24%,transparent);--glow-strong:color-mix(in srgb,var(--c-primary) 40%,transparent);
+ --tab-1:var(--c-primary);--tab-2:var(--c-good);--tab-3:var(--c-2);--tab-4:var(--c-3);--tab-5:var(--c-action);
+ --amb-1:color-mix(in srgb,var(--c-2) 10%,transparent);--amb-2:color-mix(in srgb,var(--c-primary) 8%,transparent);--amb-3:color-mix(in srgb,var(--c-3) 5%,transparent);
+}
+html[data-identity="rich"] *,[data-preview="rich"] *{font-family:var(--font-body)}
+html[data-identity="rich"] :is(h1,h2,h3,.syne,.bc,.hero-title,.section-rule span,.app-nav::before,[style*="Syne"],[style*="Barlow Condensed"]),[data-preview="rich"] .preview-heading{font-family:var(--font-display) !important}
+html[data-identity="rich"] body::after{background-image:var(--material);background-size:var(--material-size);opacity:.7;z-index:0}
+html[data-identity="rich"] :is(.home-layout,.habits-layout,.supplements-layout,.day-window,.progress-grid){background-image:var(--material) !important;background-size:var(--material-size)}
+html[data-identity="rich"] #root{position:relative;z-index:1}
+html[data-identity="rich"] :is(.xp-panel,.daily-habits,.glass-card,.cyber-card,.goal-sheet,.photo-dialog){border-radius:var(--shape) !important;box-shadow:var(--material-shadow)}
+html[data-identity="rich"] :is(.home-layout,.habits-layout,.supplements-layout)>:is(section,div):not(.hero-header){box-shadow:var(--material-shadow)}
+html[data-identity="rich"] :is(.planner-action,.pill-badge,.app-nav button){border-radius:var(--button-shape) !important}
+html[data-identity="rich"] .section-rule::before,html[data-identity="rich"] .section-rule::after{background:color-mix(in srgb,var(--c-primary) 25%,transparent)}
+html[data-identity="rich"] .theme-motion{opacity:.32}
+html[data-identity="rich"] .app-nav svg{stroke-width:1.5}
+html[data-theme="modern"] .app-nav svg{stroke-width:2;stroke-linecap:square}
+html[data-theme="vintage"] .app-nav svg{stroke-width:1.8;stroke-dasharray:3 .7}
+html[data-theme="zen"] .app-nav svg{stroke-width:1.4;stroke-linecap:round}
+html[data-theme="lagoon"] .app-nav svg{stroke-width:1.7;filter:drop-shadow(0 1px 3px var(--glow))}
+html[data-theme="dunes"] .app-nav svg{stroke-width:2;stroke-linejoin:bevel}
+html[data-theme="observatory"] .app-nav svg{stroke-width:1.2;filter:drop-shadow(0 0 3px var(--glow))}
+.theme-motion[data-motif="modern"] .theme-motif{animation-name:waveDrift;animation-duration:44s}
+.theme-motion[data-motif="vintage"] .theme-motif{animation-name:starBreathe;animation-duration:24s}
+.theme-motion[data-motif="zen"] .theme-motif{animation-name:solarTurn;animation-duration:100s}
+.theme-motion[data-motif="lagoon"] .theme-motif{animation-name:waveDrift;animation-duration:42s}
+.theme-motion[data-motif="dunes"] .theme-motif{animation-name:emberDrift;animation-duration:48s}
+.theme-motion[data-motif="observatory"] .theme-motif{animation-name:starBreathe;animation-duration:18s}
+.theme-preview{height:100px;width:100%;position:relative;overflow:hidden;isolation:isolate;background:var(--bg);border:1px solid color-mix(in srgb,var(--c-primary) 35%,transparent);border-radius:var(--shape,12px);color:var(--ink);padding:10px;text-align:left}
+.theme-preview[data-preview="classic"]{--shape:12px;--font-body:'Space Grotesk',sans-serif;--font-display:'Syne',sans-serif;--material:radial-gradient(ellipse at 90% 0%,var(--amb-1),transparent 70%);--material-size:100% 100%;--material-shadow:none}
+.theme-preview[data-theme="og"]{--bg:#060810;--bg-1:#0c0f1b;--bg-2:#111727;--bg-3:#171e30;--ink:#eef0f7;--c-primary:#f59e0b;--c-2:#8b5cf6;--amb-1:#8b5cf617}
+.theme-preview::before{content:'';position:absolute;inset:0;background-image:var(--material,radial-gradient(ellipse at 90% 0%,var(--amb-1),transparent 70%));background-size:var(--material-size,100% 100%);opacity:.6;pointer-events:none;z-index:-1}
+.preview-heading{display:block;font-family:var(--font-display,'Syne',sans-serif);font-size:14px;font-weight:700;line-height:1.3}
+.preview-card{margin-top:7px;background:var(--bg-1);border:1px solid color-mix(in srgb,var(--c-primary) 35%,transparent);border-radius:var(--shape,8px);box-shadow:var(--material-shadow);padding:6px;font-size:9px}
+.preview-track{height:3px;background:var(--bg-3);border-radius:4px;margin-top:5px;overflow:hidden}
+.preview-track span{display:block;width:68%;height:100%;background:var(--c-primary)}
+.preview-symbol{position:absolute;right:8px;top:5px;font-size:25px;color:var(--c-2);opacity:.65;animation:starBreathe 14s ease-in-out infinite}
+@media(min-width:1000px){.theme-picker-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important}.theme-sheet{max-width:720px !important}}
 body{background:var(--bg);color:var(--ink);min-height:100vh;position:relative;transition:background 0.45s ease,color 0.45s ease}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 0%,var(--amb-1) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 85% 95%,var(--amb-2) 0%,transparent 50%),radial-gradient(ellipse 40% 30% at 60% 45%,var(--amb-3) 0%,transparent 40%);pointer-events:none;z-index:-1}
 /* static film grain — kills gradient banding, adds texture on every theme */
@@ -352,7 +427,14 @@ html[data-motion-paused] .theme-motion *,html[data-motion-paused] body::before{a
   .prayer-slot[data-emphasized="true"] .prayer-card{animation:none !important}
   .prayer-outline rect{animation:none !important}
 }
-.account-bar{display:flex;justify-content:flex-end;padding:calc(env(safe-area-inset-top,0px) + 4px) 12px 0;position:relative;z-index:5;background:var(--bg)}
+.account-bar{position:fixed;right:10px;top:calc(env(safe-area-inset-top,0px) + 7px);z-index:20}
+.account-bar[data-page="home"]{right:auto;left:12px}
+.sync-chip{display:flex;align-items:center;gap:5px;min-height:28px;padding:4px 8px;border:1px solid var(--ink-3);border-radius:99px;background:var(--bg-1);color:var(--ink-2);font-family:inherit;font-size:10px;font-weight:500;box-shadow:0 2px 8px #0002;cursor:pointer}
+.sync-dot{width:5px;height:5px;border-radius:50%;background:var(--c-good)}
+.sync-chip[data-state="syncing"] .sync-dot{background:var(--c-primary);animation:pulse 1.5s ease-in-out infinite}
+.sync-chip[data-state="offline"] .sync-dot{background:var(--c-primary)}
+.sync-chip[data-state="error"] .sync-dot{background:var(--c-bad)}
+@media(prefers-reduced-motion:reduce){.sync-chip .sync-dot{animation:none !important}}
 .progress-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .progress-preview{max-width:360px;margin-left:auto;margin-right:auto}
 .progress-grid img{display:block;width:100%;height:100%;object-fit:contain}
@@ -378,7 +460,8 @@ html[data-motion-paused] .theme-motion *,html[data-motion-paused] body::before{a
   .app-nav>div>button[aria-current="page"]{background:color-mix(in srgb,var(--c-primary) 10%,transparent) !important}
   .app-nav>div>button span{font-size:14px !important}
   .app-nav>div>div[aria-hidden]{display:none !important}
-  .account-bar{padding:14px 16px 4px}
+  .account-bar{right:20px;top:12px}
+  .account-bar[data-page="home"]{left:248px}
   .home-layout,.habits-layout,.supplements-layout,.day-window>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
   .home-layout>*,.habits-layout>*,.supplements-layout>*{min-width:0}
   .home-layout>.hero-header,.home-layout>.xp-panel{grid-column:1/-1}
@@ -478,13 +561,19 @@ const THEMES = {
   ember:    { label:"Ember", motion:"Rising sparks", swatch:["hsl(32 88% 68%)","hsl(22 88% 55%)","hsl(10 72% 44%)"] },
   synthwave:{ label:"Synthwave", motion:"Neon horizons", swatch:["hsl(315 90% 62%)","hsl(265 85% 68%)","hsl(185 95% 58%)"] },
   aurora:   { label:"Aurora", motion:"Northern lights", swatch:["hsl(140 78% 66%)","hsl(170 85% 55%)","hsl(196 80% 50%)"] },
+  modern: {label:"Modern",motion:"Glass & geometry",symbol:"◇",rich:true,swatch:["#9cdecb","#b5bfeb","#a3d7ec"],meaning:"Clear geometry, room to breathe",palette:"Soft mint, slate and periwinkle balance cool clarity."},
+  vintage: {label:"Vintage",motion:"Paper & printing ink",symbol:"❦",rich:true,swatch:["#e7bf8c","#bcd2bc","#d8bde4"],meaning:"Printed pages, a slower rhythm",palette:"Oat, sage and dusty lilac soften warm ink tones."},
+  zen: {label:"Zen Garden",motion:"Raked sand & stones",symbol:"◎",rich:true,swatch:["#c5d3a0","#e8c29b","#b7d6cd"],meaning:"Enso circles, balance and renewal",palette:"Moss, rice paper and clay evoke a quiet garden."},
+  lagoon: {label:"Tidal Lagoon",motion:"Sea glass & coral",symbol:"⌁",rich:true,swatch:["#9edcd1","#f1beb2","#bdd1ee"],meaning:"Coral branches, life below the tide",palette:"Sea glass and softened coral gently balance cool depths."},
+  dunes: {label:"Desert Loom",motion:"Woven cloth & dunes",symbol:"◒",rich:true,swatch:["#efbc9d","#d0c4e8","#bed3bb"],meaning:"Dunes and woven paths, steady journeys",palette:"Terracotta, mauve and sage echo a muted desert dusk."},
+  observatory: {label:"Observatory",motion:"Celestial brass & velvet",symbol:"✧",rich:true,swatch:["#d6c8ef","#e8ce9f","#afd8dd"],meaning:"Astrolabes, perspective and possibility",palette:"Lavender slate, brass and mist blue soften the night."},
 };
 const THEME_ALIAS = { OG:"og", Teal:"aqua", Violet:"violet", Crimson:"crimson" };
 const normTheme = k => THEMES[k] ? k : (THEME_ALIAS[k] || "og");
 // animate=true runs a circular clip-path reveal via the View Transitions API
 // (user-initiated switches only — never the pre-paint restore on boot).
 const applyTheme = (key, animate) => {
-  const set = () => { document.documentElement.dataset.theme = normTheme(key); };
+  const set = () => { const k=normTheme(key);document.documentElement.dataset.theme=k;document.documentElement.dataset.identity=THEMES[k].rich?"rich":"classic"; };
   if (animate && document.startViewTransition && !_reduceMotion()) {
     const vt = document.startViewTransition(set);
     vt.ready.then(() => {
@@ -638,9 +727,9 @@ const idbDel = async (date,remote=false) => { await _idbTx("readwrite", store =>
 const idbGet = (date) => _idbTx("readonly", store => { const holder = {}; store.get(date).onsuccess = e => holder._result = e.target.result; return holder; });
 const idbGetAll = () => _idbTx("readonly", store => { const holder = {}; store.getAll().onsuccess = e => holder._result = e.target.result || []; return holder; });
 
-// Read a captured File → orientation-corrected, downscaled JPEG Blob for storage.
-function fileToProgressBlob(file, maxDim = 1080, quality = 0.82) {
+function fileToProgressBlob(file, maxDim = Infinity, quality = 0.96) {
   if (!/^image\/(jpeg|png|webp|heic|heif)$/.test(file.type) || file.size > 25*1024*1024) return Promise.reject(new Error("Choose a JPEG, PNG, WebP or supported iPhone photo under 25 MB."));
+  if(maxDim===Infinity&&file.type==="image/jpeg"&&file.size>10*1024*1024)return Promise.reject(new Error("Choose a JPEG under 10 MB. Originals are never reduced to fit."));
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -648,12 +737,13 @@ function fileToProgressBlob(file, maxDim = 1080, quality = 0.82) {
       try {
       let { width, height } = img;
       if(!width||!height||width*height>100000000)throw new Error("Photo dimensions are too large.");
+      if(maxDim===Infinity&&file.type==="image/jpeg"){URL.revokeObjectURL(url);resolve(file);return;}
       if (Math.max(width, height) > maxDim) { const s = maxDim / Math.max(width, height); width = Math.round(width * s); height = Math.round(height * s); }
       const canvas = document.createElement("canvas");
       canvas.width = width; canvas.height = height;
       canvas.getContext("2d").drawImage(img, 0, 0, width, height);
       URL.revokeObjectURL(url);
-      canvas.toBlob(b => b && b.size<=10*1024*1024 ? resolve(b) : reject(new Error("Image conversion failed or photo exceeds 10 MB")), "image/jpeg", quality);
+      canvas.toBlob(b => b && b.size<=10*1024*1024 ? resolve(b) : reject(new Error("Full-resolution conversion exceeds 10 MB. Choose a smaller original.")), "image/jpeg", quality);
       } catch(error){URL.revokeObjectURL(url);reject(error);}
     };
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Couldn't read that image.")); };
@@ -684,7 +774,7 @@ const reminderDateLabel=key=>new Date(key+"T12:00:00").toLocaleDateString("en-US
 const reminderScopeLabel=r=>r.scope==="day"?reminderDateLabel(r.startDate):r.scope==="week"?`Week of ${reminderDateLabel(r.startDate)}`:r.scope==="range"?`${reminderDateLabel(r.startDate)} – ${reminderDateLabel(r.endDate)}`:"Every day";
 const habitSlot=(h,day)=>day?.habitTimes?.[h.id]||{start:h.startTime||"",end:h.endTime||""};
 function loadHabitData() {
-  const habits=ld("dos_habits_v1",DEFAULT_HABITS).map(h=>({...h,scope:"everyday"}));
+  const habits=ld("dos_habits_v1",DEFAULT_HABITS).map(h=>({...h,scope:"everyday",startDate:h.startDate||""}));
   const planner={...ld("dos_planner_v1",{})},checked={...ld("dos_habit_checked_v1",{})},globalIds=new Set(habits.map(h=>h.id));
   Object.entries(planner).forEach(([date,day])=>{
     const local=(day.habits||[]).map(h=>({...h,scope:"day",date}));
@@ -1644,8 +1734,9 @@ function usePointerReorder(items, onReorder, onStart) {
   return {rowEls,rowStyle,handle};
 }
 
-const habitsForDay=(habits,day={})=>{
-  const list=[...new Map([...habits,...(day.habits||[])].map(h=>[h.id,h])).values()].filter(h=>!day.hiddenHabits?.[h.id]),order=new Map((day.habitOrder||[]).map((id,i)=>[id,i]));
+const habitOnDate=(habit,date)=>[habit,...(habit.history||[]).slice().reverse()].find(h=>(!h.startDate||date>=h.startDate)&&(!h.endDate||date<h.endDate));
+const habitsForDay=(habits,day={},date=tdk())=>{
+  const list=[...new Map([...habits.map(h=>habitOnDate(h,date)).filter(Boolean),...(day.habits||[])].map(h=>[h.id,h])).values()].filter(h=>!day.hiddenHabits?.[h.id]),order=new Map((day.habitOrder||[]).map((id,i)=>[id,i]));
   return list.sort((a,b)=>(order.get(a.id)??list.length)-(order.get(b.id)??list.length));
 };
 
@@ -1716,7 +1807,7 @@ function HabitEditor({ habit, dateKey, planner, onSave, onClose, returnTo }) {
       <label style={{display:"block",marginTop:12}}>Emoji<input className="planner-title" aria-label="Habit emoji" value={emoji} onChange={e=>setEmoji(e.target.value)} placeholder="🎯" autoComplete="off" spellCheck={false}/></label>
       <p style={{fontSize:11,color:C.text2,marginTop:6}}>Use any emoji from your keyboard. Leave blank for 🎯.</p>
       <div role="group" aria-label="Habit scope" style={{display:"flex",gap:8,marginTop:14}}>{[["day","Just today"],["everyday","Every day"]].map(([value,label])=><button key={value} type="button" className="planner-action" aria-pressed={scope===value} onClick={()=>{setScope(value);setAllDays(false);}} style={{flex:1,background:scope===value?"color-mix(in srgb,var(--c-primary) 18%,transparent)":"transparent",borderColor:scope===value?C.accent:C.border2}}>{label}</button>)}</div>
-      <p style={{fontSize:11,color:C.text2,marginTop:8,lineHeight:1.5}}>{scope==="day"?`Only ${reminderDateLabel(dateKey)} — the day you're viewing.`:"Repeats on every day. Completion stays separate for each day."}</p>
+      <p style={{fontSize:11,color:C.text2,marginTop:8,lineHeight:1.5}}>{scope==="day"?`Only ${reminderDateLabel(dateKey)} — the day you're viewing.`:`Repeats from ${reminderDateLabel(habit?.scope==="everyday"&&habit.startDate?habit.startDate:dateKey)} onward. Completion stays separate for each day.`}</p>
       <TimeFields start={start} end={end} onStart={setStart} onEnd={setEnd} prefix="Habit"/>
       <label style={{display:"flex",alignItems:"center",gap:10,minHeight:44,marginTop:8}}><input type="checkbox" checked={important} onChange={e=>setImportant(e.target.checked)} style={{width:22,height:22,accentColor:"var(--c-primary)"}}/>Important habit · 30 XP (standard: 20 XP)</label>
       {habit&&scope==="everyday"&&<label style={{display:"flex",alignItems:"center",gap:10,minHeight:44,marginTop:10}}><input type="checkbox" aria-label="Apply time to all days" checked={allDays} onChange={e=>setAllDays(e.target.checked)} style={{width:22,height:22,accentColor:"var(--c-primary)"}}/>Apply time to all days</label>}
@@ -1735,8 +1826,18 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKe
   const save=draft=>{
     const existing=editor.habit,id=existing?.id||crypto.randomUUID();
     const item={...(existing||{}),id,name:draft.name,emoji:draft.emoji,scope:draft.scope,important:draft.important,color:existing?.color||C.violet,startTime:!existing||draft.allDays?draft.start:existing.startTime||"",endTime:!existing||draft.allDays?draft.end:existing.endTime||""};
-    if(draft.scope==="day")item.date=today;else delete item.date;
-    setHabits(prev=>draft.scope==="everyday"?(prev.some(h=>h.id===id)?prev.map(h=>h.id===id?item:h):[...prev,item]):prev.filter(h=>h.id!==id));
+    if(draft.scope==="day"){item.date=today;delete item.startDate;delete item.endDate;delete item.history;}
+    else {delete item.date;if(existing?.scope!=="everyday"){item.startDate=today;delete item.endDate;}}
+    setHabits(prev=>{
+      const prior=prev.find(h=>h.id===id);
+      if(draft.scope==="day")return prev.map(h=>h.id===id?{...h,endDate:!h.endDate||today<h.endDate?today:h.endDate}:h);
+      if(prior&&existing?.scope!=="everyday"){
+        const {history,...segment}=prior;
+        item.history=[...(history||[]),{...segment,endDate:!segment.endDate||today<segment.endDate?today:segment.endDate}];
+      }
+      else if(prior&&existing&&(prior.startDate!==existing.startDate||prior.endDate!==existing.endDate))return prev.map(h=>h.id===id?{...h,history:(h.history||[]).map(segment=>segment.startDate===existing.startDate&&segment.endDate===existing.endDate?item:segment)}:h);
+      return prior?prev.map(h=>h.id===id?item:h):[...prev,item];
+    });
     setPlanner(prev=>{
       let next={...prev};
       if(existing&&draft.allDays){
@@ -1746,7 +1847,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKe
       const updated=draft.scope==="day"?(local.some(h=>h.id===id)?local.map(h=>h.id===id?item:h):[...local,item]):local.filter(h=>h.id!==id);
       const oldSlot=existing?habitSlot(existing,prev[today]):null;
       const changed=existing&&!draft.allDays&&(draft.start!==oldSlot.start||draft.end!==oldSlot.end);
-      return {...next,[today]:{...day,habits:updated,...(existing&&existing.scope!==draft.scope?{habitOrder:habitsForDay(habits,prev[today]).map(h=>h.id)}:{}),...(changed?{habitTimes:{...(day.habitTimes||{}),[id]:{start:draft.start,end:draft.end}}}:{})}};
+      return {...next,[today]:{...day,habits:updated,...(existing&&existing.scope!==draft.scope?{habitOrder:habitsForDay(habits,prev[today],today).map(h=>h.id)}:{}),...(changed?{habitTimes:{...(day.habitTimes||{}),[id]:{start:draft.start,end:draft.end}}}:{})}};
     });
     setEditor(null);haptic();playCue("save");
   };
@@ -1758,13 +1859,13 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKe
       return { ...prev, [today]: { ...day, [id]: !day[id] } };
     });
   };
-  const list=habitsForDay(habits,planner?.[today]);
+  const list=habitsForDay(habits,planner?.[today],today);
   const removeHabit = allDays => {
     const id=deleting.habit.id,recurring=habits.some(h=>h.id===id);
-    if(allDays)setHabits(prev=>prev.filter(h=>h.id!==id));
+    if(allDays)setHabits(prev=>prev.map(h=>h.id===id?{...h,endDate:!h.endDate||today<h.endDate?today:h.endDate,history:(h.history||[]).map(segment=>({...segment,endDate:!segment.endDate||today<segment.endDate?today:segment.endDate}))}:h));
     setPlanner(prev=>{
       const next={...prev};
-      (allDays?Object.keys(prev):[today]).forEach(date=>{
+      (allDays?Object.keys(prev).filter(date=>date>=today):[today]).forEach(date=>{
         const day=prev[date]||{},times={...(day.habitTimes||{})},hidden={...(day.hiddenHabits||{})};
         delete times[id];
         if(!allDays&&recurring)hidden[id]=true;else delete hidden[id];
@@ -1772,11 +1873,11 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKe
       });
       return next;
     });
-    setHabitChecked(prev=>{const next={...prev};(allDays?Object.keys(prev):[today]).forEach(date=>{const marks={...(prev[date]||{})};delete marks[id];next[date]=marks;});return next;});
+    setHabitChecked(prev=>{const next={...prev};(allDays?Object.keys(prev).filter(date=>date>=today):[today]).forEach(date=>{const marks={...(prev[date]||{})};delete marks[id];next[date]=marks;});return next;});
     setDeleting(null);haptic();
   };
   const reorder=next=>{
-    const globals=new Set(habits.map(h=>h.id)),rank=new Map(next.map((h,i)=>[h.id,i]));
+    const globals=new Set(habits.map(h=>habitOnDate(h,today)).filter(Boolean).map(h=>h.id)),rank=new Map(next.map((h,i)=>[h.id,i]));
     setHabits(prev=>[...prev].sort((a,b)=>(rank.get(a.id)??next.length)-(rank.get(b.id)??next.length)));
     setPlanner(prev=>({...prev,[today]:{...(prev[today]||{}),habits:next.filter(h=>!globals.has(h.id)),habitOrder:next.map(h=>h.id)}}));
   };
@@ -1824,7 +1925,7 @@ function HabitSection({ habits, setHabits, habitChecked, setHabitChecked, dateKe
 
       </div>
       {editor&&<HabitEditor habit={editor.habit} dateKey={today} planner={planner} returnTo={editor.trigger} onSave={save} onClose={()=>setEditor(null)}/>}
-      {deleting&&<GoalSheet title="Delete habit" returnTo={deleting.trigger} onClose={()=>setDeleting(null)}><p style={{fontSize:13,color:C.text2,marginBottom:12}}>Remove “{deleting.habit.name}” from {reminderDateLabel(today)}, or from every day?</p><div style={{display:"grid",gap:8}}><button className="planner-action" onClick={()=>removeHabit(false)}>Delete for today only</button><button className="planner-action" style={{color:C.red,borderColor:C.red,background:"color-mix(in srgb,var(--c-bad) 12%,transparent)"}} onClick={()=>removeHabit(true)}>Delete for all days</button><button className="planner-action planner-secondary" onClick={()=>setDeleting(null)}>Cancel</button></div></GoalSheet>}
+      {deleting&&<GoalSheet title="Delete habit" returnTo={deleting.trigger} onClose={()=>setDeleting(null)}><p style={{fontSize:13,color:C.text2,marginBottom:12}}>Remove “{deleting.habit.name}” only on {reminderDateLabel(today)}, or from that day onward? Earlier days and their XP stay saved.</p><div style={{display:"grid",gap:8}}><button className="planner-action" onClick={()=>removeHabit(false)}>Delete for today only</button><button className="planner-action" style={{color:C.red,borderColor:C.red,background:"color-mix(in srgb,var(--c-bad) 12%,transparent)"}} onClick={()=>removeHabit(true)}>Delete from today onward</button><button className="planner-action planner-secondary" onClick={()=>setDeleting(null)}>Cancel</button></div></GoalSheet>}
     </div>
   );
 }
@@ -2887,7 +2988,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
 function WeeklyPlanner({ selectedDate, onSelect, habits, planner, setPlanner, clipboard, setClipboard, setReminderView }) {
   const date=new Date(selectedDate+"T12:00:00"),monday=weekStartKey(selectedDate),days=Array.from({length:7},(_,i)=>shiftDateKey(monday,i)),day=planner[selectedDate]||{};
   const copy=()=>{
-    const habitTimes=Object.fromEntries(habits.map(h=>[h.id,habitSlot(h,day)]));
+    const habitTimes=Object.fromEntries(habitsForDay(habits,day,selectedDate).filter(h=>h.scope==="everyday").map(h=>[h.id,habitSlot(h,day)]));
     const copies=(day.habits||[]).map(h=>{const slot=habitSlot(h,day);return {...h,startTime:slot.start,endTime:slot.end};});
     setClipboard({from:selectedDate,kind:"day",habitTimes,habits:copies});haptic();playCue("save");toast("Habits and times copied","success");
   };
@@ -2895,7 +2996,7 @@ function WeeklyPlanner({ selectedDate, onSelect, habits, planner, setPlanner, cl
     if(!clipboard)return;
     setPlanner(prev=>{
       const target=prev[selectedDate]||{};
-      const clone=h=>({...h,id:crypto.randomUUID(),scope:"day",date:selectedDate,done:false});
+      const clone=h=>{const {startDate,endDate,history,...item}=h;return {...item,id:crypto.randomUUID(),scope:"day",date:selectedDate,done:false};};
       if(clipboard.kind==="habit")return {...prev,[selectedDate]:{...target,habits:[...(target.habits||[]),clone(clipboard.habit)]}};
       const times=Object.fromEntries(Object.entries(clipboard.habitTimes).filter(([id])=>habits.some(h=>h.id===id)));
       const signature=(h,slot)=>JSON.stringify([h.name,h.emoji||"🎯",slot.start,slot.end]);
@@ -2929,7 +3030,7 @@ function UrgentReminders({ reminders, setReminders, selectedDate, view, setView 
   const [form,setForm]=useState(null),[text,setText]=useState("");
   const [scope,setScope]=useState("day"),[start,setStart]=useState(selectedDate),[end,setEnd]=useState(selectedDate),[error,setError]=useState("");
   const trigger=useRef(null);
-  const visible=reminders.map(r=>({reminder:r,dates:reminderViewDates(r,selectedDate,view)})).filter(r=>r.dates.length);
+  const visible=reminders.map(r=>({reminder:r,dates:reminderViewDates(r,selectedDate,view)})).filter(r=>r.dates.length).sort((a,b)=>Number(reminderComplete(a.reminder,a.dates))-Number(reminderComplete(b.reminder,b.dates)));
   const open=(item,button)=>{
     trigger.current=button;setForm(item?.id||"new");setText(item?.text||"");setScope(item?.scope||(item?"everyday":view==="week"?"week":"day"));
     setStart(item?.startDate||selectedDate);setEnd(item?.endDate||selectedDate);setError("");
@@ -2959,7 +3060,7 @@ function UrgentReminders({ reminders, setReminders, selectedDate, view, setView 
       {visible.map(({reminder:r,dates})=>{
         const done=reminderComplete(r,dates),count=dates.filter(date=>r.completedDates?.[date]??r.done??false).length;
         return <div key={r.id} style={{display:"flex",alignItems:"center",gap:8,paddingTop:12,marginTop:12,borderTop:"1px solid rgba(251,113,133,.25)",opacity:done?0.65:1}}>
-          <button role="checkbox" aria-checked={done} aria-label={`Complete urgent reminder ${r.text}`} onClick={()=>toggle(r,dates)} style={{width:44,height:44,flexShrink:0,border:"1px solid #fb7185",borderRadius:10,color:"#fff",fontSize:20}}>{done?"✓":<span aria-hidden="true">⚠️</span>}</button>
+          <button role="checkbox" aria-checked={done} aria-label={`Complete urgent reminder ${r.text}`} onClick={()=>toggle(r,dates)} style={{width:44,height:44,flexShrink:0,border:`2px solid ${done?"#a7f3d0":"#fb7185"}`,borderRadius:10,color:done?"#a7f3d0":"#fff",background:done?"rgba(167,243,208,.12)":"#4c1523",fontSize:24,transition:"background .2s,border-color .2s",boxShadow:done?"0 0 12px rgba(167,243,208,.12)":"none"}}>{done?"✓":<span aria-hidden="true">□</span>}</button>
           <div style={{flex:1,minWidth:0}}><span style={{fontSize:14,fontWeight:800,textTransform:"uppercase",overflowWrap:"anywhere",lineHeight:1.5,color:"#fff",textDecoration:done?"line-through":"none"}}>{r.text}</span><div style={{fontSize:10,color:"#fecdd3",marginTop:4,lineHeight:1.5,overflowWrap:"anywhere"}}>{reminderScopeLabel(r)}{view==="week"&&dates.length>1?` · ${count}/${dates.length} days done`:""}</div></div>
           <button aria-label={`Edit urgent reminder ${r.text}`} onClick={e=>open(r,e.currentTarget)} style={{minWidth:44,minHeight:44,fontSize:11,color:"#fecdd3"}}>Edit</button><button aria-label={`Delete urgent reminder ${r.text}`} onClick={()=>{setReminders(prev=>prev.filter(x=>x.id!==r.id));haptic();}} style={{minWidth:44,minHeight:44,fontSize:22,color:"#fecdd3"}}>×</button>
         </div>;
@@ -2984,7 +3085,7 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked, planner,
   const [reminderView,setReminderView]=useState("day");
   const [clipboard,setClipboard]=useState(null);
   const today = selectedDate;
-  const dailyHabits=habitsForDay(habits,planner[today]);
+  const dailyHabits=habitsForDay(habits,planner[today],today);
   const done = dailyHabits.filter(h => (habitChecked[today]||{})[h.id]).length;
   const allDone = dailyHabits.length > 0 && done === dailyHabits.length;
   const copyHabit=(habit,slot)=>{setClipboard({from:selectedDate,kind:"habit",habit:{...habit,startTime:slot.start,endTime:slot.end}});haptic();playCue("save");toast("Habit copied — paste here or choose a day","success");};
@@ -3127,27 +3228,32 @@ function ToastHost() {
 function ThemeSheet({ theme, setTheme, soundEnabled, setSoundEnabled, onClose }) {
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(3px)",WebkitBackdropFilter:"blur(3px)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"backdropFade 0.25s ease"}}>
-      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,maxHeight:"88svh",overflowY:"auto",background:"color-mix(in srgb, var(--bg-1) 98%, transparent)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 22px)",animation:"sheetUp 0.38s cubic-bezier(0.22,1,0.36,1)"}}>
+      <div className="theme-sheet" role="dialog" aria-modal="true" aria-label="Choose theme" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,maxHeight:"88svh",overflowY:"auto",background:"color-mix(in srgb, var(--bg-1) 98%, transparent)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 22px)",animation:"sheetUp 0.38s cubic-bezier(0.22,1,0.36,1)"}}>
         <div style={{width:38,height:4,borderRadius:2,background:"rgba(255,255,255,0.16)",margin:"0 auto 16px"}}/>
         <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:C.text,marginBottom:2}}>Theme</div>
-        <div style={{fontSize:12,color:C.text2,marginBottom:16}}>Find your atmosphere. Each palette has its own quiet motion.</div>
+        <div style={{fontSize:12,color:C.text2,marginBottom:12}}>Live previews of your atmosphere. Tap a theme to try it.</div>
+        <button className="planner-action planner-secondary" onClick={onClose} style={{marginBottom:12}}>Done</button>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,padding:"12px 0",marginBottom:12,borderBottom:`1px solid ${C.border2}`}}>
           <div><div style={{fontSize:12,fontWeight:600,color:C.text}}>Gentle sounds</div><div style={{fontSize:10,color:C.text2,marginTop:4}}>Small cues for water, progress, and completion.</div></div>
           <button className="planner-action" aria-label="Gentle sounds" aria-pressed={soundEnabled} onClick={()=>{const next=!soundEnabled;sv("dos_sound_v1",next);setSoundEnabled(next);if(next)playCue("select");}}>{soundEnabled?"On":"Off"}</button>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        <div className="theme-picker-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
           {Object.keys(THEMES).map(k=>{
             const t = THEMES[k], active = theme===k, sw = t.swatch[Math.min(1,t.swatch.length-1)];
             return (
-              <button key={k} className="tap" onClick={()=>{ haptic(12);playCue("select"); setTheme(k); toast(t.label+" theme","info"); onClose(); }} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",borderRadius:14,background:active?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?sw:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 20px ${sw}55`:"none",transition:"border 0.2s,box-shadow 0.2s,background 0.2s"}}>
-                <div style={{display:"flex",flexShrink:0}}>
-                  {t.swatch.map((c,i)=>(<div key={i} style={{width:16,height:16,borderRadius:"50%",background:c,marginLeft:i?-6:0,border:"2px solid color-mix(in srgb, var(--bg-1) 95%, transparent)"}}/>))}
-                </div>
-                <span style={{textAlign:"left",minWidth:0}}>
+              <button key={k} className="tap" aria-pressed={active} aria-label={`${t.label} theme${active?", selected":""}`} onClick={()=>{ haptic(12);playCue("select"); setTheme(k); }} style={{display:"flex",flexDirection:"column",alignItems:"stretch",gap:8,padding:9,borderRadius:14,background:active?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?sw:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 20px color-mix(in srgb, ${sw} 20%, transparent)`:"none",transition:"border 0.2s,box-shadow 0.2s,background 0.2s"}}>
+                <span className="theme-preview" data-theme={k} data-preview={t.rich?"rich":"classic"} aria-hidden="true">
+                  <span className="preview-symbol">{t.symbol||"✦"}</span><span className="preview-heading">A little progress</span>
+                  <span className="preview-card" style={{display:"block"}}>✓ Your daily rhythm<span className="preview-track" style={{display:"block"}}><span/></span></span>
+                  <span style={{display:"flex",gap:4,marginTop:6}}>{t.swatch.map((c,i)=><span key={i} style={{width:14,height:4,borderRadius:4,background:c}}/>)}</span>
+                </span>
+                <span style={{textAlign:"left",minWidth:0,position:"relative"}}>
                   <span style={{display:"block",fontSize:14,fontWeight:700,color:active?C.text:C.text2}}>{t.label}</span>
                   <span style={{display:"block",fontSize:9,color:C.text2,marginTop:3,lineHeight:1.3}}>{t.motion}</span>
+                  {t.meaning&&<span style={{display:"block",fontSize:10,color:C.text2,marginTop:5,lineHeight:1.4}}>{t.meaning}</span>}
+                  {t.palette&&<span style={{display:"block",fontSize:9,color:C.text2,marginTop:4,lineHeight:1.4}}>{t.palette}</span>}
+                  {active && <span style={{position:"absolute",right:0,top:0,color:sw,fontSize:14,fontWeight:900}}>✓</span>}
                 </span>
-                {active && <span style={{marginLeft:"auto",color:sw,fontSize:14,fontWeight:900}}>✓</span>}
               </button>
             );
           })}
@@ -3185,20 +3291,34 @@ function BackupSheet({ onClose }) {
 // ── BODY PROGRESS ─────────────────────────────────────────────────────────────
 // Full-screen photo viewer: swipe/arrow between progress shots, download a copy,
 // or delete (two-tap to confirm). Photos are passed in already sorted ascending.
+function useProgressOriginal(photo) {
+  const [loaded,setLoaded]=useState(null);
+  useEffect(()=>{
+    let active=true,url,image;
+    if(photo)idbGet(photo.date).then(record=>{
+      if(!active||!record?.blob||record.ts!==photo.ts)return;
+      url=URL.createObjectURL(record.blob);
+      image=new Image();
+      image.onload=()=>{if(active)setLoaded({date:photo.date,ts:photo.ts,url});};
+      image.onerror=()=>{if(active)toast("Couldn't open the full photo. Try again.","error");};
+      image.src=url;
+    }).catch(()=>{if(active)toast("Couldn't open that photo. Try again.","error");});
+    return ()=>{active=false;if(image){image.onload=null;image.onerror=null;}if(url)URL.revokeObjectURL(url);};
+  },[photo?.date,photo?.ts]);
+  return loaded?.date===photo?.date&&loaded?.ts===photo?.ts?loaded.url:null;
+}
+function ProgressOriginal({photo,alt,style}) {
+  const original=useProgressOriginal(photo);
+  return <img decoding="async" src={original||photo.url} data-original-loaded={!!original} alt={alt} style={style}/>;
+}
 function ProgressViewer({ photos, startDate, weightByDate, onClose, onDelete }) {
   const startIdx = Math.max(0, photos.findIndex(p => p.date === startDate));
   const [idx, setIdx] = useState(startIdx);
   const [armed, setArmed] = useState(false);
   const dragX = useRef(null);
   const panel = useRef(null);
-  const [fullUrl,setFullUrl] = useState(null);
   const p = photos[idx];
-  useEffect(() => {
-    let active=true,url;
-    setFullUrl(null);
-    if(p)idbGet(p.date).then(record=>{if(active&&record?.blob){url=URL.createObjectURL(record.blob);setFullUrl(url);}}).catch(()=>toast("Couldn't open that photo. Try again.","error"));
-    return ()=>{active=false;if(url)URL.revokeObjectURL(url);};
-  }, [p?.date,p?.ts]);
+  const fullUrl=useProgressOriginal(p);
   useEffect(() => {
     const previous=document.activeElement,overflow=document.body.style.overflow;
     document.body.style.overflow="hidden";
@@ -3237,7 +3357,7 @@ function ProgressViewer({ photos, startDate, weightByDate, onClose, onDelete }) 
         onPointerDown={e=>{dragX.current=e.clientX;}}
         onPointerUp={e=>{ if(dragX.current==null) return; const dx=e.clientX-dragX.current; dragX.current=null; if(Math.abs(dx)>44) go(dx<0?1:-1); }}
         onPointerCancel={()=>{dragX.current=null;}}>
-        {fullUrl ? <img key={p.date} src={fullUrl} alt={`Progress ${p.date}`} style={{width:"100%",height:"100%",maxWidth:"92vw",maxHeight:"80dvh",objectFit:"contain",animation:"fadeIn 0.25s ease"}}/> : <span role="status" style={{color:C.text2}}>Loading photo…</span>}
+        <img key={p.date} src={fullUrl||p.url} data-original-loaded={!!fullUrl} aria-busy={!fullUrl} alt={`Progress ${p.date}`} style={{width:"100%",height:"100%",maxWidth:"92vw",maxHeight:"80dvh",objectFit:"contain",animation:_reduceMotion()?undefined:"fadeIn 0.25s ease"}}/>
         {idx>0 && <button aria-label="Previous" onClick={()=>go(-1)} style={{position:"absolute",left:8,top:"50%",transform:"translateY(-50%)",width:40,height:40,borderRadius:"50%",background:"rgba(0,0,0,0.4)",border:"1px solid rgba(255,255,255,0.14)",color:"#fff",fontSize:20}}>‹</button>}
         {idx<photos.length-1 && <button aria-label="Next" onClick={()=>go(1)} style={{position:"absolute",right:8,top:"50%",transform:"translateY(-50%)",width:40,height:40,borderRadius:"50%",background:"rgba(0,0,0,0.4)",border:"1px solid rgba(255,255,255,0.14)",color:"#fff",fontSize:20}}>›</button>}
       </div>
@@ -3322,7 +3442,7 @@ function ProgressPage({ bwLog, setShowBackupSheet }) {
       await idbPut({ date, ts: Date.now(), blob });
       haptic(18);
       await reload();
-      toast(date === todayKey ? "Progress photo saved" : "Photo added", "success");
+      toast(f.type==="image/jpeg"?(date === todayKey ? "Original progress photo saved" : "Original photo added"):"Photo saved at full dimensions; converted to JPEG for sync", "success");
       try { if (typeof confetti !== "undefined") confetti({ particleCount: 55, spread: 68, origin: { y: 0.7 } }); } catch {}
     } catch (error) { toast(error.message||"Couldn't save that photo", "error"); }
     captureDateRef.current = null;
@@ -3396,8 +3516,8 @@ function ProgressPage({ bwLog, setShowBackupSheet }) {
               onPointerMove={e=>{ if(draggingRef.current) setPctFromEvent(e.clientX); }}
               onPointerUp={()=>{draggingRef.current=false;}}
               onPointerCancel={()=>{draggingRef.current=false;}}>
-              <img loading="lazy" decoding="async" src={first.url} alt="Before" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"contain",pointerEvents:"none"}}/>
-              <img loading="lazy" decoding="async" src={latest.url} alt="After" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"contain",pointerEvents:"none",clipPath:`inset(0 0 0 ${sliderPct}%)`}}/>
+              <ProgressOriginal photo={first} alt="Before" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"contain",pointerEvents:"none"}}/>
+              <ProgressOriginal photo={latest} alt="After" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"contain",pointerEvents:"none",clipPath:`inset(0 0 0 ${sliderPct}%)`}}/>
               <div style={{position:"absolute",top:0,bottom:0,left:`${sliderPct}%`,width:2,background:"rgba(255,255,255,0.9)",boxShadow:"0 0 12px rgba(0,0,0,0.6)",pointerEvents:"none"}}/>
               <div style={{position:"absolute",top:"50%",left:`${sliderPct}%`,transform:"translate(-50%,-50%)",width:34,height:34,borderRadius:"50%",background:"rgba(255,255,255,0.95)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 10px rgba(0,0,0,0.5)",pointerEvents:"none",color:"#111",fontSize:14,fontWeight:900}}>⇆</div>
               <span style={{position:"absolute",top:8,left:8,fontSize:9,fontWeight:800,letterSpacing:1,color:"#fff",background:"rgba(0,0,0,0.5)",padding:"3px 7px",borderRadius:6,pointerEvents:"none"}}>BEFORE</span>
@@ -3417,7 +3537,7 @@ function ProgressPage({ bwLog, setShowBackupSheet }) {
         {photos.length === 1 && (
           <div className="progress-preview" style={{...card,padding:14,marginBottom:16}}>
             <button aria-label={`View progress photo for ${latest.date}`} onClick={()=>setViewerDate(latest.date)} style={{display:"block",padding:0,position:"relative",width:"100%",aspectRatio:"4/5",borderRadius:14,overflow:"hidden",cursor:"pointer"}}>
-              <img loading="lazy" decoding="async" src={latest.url} alt="Latest" style={{width:"100%",height:"100%",objectFit:"contain"}}/>
+              <ProgressOriginal photo={latest} alt="Latest" style={{width:"100%",height:"100%",objectFit:"contain"}}/>
             </button>
             <div style={{fontSize:12,color:C.text2,textAlign:"center",marginTop:10}}>Add another day to unlock the before/after slider.</div>
           </div>
@@ -3486,6 +3606,12 @@ function ThemeMotion({ theme }) {
   },[]);
   const motif = () => {
     switch(theme){
+      case "modern": return <g><rect x="20" y="20" width="56" height="56" rx="3"/><rect x="44" y="44" width="56" height="56" rx="3" fill="currentColor" fillOpacity=".05"/><circle cx="48" cy="48" r="14"/><path d="M20 92 H35 M27 85 V100 M90 15 V32 M82 23 H99"/></g>;
+      case "vintage": return <g><rect x="16" y="24" width="88" height="72" rx="1"/><rect x="21" y="29" width="78" height="62" rx="1" opacity=".4"/><path d="M38 47 Q60 20 82 47 M38 73 Q60 100 82 73 M31 60 H89 M43 60 Q51 44 60 60 Q69 76 77 60"/><circle cx="60" cy="60" r="21" opacity=".35"/><path d="M8 16 H23 M15 9 V23 M97 104 H112 M105 97 V112"/></g>;
+      case "zen": return <g><path d="M80 25 C29 3 4 66 39 93 C81 123 119 59 89 29" strokeWidth="4" opacity=".65"/><path d="M27 78 Q50 69 83 78 Q103 95 58 98 Q18 97 27 78Z" fill="currentColor" fillOpacity=".15"/>{[0,8,16].map(y=><path key={y} d={`M-10 ${40+y} Q25 ${22+y} 54 ${40+y} T130 ${40+y}`} opacity=".35"/>)}<path d="M104 51 Q88 65 106 74 M104 59 Q119 50 113 36"/></g>;
+      case "lagoon": return <g><path d="M60 108 V64 Q37 47 37 23 M60 82 Q91 69 91 42 M37 43 L19 31 M38 55 L52 34 M91 58 L110 48 M61 64 L73 32" strokeWidth="3"/><path d="M-10 91 Q23 71 54 91 T130 91" opacity=".35"/>{[[15,62,4],[79,13,3],[103,91,5],[66,47,2]].map(([x,y,r])=><circle key={x} cx={x} cy={y} r={r} opacity=".5"/>)}<path d="M13 100 Q40 113 81 101"/></g>;
+      case "dunes": return <g><path d="M-15 102 Q42 10 140 79 M-20 117 Q35 45 138 97 M-10 129 Q75 64 141 114"/><circle cx="87" cy="27" r="16" fill="currentColor" fillOpacity=".12"/>{[0,10,20].map(x=><path key={x} d={`M${20+x} 17 l10 10 -10 10 -10 -10Z`} opacity=".6"/>)}<path d="M57 83 Q77 84 95 89 M34 98 Q55 97 79 102" opacity=".35"/></g>;
+      case "observatory": return <g><circle cx="60" cy="60" r="43"/><circle cx="60" cy="60" r="36" opacity=".4"/><ellipse cx="60" cy="60" rx="43" ry="14" transform="rotate(-30 60 60)"/><path d="M60 9 V25 M60 95 V111 M9 60 H25 M95 60 H111 M36 82 L59 36 L84 62Z"/>{[[36,82],[59,36],[84,62]].map(([x,y])=><circle key={x} cx={x} cy={y} r="2.4" fill="currentColor"/>)}<path d="M94 7 V20 M87 14 H101"/><circle cx="17" cy="100" r="2" fill="currentColor"/></g>;
       case "aqua": return <g>{[34,54,74,94].map(y=><path key={y} d={`M-30 ${y} Q0 ${y-18} 30 ${y} T90 ${y} T150 ${y}`} />)}</g>;
       case "sakura": return <g>{[0,72,144,216,288].map(a=><path key={a} transform={`rotate(${a} 60 60)`} d="M60 60 C39 49 40 22 53 22 L60 28 L67 22 C80 22 81 49 60 60Z" fill="currentColor" fillOpacity=".22"/>)}<circle cx="60" cy="60" r="4" fill="currentColor"/><path d="M96 87 Q108 78 113 91 Q108 106 96 87Z" fill="currentColor" fillOpacity=".35"/></g>;
       case "emerald": return <g><path d="M36 16 H84 L104 36 V84 L84 104 H36 L16 84 V36Z M36 16 L44 34 H76 L84 16 M104 36 L86 44 V76 L104 84 M84 104 L76 86 H44 L36 104 M16 84 L34 76 V44 L16 36 M44 34 L34 44 V76 L44 86 H76 L86 76 V44 L76 34Z"/><path d="M44 34 H76 L86 44 V76 L76 86 H44 L34 76 V44Z" fill="currentColor" fillOpacity=".18"/><path d="M44 34 L76 86 M76 34 L44 86" opacity=".3"/><path d="M107 12 V24 M101 18 H113"/></g>;
@@ -3522,6 +3648,7 @@ function AccountSheet({ onClose, syncStatus, onApiKey, soundEnabled, setSoundEna
   const run=async action=>{setBusy(true);setMessage("");try{setMessage(await action()||"");}catch(e){setMessage(e.message);}finally{setBusy(false);}};
   return <GoalSheet title="Account & sync" onClose={busy?()=>{}:onClose}>
     <p role="status" style={{fontSize:13,color:C.text2,marginBottom:10}}>{syncStatus.email||"Use the same account on your phone and laptop."}<br/>{syncStatus.message}{syncStatus.pending?` · ${syncStatus.pending} changes waiting`:""}</p>
+    <p style={{fontSize:12,color:C.text2,marginBottom:12}}>{syncStatus.online===false?"Offline":"Online"} · {syncStatus.pending||0} pending changes<br/>Last synced: {syncStatus.lastSynced?new Date(syncStatus.lastSynced).toLocaleString():"Not yet"}</p>
     {syncStatus.error&&<p role="alert" style={{fontSize:12,color:C.red,marginBottom:12}}>{syncStatus.error}</p>}
     {syncStatus.message==="Choose migration source"&&<div style={{marginBottom:14}}><p style={{fontSize:12,color:C.text2,marginBottom:8}}>Your account is empty. Open this sheet in the iPhone app that contains your saved data, then upload from there.</p><button className="planner-action" disabled={busy} onClick={()=>run(()=>window.DailySync.seed())}>Upload this device’s existing data</button></div>}
     <a href="./SYNC-SETUP.md" target="_blank" rel="noopener" style={{display:"inline-block",color:C.accent,fontSize:13,marginBottom:12}}>Setup instructions</a>
@@ -3634,13 +3761,14 @@ function App() {
   }, [page]);
   useEffect(()=>{ if(page!=="home") setScrollY(0); }, [page]);
 
+  if (syncStatus.checkingSession) return <div aria-label="Checking saved session" style={{minHeight:"100dvh",background:C.bg,display:"grid",placeItems:"center"}}>{syncStatus.error&&<div style={{padding:24,color:C.text2,textAlign:"center"}}><p>Unable to check your saved session.</p><button className="planner-action" onClick={()=>window.DailySync.retry().catch(e=>toast(e.message,"error"))}>Retry connection</button></div>}<ToastHost/></div>;
   if (!syncStatus.connected) return <div><div style={{padding:"60px 24px",textAlign:"center",color:C.text}}><h1>Daily OS</h1><p>Sign in to open your private habits and photos.</p></div><AccountSheet onClose={()=>{}} syncStatus={syncStatus} onApiKey={()=>{}} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}/><ToastHost/></div>;
   if (showApiKey) return <div><button className="planner-action" style={{margin:20}} onClick={()=>setShowApiKey(false)}>← Back to Daily OS</button><ApiKeyScreen onSave={key=>{setApiKey(key);setShowApiKey(false);}}/></div>;
 
   return (
     <div>
       <ThemeMotion theme={theme}/>
-      <div className="account-bar"><button className="planner-action planner-secondary" aria-label="Account and sync settings" onClick={()=>setShowAccount(true)}>{syncStatus.connected?"☁":"↗"} {syncStatus.message}{syncStatus.pending?` (${syncStatus.pending})`:""}</button></div>
+      <div className="account-bar" data-page={page}><button className="sync-chip" data-state={syncStatus.error?"error":syncStatus.online===false?"offline":syncStatus.message==="Synced"&&!syncStatus.pending?"synced":"syncing"} aria-label="Account and sync settings" title={syncStatus.message} onClick={()=>setShowAccount(true)}><span className="sync-dot"/>{syncStatus.error?"Sync issue":syncStatus.online===false?"Offline":syncStatus.message==="Synced"&&!syncStatus.pending?"Synced":"Syncing"}</button></div>
       {showAccount&&<AccountSheet onClose={()=>setShowAccount(false)} syncStatus={syncStatus} onApiKey={()=>{setShowAccount(false);setShowApiKey(true);}} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}/>}
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
       {showThemeSheet&&<ThemeSheet theme={theme} setTheme={setTheme} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} onClose={()=>setShowThemeSheet(false)}/>}

@@ -11,7 +11,8 @@
     const add = (kind, date, id, amount = values[kind]) => { result[JSON.stringify([kind,date,String(id)])] = amount; };
     Object.entries(data.habitChecked || {}).forEach(([date, marks]) => Object.entries(marks).forEach(([id, done]) => {
       if (done) {
-        const habit = [...(data.habits || []), ...(data.planner?.[date]?.habits || [])].find(h => String(h.id) === id);
+        const record = [...(data.planner?.[date]?.habits || []), ...(data.habits || [])].find(h => String(h.id) === id);
+        const habit = record && [record,...(record.history || []).slice().reverse()].find(h => (!h.startDate || date >= h.startDate) && (!h.endDate || date < h.endDate));
         add('habit', date, id, habit?.important ? values.importantHabit : values.habit);
       }
     }));

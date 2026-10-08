@@ -1,0 +1,38 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const xp=require('../dailyos-xp.js'),source=fs.readFileSync(require.resolve('../index.html'),'utf8');
+const helpers=source.slice(source.indexOf('const habitOnDate='),source.indexOf('\nfunction GoalSheet'));
+const section=source.slice(source.indexOf('function HabitSection('),source.indexOf('  const reorder=next=>',source.indexOf('function HabitSection(')));
+const date='2026-10-08',past='2026-10-07',future='2026-10-09';
+function fixture(habits,planner={},checked={},editing=null,deleting=null){
+  const data={habits,planner,checked};let state=0;
+  const context={tdk:()=>date,crypto:{randomUUID:()=> 'new'},C:{violet:'purple'},habitSlot:(h,d)=>d?.habitTimes?.[h.id]||{start:h.startTime||'',end:h.endTime||''},haptic(){},playCue(){},useState:()=>[++state===1?{habit:editing}: {habit:deleting},()=>{}]};
+  vm.runInNewContext(helpers+'\n'+section+'return {save,removeHabit};\n}',context);
+  const actions=context.HabitSection({habits,setHabits:f=>data.habits=f(data.habits),planner,setPlanner:f=>data.planner=f(data.planner),habitChecked:checked,setHabitChecked:f=>data.checked=f(data.checked),dateKey:date});
+  return {data,actions,list:key=>vm.runInNewContext(`habitsForDay(testHabits,testDay,${JSON.stringify(key)})`,Object.assign(context,{testHabits:data.habits,testDay:data.planner[key]}))};
+}
+const draft={name:'Read',emoji:'📚',scope:'everyday',important:true,start:'09:00',end:'09:30',allDays:false};
+let f=fixture([]);f.actions.save(draft);assert.equal(f.data.habits[0].startDate,date);assert.equal(f.list(past).length,0);assert.equal(f.list(date).length,1);assert.equal(f.list(future).length,1);
+const local={id:'local',name:'Local',scope:'day',date:past};
+f=fixture([],{[past]:{habits:[local]}},{},local);f.actions.save(draft);assert.equal(f.list(past)[0].name,'Local');assert.equal(f.list(date)[0].name,'Read');
+const recurring={id:'r',name:'Read',scope:'everyday',startDate:'',important:true};
+const oldDay={habitTimes:{r:{start:'10:00',end:'10:30'}},habitOrder:['r'],habits:[]};
+const oldMarks={r:true};
+f=fixture([recurring],{[past]:oldDay,[date]:{habitTimes:{r:{start:'12:00'}}}},{[past]:oldMarks,[date]:{r:true},[future]:{r:true}},null,recurring);
+f.actions.removeHabit(true);assert.equal(f.data.habits[0].endDate,date);assert.equal(f.list(past).length,1);assert.equal(f.list(date).length,0);assert.equal(f.list(future).length,0);assert.strictEqual(f.data.planner[past],oldDay);assert.strictEqual(f.data.checked[past],oldMarks);
+assert.equal(Object.values(xp.awards({habits:f.data.habits,planner:f.data.planner,habitChecked:f.data.checked})).reduce((a,b)=>a+b,0),30,'Historic important habit XP stays earned');
+f=fixture([recurring],{},{[past]:oldMarks},recurring);f.actions.save({...draft,scope:'day'});assert.equal(f.list(past)[0].name,'Read');assert.equal(f.list(date)[0].scope,'day');assert.equal(f.list(future).length,0);
+const ended=f.data.habits[0],dated=f.data.planner[date].habits[0];
+f=fixture([ended],f.data.planner,f.data.checked,dated);f.actions.save({...draft,name:'Reopened',important:false});assert.equal(f.list(past)[0].name,'Read');assert.equal(f.list(date)[0].name,'Reopened');assert.equal(Object.values(xp.awards({habits:f.data.habits,habitChecked:f.data.checked}))[0],30);
+const reminder={id:'urgent',scope:'range',startDate:past,endDate:future,completedDates:{[past]:true,[date]:true,[future]:true}};
+const awards=xp.awards({urgent:[reminder]});assert.equal(Object.keys(awards).length,3);assert.deepEqual(awards,xp.awards({urgent:[reminder]}));assert.equal(Object.keys(xp.awards({urgent:[{...reminder,completedDates:{...reminder.completedDates,[date]:false}}]})).length,2);
+const reminderHelpers=source.slice(source.indexOf('const shiftDateKey='),source.indexOf('const reminderDateLabel='));
+const reminderContext={dk:d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+vm.runInNewContext(reminderHelpers,reminderContext);
+const dates=(item,key,view)=>Array.from(reminderContext.reminderViewDates(item,key,view));
+assert.deepEqual(dates(reminder,date,'day'),[date]);assert.deepEqual(dates(reminder,date,'week'),[past,date,future]);assert.deepEqual(dates(reminder,'2026-10-10','day'),[]);
+assert.deepEqual(dates({...reminder,scope:'day'},date,'day'),[]);
+const {flatten,materialize}=require('../dailyos-sync.js');
+const document={habits:f.data.habits,urgent:[reminder]};
+const rows=Object.fromEntries(Object.entries(flatten(document,['doc'])).map(([path,value])=>[path,{path,value,stamp:1,device:'phone',deleted:false}]));
+assert.deepEqual(materialize(rows,['doc']),JSON.parse(JSON.stringify(document)),'Habit date bounds/history and scoped urgent completions survive sync serialization');
+console.log('Passed: repeating start dates, legacy history, scope conversion/reopening, forward deletion, historical overrides/XP, urgent XP deduplication/reversal.');

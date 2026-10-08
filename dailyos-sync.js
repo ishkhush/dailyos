@@ -66,8 +66,9 @@
   });
   const listeners = new Set();
   const acknowledged = {};
-  let status = { message:'Local mode', pending:Object.keys(meta.pending).length, email:null, connected:false, error:'' };
-  const report = (message,error='') => { status={message,error,pending:Object.keys(meta.pending).length,email:session?.user.email||null,connected:!!session}; listeners.forEach(fn=>fn({...status})); };
+  let checkingSession = true;
+  let status = { message:'Checking session…', checkingSession:true, online:navigator.onLine, lastSynced:meta.lastSynced||null, pending:Object.keys(meta.pending).length, email:null, connected:false, error:'' };
+  const report = (message,error='') => { status={message,error,checkingSession,online:navigator.onLine,lastSynced:meta.lastSynced||null,pending:Object.keys(meta.pending).length,email:session?.user.email||null,connected:!!session}; listeners.forEach(fn=>fn({...status})); };
   const persist = () => {mergeStoredMeta();put('dos_sync_meta_v1',meta);};
   const stamp = () => meta.clock = Math.max(Date.now(),meta.clock+1);
   function mergeStoredMeta(stored=read('dos_sync_meta_v1',null)) {
@@ -75,6 +76,7 @@
     for(const row of Object.values(stored.rows))if(validRow(row) && compare(row,meta.rows[row.path])>0)meta.rows[row.path]=row;
     for(const row of Object.values(stored.pending))if(validRow(row) && compare(row,acknowledged[row.path])>0 && compare(row,meta.pending[row.path])>0 && compare(row,meta.rows[row.path])>=0)meta.pending[row.path]=row;
     meta.clock=Math.max(meta.clock,Number.isSafeInteger(stored.clock)?stored.clock:0);
+    meta.lastSynced=Math.max(meta.lastSynced||0,stored.lastSynced||0)||null;
   }
   function localDoc(key,value) {
     if (!eligible(key)) return;
@@ -132,7 +134,7 @@
   const schedule = () => { clearTimeout(timer); timer=setTimeout(()=>flush(),180); };
   async function flush() {
     if (working || starting || reconciling || !session || !navigator.onLine) { dirty=true; return; }
-    working=true; dirty=false;
+    working=true; dirty=false; report('Syncing…');
     try {
       while(Object.keys(meta.pending).length) {
         const candidates=Object.values(meta.pending).slice(0,150),batch=[];
@@ -152,14 +154,14 @@
         batch.forEach(row=>{acknowledged[row.path]=row;if(meta.pending[row.path] && compare(meta.pending[row.path],row)===0)delete meta.pending[row.path];});
         await applyRows(data||[]);
       }
-      report('Synced');
+      meta.lastSynced=Date.now(); report('Synced');
     } catch(error) { report(navigator.onLine?'Sync needs attention':'Offline · changes queued',error.message); }
     finally { working=false; persist(); if(dirty)schedule(); }
   }
   async function hydrate(nextSession,allowSeed=seedAuthorized) {
-    if (!nextSession) { session=null; if(channel)await client.removeChannel(channel); channel=null; report('Local mode'); return; }
+    if (!nextSession) { session=null; checkingSession=false; if(channel)await client.removeChannel(channel); channel=null; report('Sign in to sync'); return; }
     if (meta.owner && meta.owner!==nextSession.user.id) { session=null; await client.auth.signOut(); report('Sign in to sync'); throw Error('This browser holds another account’s offline data. Use a separate browser profile for a different account.'); }
-    session=nextSession; starting=true; report('Connecting…');
+    session=nextSession; checkingSession=false; starting=true; report(navigator.onLine?'Connecting…':'Offline');
     try {
       if (channel)await client.removeChannel(channel);
       channel=client.channel('dailyos-'+session.user.id).on('postgres_changes',{event:'*',schema:'public',table:'dailyos_records',filter:'user_id=eq.'+session.user.id},()=>{
@@ -197,14 +199,14 @@
   async function reconcile() {
     if (!session || starting || working || reconciling || !navigator.onLine)return;
     if(!meta.owner){try{await hydrate(session,false);}catch(e){report('Sync needs attention',e.message);}return;}
-    reconciling=true;
-    try { await applyRows(await pull()); } catch(e) { report('Sync needs attention',e.message); }
+    reconciling=true; report('Syncing…');
+    try { await applyRows(await pull()); } catch(e) { report('Sync needs attention',e.message); return; }
     finally { reconciling=false; }
     await flush();
   }
   async function connect() {
     const config=read('dos_sync_config_v1',root.DAILYOS_SYNC||{});
-    if (!config.url || !config.publishableKey) { report('Local mode · set up sync'); return; }
+    if (!config.url || !config.publishableKey) { checkingSession=false; report('Local mode · set up sync'); return; }
     if (!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(config.url))throw Error('Use your project’s https://…supabase.co URL.');
     if(!browserKeyAllowed(config.publishableKey))throw Error('Use only a Supabase publishable or anon browser key. Secret and service-role keys are rejected.');
     if(!root.supabase)throw Error('Sync library unavailable. Reopen online.');
@@ -217,7 +219,7 @@
       else if(event==='SIGNED_IN' && !session)setTimeout(()=>{if(!session&&!starting)hydrate(next).catch(()=>{});},0);
     }).data.subscription;
     if(data.session)await hydrate(data.session);
-    else report('Sign in to sync');
+    else { checkingSession=false; report('Sign in to sync'); }
   }
   root.DailySync = {
     eligible, status:()=>({...status}), subscribe(fn){listeners.add(fn);fn({...status});return()=>listeners.delete(fn);},
