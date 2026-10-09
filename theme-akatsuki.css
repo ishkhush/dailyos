@@ -1,0 +1,48 @@
+[data-theme="akatsuki"]{
+ --ak-background:#090909;--ak-surface:#141414;--ak-card:#202020;--ak-raised:#2b2b2b;--ak-border:#747474;
+ --ak-primary:#ff8190;--ak-secondary:#e0e0e0;--ak-text:#f8f8f8;--ak-muted:#bcbcbc;--ak-trim:#ffffff;--ak-cloud-red:#cf0a24;--ak-emphasis:#330b10;
+ --ak-cloud:image-set(url('./assets/themes/akatsuki/cloud-phone.png') 1x,url('./assets/themes/akatsuki/cloud-desktop.png') 2x);
+ --bg:var(--ak-background);--bg-1:var(--ak-surface);--bg-2:var(--ak-card);--bg-3:var(--ak-raised);
+ --ink:var(--ak-text);--ink-2:var(--ak-secondary);--ink-3:var(--ak-muted);
+ --c-primary:var(--ak-primary);--c-2:var(--ak-secondary);--c-3:var(--ak-muted);--c-good:var(--ak-trim);--c-action:var(--ak-primary);--c-bad:var(--ak-primary);--on-accent:var(--ak-background);
+ --c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2);--material:none;--material-size:auto;--scene-size:480px 560px;
+ --font-body:'Manrope',sans-serif;--font-display:'Permanent Marker',sans-serif;--shape:9px 22px 9px 22px;--button-shape:7px;--material-shadow:0 4px 0 #000000;
+}
+html[data-theme="akatsuki"][data-page="home"]{--scene-motif:url('./assets/themes/akatsuki/motifs/itachi.svg')}
+html[data-theme="akatsuki"][data-page="fitness"]{--scene-motif:url('./assets/themes/akatsuki/motifs/orochimaru.svg')}
+html[data-theme="akatsuki"][data-page="habits"]{--scene-motif:url('./assets/themes/akatsuki/motifs/pain.svg')}
+html[data-theme="akatsuki"][data-page="supplements"]{--scene-motif:url('./assets/themes/akatsuki/motifs/hidan.svg')}
+html[data-theme="akatsuki"][data-page="progress"]{--scene-motif:url('./assets/themes/akatsuki/motifs/tobi.svg')}
+html[data-theme="akatsuki"] :is(.page-enter>div,.home-layout,.habits-layout,.supplements-layout){background-color:var(--ak-background) !important;background-image:var(--scene-motif) !important;background-size:var(--scene-size)}
+html[data-theme="akatsuki"] :is(.hero-header,.page-header){background-color:var(--ak-surface) !important;background-image:var(--scene-motif) !important;background-size:var(--scene-size);border-bottom:2px solid var(--ak-cloud-red) !important}
+html[data-theme="akatsuki"] .hero-header::before{content:'';position:absolute;inset:0;background-image:var(--ak-cloud);background-position:right 24px top 18px;background-size:160px auto;background-repeat:no-repeat;opacity:.35;pointer-events:none}
+html[data-theme="akatsuki"] .page-header::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:var(--ak-cloud);background-repeat:no-repeat;background-position:right 18px top 20px;background-size:90px auto;opacity:.3}
+html[data-theme="akatsuki"] :is(.glass-card,.cyber-card,.daily-habits,.day-window,.prayer-card,.xp-panel,.goal-sheet,.photo-dialog,.theme-sheet){background:var(--ak-card) !important;border-color:var(--ak-border) !important;box-shadow:0 3px 0 #000000 !important}
+html[data-theme="akatsuki"] [style*="backdrop-filter"]{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+html[data-theme="akatsuki"] .page-enter [style*="background: rgba"],html[data-theme="akatsuki"] .page-enter [style*="background: color-mix"][style*="transparent"]{background-color:var(--ak-card) !important;border-color:var(--ak-border) !important}
+html[data-theme="akatsuki"] .page-enter [style*="background: linear-gradient"]{background:var(--ak-card) !important}
+html[data-theme="akatsuki"] .page-enter [style*="background-clip: text"]{background:none !important;color:var(--ak-text) !important;-webkit-text-fill-color:var(--ak-text) !important}
+html[data-theme="akatsuki"] .page-enter [style*="box-shadow"]{box-shadow:0 3px 0 #000000 !important}
+html[data-theme="akatsuki"] .prayer-card{background-image:none !important}
+html[data-theme="akatsuki"] .prayer-slot[data-emphasized="true"] .prayer-card{background:var(--ak-emphasis) !important;border:2px solid var(--ak-trim) !important;box-shadow:0 0 14px #ffffff30 !important}
+html[data-theme="akatsuki"] .prayer-outline{filter:drop-shadow(0 0 2px var(--ak-trim))}
+html[data-theme="akatsuki"] .page-enter svg[fill]:not([fill="none"]){fill:var(--c-primary)}
+html[data-theme="akatsuki"] .page-enter svg :is([fill^="#"],[stroke^="#"]){fill:var(--c-primary);stroke:var(--c-primary)}
+html[data-theme="akatsuki"] section[aria-label="Urgent Reminders"]{background:var(--ak-emphasis) !important;border-color:var(--ak-primary) !important}
+html[data-theme="akatsuki"] .xp-fill{background:var(--ak-primary) !important}
+html[data-theme="akatsuki"] .xp-panel [role="progressbar"]{background:var(--ak-raised) !important}
+html[data-theme="akatsuki"] .section-rule::before,html[data-theme="akatsuki"] .section-rule::after{height:22px;background-image:var(--ak-cloud);background-position:center;background-size:auto 22px;background-repeat:repeat-x;opacity:.7}
+html[data-theme="akatsuki"] button[aria-label^="Mark "][aria-pressed="true"]:not(.prayer-card){background-image:var(--ak-cloud) !important;background-size:20px auto;background-repeat:no-repeat;background-position:right 6px center}
+html[data-theme="akatsuki"] .page-enter .pill-badge{border-color:var(--ak-border) !important}
+.theme-preview[data-theme="akatsuki"]{--scene-motif:none;background-color:var(--ak-surface);background-image:var(--ak-cloud);background-position:right 5px top 5px;background-size:66px auto;background-repeat:no-repeat}
+.theme-preview[data-theme="akatsuki"]::before{background-image:none}
+.theme-preview[data-theme="akatsuki"] .preview-cloud{width:34px;height:23px;object-fit:contain;opacity:1;animation:none}
+html[data-theme="akatsuki"] .hero-row>.theme-character-frame{width:40%;max-width:170px}
+html[data-theme="akatsuki"] .hero-row{padding-top:calc(env(safe-area-inset-top,20px) + 56px) !important}
+html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:250px;object-position:right bottom}
+html[data-theme="akatsuki"] .hero-row>.theme-character-frame .theme-crow{top:60px;left:-12px;opacity:.75}
+html[data-theme="akatsuki"] .page-title{font-weight:400 !important;letter-spacing:.3px !important}
+html[data-theme="akatsuki"] [style*="Syne"]:not(.hero-title):not(.page-title){font-family:var(--font-body) !important}
+html[data-theme="akatsuki"] :is(input,textarea,select){color:var(--ak-text);background-color:var(--ak-surface);border-color:var(--ak-border);color-scheme:dark}
+@media(min-width:1000px){html[data-theme="akatsuki"] .hero-row>.theme-character-frame{width:320px;max-width:320px;margin-right:45px}html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:340px}}
+@media(max-width:360px){html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:210px}}

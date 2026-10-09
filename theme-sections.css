@@ -49,46 +49,11 @@ html[data-theme="pokemon"] .page-enter [style*="background: linear-gradient"]>sv
 html[data-theme="pokemon"] .page-enter div[style*="border-radius: 50%"][style*="background: linear-gradient"]{color:var(--on-accent) !important;box-shadow:none !important}
 html[data-theme="pokemon"] .hero-row{gap:16px !important}
 
-html[data-theme="akatsuki"],.theme-preview[data-theme="akatsuki"]{
- --bg:#120c0e;--bg-1:#211518;--bg-2:#2d1d21;--bg-3:#3a262b;--ink:#ffe9eb;--ink-2:#e8c2c7;--ink-3:#d2a8b0;
- --c-primary:#f58a98;--c-2:#e7919c;--c-3:#e4b2bb;--c-good:#efa9b2;--c-action:#f58a98;--c-bad:#ff9ca6;--on-accent:#261014;
- --c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2);--material:none;--material-size:auto;--scene-size:480px 560px;
-}
-html[data-theme="akatsuki"][data-page="home"]{--scene-motif:url('./assets/themes/motifs/itachi.svg')}
-html[data-theme="akatsuki"][data-page="fitness"]{--scene-motif:url('./assets/themes/motifs/orochimaru.svg')}
-html[data-theme="akatsuki"][data-page="habits"]{--scene-motif:url('./assets/themes/motifs/pain.svg')}
-html[data-theme="akatsuki"][data-page="supplements"]{--scene-motif:url('./assets/themes/motifs/hidan.svg')}
-html[data-theme="akatsuki"][data-page="progress"]{--scene-motif:url('./assets/themes/motifs/tobi.svg')}
-html[data-theme="akatsuki"] :is(.page-enter>div,.home-layout,.habits-layout,.supplements-layout){background-color:var(--bg) !important;background-image:var(--scene-motif) !important;background-size:var(--scene-size)}
-html:is([data-theme="pokemon"],[data-theme="akatsuki"]) body::after{display:none}
-html[data-theme="akatsuki"] :is(.hero-header,.page-header){background-color:var(--bg-1) !important;background-image:var(--scene-motif) !important;background-size:var(--scene-size);border-bottom:2px solid #b34455 !important}
-html[data-theme="akatsuki"] .hero-header::before{background-image:url('./assets/themes/red-cloud.svg');background-position:right 24px top 18px;background-size:160px auto;opacity:.25}
-html[data-theme="akatsuki"] .page-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:url('./assets/themes/red-cloud.svg') right 18px top 20px/90px auto no-repeat;opacity:.2}
-html[data-theme="akatsuki"] :is(.glass-card,.cyber-card,.daily-habits,.day-window,.prayer-card,.xp-panel){background:var(--bg-1) !important;border-color:#86434e !important;box-shadow:0 3px 0 #080506 !important}
-html[data-theme="akatsuki"] [style*="backdrop-filter"]{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
-html[data-theme="akatsuki"] .page-enter [style*="background: rgba"],html[data-theme="akatsuki"] .page-enter [style*="background: color-mix"][style*="transparent"]{background-color:var(--bg-1) !important;border-color:#86434e !important}
-html[data-theme="akatsuki"] .page-enter [style*="background: linear-gradient"]{background:var(--bg-2) !important}
-html[data-theme="akatsuki"] .page-enter [style*="background-clip: text"]{background:none !important;color:var(--ink) !important;-webkit-text-fill-color:var(--ink) !important}
-html[data-theme="akatsuki"] .page-enter [style*="box-shadow"]{box-shadow:0 3px 0 #080506 !important}
-html[data-theme="akatsuki"] .app-nav button>div{filter:none !important}
-html[data-theme="akatsuki"] .prayer-slot[data-emphasized="true"] .prayer-card{background:#412029 !important;border:2px solid #f58a98 !important}
-html[data-theme="akatsuki"] .prayer-outline{filter:none}
-html[data-theme="akatsuki"] .page-enter svg[fill]:not([fill="none"]){fill:var(--c-primary)}
-html[data-theme="akatsuki"] .page-enter svg :is([fill^="#"],[stroke^="#"]){fill:var(--c-primary);stroke:var(--c-primary)}
-html[data-theme="akatsuki"] section[aria-label="Urgent Reminders"]{background:#3f141d !important;border-color:#f58a98 !important}
-html[data-theme="akatsuki"] .xp-fill{background:#c8465b !important}
-html[data-theme="akatsuki"] .xp-panel [role="progressbar"]{background:var(--bg-3) !important}
-html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav{background:var(--bg-1) !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
-html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav>div>div[aria-hidden]{display:none !important}
-html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav button[aria-current="page"]{background:var(--bg-2) !important;border-bottom:2px solid var(--c-primary) !important}
-html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav button>div{filter:none !important}
-html[data-theme="akatsuki"] .section-rule::before,html[data-theme="akatsuki"] .section-rule::after{height:22px;background:url('./assets/themes/red-cloud.svg') center/42px 22px repeat-x;opacity:.65}
-html[data-theme="akatsuki"] .page-enter .pill-badge{border-color:#86434e !important}
-html[data-theme="akatsuki"] .theme-preview{background:#211518 url('./assets/themes/red-cloud.svg') right 5px top 5px/66px auto no-repeat}
-html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .home-layout>:is(section,div):not(.hero-header){background-color:var(--bg-1)}
-html[data-theme="akatsuki"] .hero-row>.theme-character-frame{width:40%;max-width:170px}
-html[data-theme="akatsuki"] .hero-row{padding-top:calc(env(safe-area-inset-top,20px) + 56px) !important}
-html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:250px;object-position:right bottom}
-html[data-theme="akatsuki"] .hero-row>.theme-character-frame .theme-crow{top:60px;left:-12px;opacity:.75}
-@media(min-width:1000px){html[data-theme="akatsuki"] .hero-row>.theme-character-frame{width:320px;max-width:320px;margin-right:45px}html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:340px}}
-@media(max-width:360px){html[data-theme="pokemon"] .hero-row{gap:6px !important}html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:210px}}
+
+html[data-character-theme] body::after{display:none}
+html[data-character-theme] .app-nav{background:var(--bg-1) !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+html[data-character-theme] .app-nav>div>div[aria-hidden]{display:none !important}
+html[data-character-theme] .app-nav button[aria-current="page"]{background:var(--bg-2) !important;border-bottom:2px solid var(--c-primary) !important}
+html[data-character-theme] .app-nav button>div{filter:none !important}
+html[data-character-theme] .home-layout>:is(section,div):not(.hero-header){background-color:var(--bg-1)}
+@media(max-width:360px){html[data-theme="pokemon"] .hero-row{gap:6px !important}}

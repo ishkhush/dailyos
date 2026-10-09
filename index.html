@@ -19,6 +19,7 @@
   All three steps are self-contained here so the repo stays as two files:
   index.html + sw.js.
 -->
+<script src="./dailyos-theme.js"></script>
 <script>
 (function(){
   function makeIcon(size) {
@@ -484,6 +485,7 @@ html[data-motion-paused] .theme-motion *,html[data-motion-paused] body::before{a
 <link rel="stylesheet" href="./theme-modern.css">
 <link rel="stylesheet" href="./theme-characters.css">
 <link rel="stylesheet" href="./theme-sections.css">
+<link rel="stylesheet" href="./theme-akatsuki.css">
 <script src="./dailyos-weather.js"></script>
 </head>
 <body>
@@ -551,35 +553,10 @@ const C = {
 // are fully monochromatic families defined by [data-theme] CSS blocks; each swatch
 // shows a few shades of that family. applyTheme just flips documentElement's
 // data-theme, so every token-routed color re-skins at once.
-const THEMES = {
-  og:       { label:"OG", motion:"Orbital light", swatch:["#F59E0B","#10B981","#8B5CF6","#06B6D4"] },
-  crimson:  { label:"Crimson", motion:"Silk ribbons", swatch:["hsl(348 88% 74%)","hsl(348 85% 60%)","hsl(348 74% 44%)"] },
-  solar:    { label:"Solar", motion:"Sunlit halos", swatch:["hsl(46 92% 70%)","hsl(38 95% 58%)","hsl(28 80% 46%)"] },
-  aqua:     { label:"Aqua", motion:"Gentle tides", swatch:["hsl(184 82% 68%)","hsl(189 88% 54%)","hsl(202 74% 44%)"] },
-  violet:   { label:"Violet", motion:"Crystal facets", swatch:["hsl(274 82% 78%)","hsl(262 86% 68%)","hsl(248 70% 52%)"] },
-  emerald:  { label:"Emerald", motion:"Emerald facets", swatch:["hsl(166 74% 64%)","hsl(156 80% 52%)","hsl(142 68% 40%)"] },
-  graphite: { label:"Graphite", motion:"Sculpted contours", swatch:["hsl(220 16% 84%)","hsl(220 13% 64%)","hsl(220 12% 46%)"] },
-  midnight: { label:"Midnight", motion:"Quiet constellations", swatch:["hsl(207 90% 74%)","hsl(217 95% 62%)","hsl(228 76% 50%)"] },
-  sakura:   { label:"Sakura", motion:"Drifting blossoms", swatch:["hsl(350 88% 82%)","hsl(340 80% 70%)","hsl(326 64% 52%)"] },
-  ember:    { label:"Ember", motion:"Rising sparks", swatch:["hsl(32 88% 68%)","hsl(22 88% 55%)","hsl(10 72% 44%)"] },
-  synthwave:{ label:"Synthwave", motion:"Neon horizons", swatch:["hsl(315 90% 62%)","hsl(265 85% 68%)","hsl(185 95% 58%)"] },
-  aurora:   { label:"Aurora", motion:"Northern lights", swatch:["hsl(140 78% 66%)","hsl(170 85% 55%)","hsl(196 80% 50%)"] },
-  modern: {label:"Modern",motion:"Matte stone & linen",symbol:"◒",rich:true,swatch:["#875c47","#715d4e","#ede6dc"],meaning:"Warm spaces, quiet daily rituals",palette:"Bone, greige and espresso with a restrained clay accent."},
-  pokemon: {label:"Pokémon",motion:"Clouds & Poké Balls",symbol:"◓",rich:true,swatch:["#245da0","#9c302d","#ffe18a"],meaning:"Friendship, adventure, growing together",palette:"Open blue skies, warm sunlight and each partner’s type colors."},
-  akatsuki: {label:"Akatsuki",motion:"Red clouds & ink",symbol:"☁",rich:true,swatch:["#f58a98","#e8c2c7","#120c0e"],meaning:"Pain, loss and unyielding ambition",palette:"Ink black and blood-red motifs with pale-red lettering."},
-  vintage: {label:"Vintage",motion:"Paper & printing ink",symbol:"❦",rich:true,swatch:["#e7bf8c","#bcd2bc","#d8bde4"],meaning:"Printed pages, a slower rhythm",palette:"Oat, sage and dusty lilac soften warm ink tones."},
-  zen: {label:"Zen Garden",motion:"Raked sand & stones",symbol:"◎",rich:true,swatch:["#c5d3a0","#e8c29b","#b7d6cd"],meaning:"Enso circles, balance and renewal",palette:"Moss, rice paper and clay evoke a quiet garden."},
-  lagoon: {label:"Tidal Lagoon",motion:"Sea glass & coral",symbol:"⌁",rich:true,swatch:["#9edcd1","#f1beb2","#bdd1ee"],meaning:"Coral branches, life below the tide",palette:"Sea glass and softened coral gently balance cool depths."},
-  dunes: {label:"Desert Loom",motion:"Woven cloth & dunes",symbol:"◒",rich:true,swatch:["#efbc9d","#d0c4e8","#bed3bb"],meaning:"Dunes and woven paths, steady journeys",palette:"Terracotta, mauve and sage echo a muted desert dusk."},
-  observatory: {label:"Observatory",motion:"Celestial brass & velvet",symbol:"✧",rich:true,swatch:["#d6c8ef","#e8ce9f","#afd8dd"],meaning:"Astrolabes, perspective and possibility",palette:"Lavender slate, brass and mist blue soften the night."},
-};
-const THEME_ALIAS = { OG:"og", Teal:"aqua", Violet:"violet", Crimson:"crimson" };
-const normTheme = k => THEMES[k] ? k : (THEME_ALIAS[k] || "og");
-const applyTheme = key => {
-  const k=normTheme(key);
-  document.documentElement.dataset.theme=k;
-  document.documentElement.dataset.identity=THEMES[k].rich?"rich":"classic";
-};
+const THEMES=window.DailyTheme.catalog;
+const THEME_ALIAS=window.DailyTheme.aliases;
+const normTheme=window.DailyTheme.normalize;
+const applyTheme=window.DailyTheme.apply;
 
 
 // ── PROFILE PHOTO ───────────────────────────────────────────────────────────
@@ -3222,7 +3199,7 @@ function ThemeSheet({ theme, setTheme, soundEnabled, setSoundEnabled, onClose })
             return (
               <button key={k} className="tap" aria-pressed={active} aria-label={`${t.label} theme${active?", selected":""}`} onClick={()=>{ haptic(12);playCue("select"); setTheme(k); }} style={{display:"flex",flexDirection:"column",alignItems:"stretch",gap:8,padding:9,borderRadius:14,background:active?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?sw:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 20px color-mix(in srgb, ${sw} 20%, transparent)`:"none",transition:"border 0.2s,box-shadow 0.2s,background 0.2s"}}>
                 <span className="theme-preview" data-theme={k} data-preview={t.rich?"rich":"classic"} aria-hidden="true">
-                  {k==="pokemon"?<img className="preview-symbol preview-pokeball" src="./assets/themes/pokeball.svg" alt=""/>:<span className="preview-symbol">{t.symbol||"✦"}</span>}<span className="preview-heading">A little progress</span>
+                  {k==="akatsuki"?<img className="preview-symbol preview-cloud" src="./assets/themes/akatsuki/cloud-phone.png" srcSet="./assets/themes/akatsuki/cloud-phone.png 1x, ./assets/themes/akatsuki/cloud-desktop.png 2x" alt=""/>:k==="pokemon"?<img className="preview-symbol preview-pokeball" src="./assets/themes/pokeball.svg" alt=""/>:<span className="preview-symbol">{t.symbol||"✦"}</span>}<span className="preview-heading">A little progress</span>
                   {k==="akatsuki"&&<img className="preview-character" src="./assets/themes/akatsuki/home-phone.png" alt=""/>}
                   <span className="preview-card" style={{display:"block"}}>✓ Your daily rhythm<span className="preview-track" style={{display:"block"}}><span/></span></span>
                   <span style={{display:"flex",gap:4,marginTop:6}}>{t.swatch.map((c,i)=><span key={i} style={{width:14,height:4,borderRadius:4,background:c}}/>)}</span>

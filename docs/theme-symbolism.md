@@ -16,7 +16,7 @@ Sources: [official Pokémon introduction](https://in.portal-pokemon.com/about/),
 
 ## Akatsuki
 
-Use exclusively black/charcoal and red-family interface colors, including pale blush reds for readable text and cloud outlines. Character artwork preserves its own colors. Red clouds should have the recognizable elongated silhouette, curling lobes and outlined interior curves, rather than ordinary rounded weather clouds. The cloud geometry is a locally drawn interpretation of the cloak emblem.
+Use black/charcoal, logo red and white/neutral-gray trim and text, with lighter red for readable actions. Character artwork preserves its own colors. Red clouds should have the recognizable elongated silhouette, curling lobes and outlined interior curves, rather than ordinary rounded weather clouds. The owner-supplied cloud image replaces the earlier drawn emblem and preserves its white outline.
 
 | Section | Canon grounding | Visual interpretation for DailyOS |
 |---|---|---|
@@ -30,4 +30,4 @@ Sources: [Itachi retrospective](https://naruto-official.com/en/news/01_1814), [I
 
 ## Local motif assets
 
-`assets/themes/motifs/{umbreon,gengar,mewtwo,rayquaza,itachi,orochimaru,pain,hidan,tobi}.svg` are transparent 480 × 560 tiles with restrained internal opacity. They have no scripts, external resources, fonts, filters or animations. `assets/themes/red-cloud.svg` is the outlined cloud accent. All assets remain sharp at phone/desktop/retina resolutions. The rendering CSS owns placement and motion, including reduced-motion behavior.
+`assets/themes/motifs/{umbreon,gengar,mewtwo,rayquaza}.svg` and `assets/themes/akatsuki/motifs/{itachi,orochimaru,pain,hidan,tobi}.svg` are transparent 480 × 560 tiles with restrained internal opacity. They have no scripts, external resources, fonts, filters or animations. `assets/themes/akatsuki/cloud-{phone,desktop}.png` supply the owner's outlined cloud accent. All assets remain sharp at phone/desktop/retina resolutions. The rendering CSS owns placement and motion, including reduced-motion behavior.

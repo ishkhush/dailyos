@@ -21,6 +21,12 @@ PNG assets retain real alpha transparency and have phone/desktop variants. PNG r
 
 ## Images still needed
 
+## Supplied Akatsuki cloud
+
+The owner supplied [this Pinterest image](https://i.pinimg.com/736x/e9/20/50/e920508528c394e8bbc81662a7185933.jpg). Built-in imagegen removed its black background and unused margins, preserving a red cloud with white outline. Selected output was resized with sips to `akatsuki/cloud-phone.png` (480px wide) and `akatsuki/cloud-desktop.png` (960px wide). Both have alpha, are precached offline, and are verified in deployment. The retired `red-cloud.svg` is removed. The direct image address does not supply a license declaration; no additional license rights are inferred from Pinterest.
+
+Prompt: "Use case: background-extraction. Edit target: the supplied red Akatsuki cloud emblem on black. Remove only the pure black background, including any black exterior gaps, to transparent alpha. Preserve the exact supplied silhouette, its left pointed tail, three inward curling white lines, solid crimson red fill and thick pure white outline. Do not redesign, redraw or substitute a different cloud. Crop away the large unused black margins; output the same entire emblem tightly framed on a wide transparent PNG canvas with a small clear margin. Sharpen only the cutout edge with smooth antialiasing, no halo or fringe. No shadows, background, extra symbols, text or changes of color."
+
 None. All requested characters now have bundled transparent artwork. The supplied Tobi image is a low-resolution Google thumbnail; its cutout edges were refined for header display rather than claiming to recover original high-resolution detail. Orochimaru is supplied as a clean head-and-snake composition, rather than a full body render. Hidan now uses the owner-supplied image with its white background removed; white character details are preserved.
 
 ## Tobi cutout update

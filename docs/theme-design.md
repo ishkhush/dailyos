@@ -46,6 +46,29 @@ Validation covers all twenty themes across Home, Health, Habits, Stack and Progr
 
 ## Sectionwide refinement
 
+October 8 cloud/palette correction: Akatsuki is now defined solely in `theme-akatsuki.css`; shared character geometry uses `data-character-theme`, which the theme bootstrap adds/removes on switches. Theme metadata and saved selection are restored by `dailyos-theme.js` in the head before first paint, retaining the existing storage key, aliases and synchronized selection. The supplied Pinterest cloud is bundled as transparent `assets/themes/akatsuki/cloud-{phone,desktop}.png`, rendered through image-set with automatic aspect ratio. It replaces the retired SVG in Home/section headers, section dividers, checked habit/supplement buttons, and only the Akatsuki miniature/symbol. Prayer cards explicitly exclude the completion motif; emphasis, shake, enlargement, white outline and toggling remain intact.
+
+The picker bug was `html[data-theme="akatsuki"] .theme-preview`: selecting Akatsuki caused every miniature to receive its background. The replacement is `.theme-preview[data-theme="akatsuki"]`, with its own tokens; no shared selector references the cloud. All twenty themes and repeated switching are covered by browser tests, including Pokémon, Modern and Vintage. Other small completion buttons retain their clouds, as requested.
+
+The palette returns to the cloak's black/red/white identity. Black layers give depth; gray/white trim, borders and text create readable separation; the image's crimson remains decorative and a lighter red is reserved for readable actions. The varied rings and tan straw hat were researched but excluded from the core palette. Symbolic associations are design interpretations informed by the official costume references and the organization's war/grief/peace story, not a claim of prescribed hex codes.
+
+| Token (`--ak-` prefix) | Value | Use |
+| --- | --- | --- |
+| background | #090909 | Page canvas |
+| surface | #141414 | Header/nav/input base |
+| card | #202020 | Cards, goals and sheets |
+| raised | #2b2b2b | Selected/raised controls and tracks |
+| border | #747474 | Dividers and control boundaries |
+| primary | #ff8190 | Readable red actions and XP |
+| secondary | #e0e0e0 | Secondary labels/icons |
+| text | #f8f8f8 | Main text |
+| muted | #bcbcbc | Supporting text |
+| trim | #ffffff | Prayer outline/completion trim |
+| cloud-red | #cf0a24 | Decorative red/cloud color family |
+| emphasis | #330b10 | Current prayer and urgent panels |
+
+The lowest ordinary text/action contrast across all four black layers is 5.93:1; muted text reaches at least 7.46:1 and the gray border reaches 3.03:1 against the raised surface. Decorative emblem red is not used for small body text. Existing theme role variables map to these tokens across all five pages, prayers, goals, supplements and account/settings sheets; member motifs remain distinct.
+
 `theme-sections.css` supplies full-page Pokémon palettes and transparent repeating motifs, selected through the root `data-page` attribute. Health uses Umbreon's moonlit charcoal/gold; Habits uses Gengar's ghostly purple; Stack uses Mewtwo's pale psychic violet; Progress uses Rayquaza's deep sky-green/gold. Home keeps the sky and soft clouds with its welcome/date/day text placed directly on the backdrop. Pokémon's picker thumbnail uses the bundled red/white Poké Ball. All character captions were removed.
 
 Akatsuki interface roles are exclusively black and red families, including pale-red text; original character art and personal photos retain their colors. The supplied Itachi, Orochimaru and Deva Path Pain replace the prior art. Nine lightweight SVG section motifs carry crows/feathers, serpents/scales, Rinnegan/rain/six paths, ritual circles/triple blades, and spiral/loop imagery across full pages. The Akatsuki cloud was redrawn with elongated curls and a pale-red outline. [Research and the distinction between canon and design interpretation](theme-symbolism.md) explain the imagery.
