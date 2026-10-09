@@ -31,6 +31,14 @@ Prompt: "Use case: background-extraction. Edit target: the supplied Tobi/Obito a
 
 ## Visual research
 
+## Owner-selected Naruto art revision — 8 October 2026
+
+Replaced Itachi, Orochimaru, and Pain with the owner's chosen compositions. Itachi source: `https://static.wikia.nocookie.net/characterprofile/images/a/a1/Uchiha_Itachi.png/revision/latest?cb=20160221115529` (320×638, real alpha). Orochimaru source: `https://static.wikia.nocookie.net/deathbattlefanon/images/4/44/Oroch_2.png/revision/latest?cb=20200622150129` (1742×3923, real alpha). Both URLs return WebP bytes; they were converted directly to transparent PNG and resized with sips, without generated changes. Itachi phone/desktop variants are 180×360 and 320×638; Orochimaru variants are 160×360 and 399×900. Invisible black/white pixels in Orochimaru's source have zero alpha and do not appear in the UI.
+
+Pain source: `https://i.pinimg.com/736x/a7/9e/67/a79e67c22c4c5afd649356285b4d77af.jpg` (736×1661). The source's checkerboard is baked into the JPEG; built-in imagegen extracted it to actual transparent alpha. The supplied Deva Path pose and identity are retained. PNG phone/desktop variants are 159×360 and 399×900. A first parallel imagegen call failed output moderation; the separate Pain extraction succeeded. No CLI or API fallback was used.
+
+Pain extraction prompt: "Use case: background-extraction. Edit target: supplied Pain (Deva Path/Yahiko appearance) anime character illustration. Remove ONLY the baked gray-white checkerboard background including gaps around fingers and between legs. Preserve the exact character drawing, full body, outstretched right hand, orange spiky hair, Rinnegan eyes, piercings, dark Akatsuki cloak with red clouds and pale outlines, trousers and sandals. Entire head and feet visible. Produce genuine transparent alpha with clean antialiasing, no checkerboard pixels, fringe, halo, shadow or added objects. Do not redesign, change pose, or recolor. Tight framing with small transparent margin. For a private app asset."
+
 ### Hidan cutout update
 
 Built-in imagegen was used for background extraction and a second alpha-edge refinement; the selected output was resized with sips into `akatsuki/stack-phone.png` (270×360) and `akatsuki/stack-desktop.png` (676×900). Both preserve actual PNG transparency and are precached for offline use. The owner subsequently requested publishing the shared app with these bundled assets.

@@ -120,13 +120,14 @@ let cleanup=async()=>{};
     const themeCheck=await evaluate(`(()=>{const s=getComputedStyle(document.documentElement),v=k=>s.getPropertyValue(k).trim();const lum=c=>{const a=c.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return a[0]*.2126+a[1]*.7152+a[2]*.0722;};const ratio=(a,b)=>{const l=[lum(a),lum(b)].sort((a,b)=>a-b);return(l[1]+.05)/(l[0]+.05);};const ink=['--ink','--ink-2','--ink-3'],accents=['--c-primary','--c-2','--c-3','--c-good','--c-action','--c-bad'];const motion=document.querySelector('.theme-motion'),motif=motion?.querySelector('.theme-motif'),preview=document.querySelector('.theme-preview[data-theme="${key}"] .preview-symbol');const duration=e=>e&&getComputedStyle(e).display!=='none'?parseFloat(getComputedStyle(e).animationDuration)||0:0;return {font:v('--font-body')+' / '+v('--font-display'),material:v('--material'),text:Math.min(...ink.flatMap(a=>['--bg','--bg-1'].map(b=>ratio(v(a),v(b))))),accent:Math.min(...accents.map(a=>ratio(v(a),v('--bg-1')))),button:Math.min(...accents.filter(a=>a!=='--c-bad').map(a=>ratio(v('--on-accent'),v(a)))),motion:duration(motif),previewMotion:duration(preview),motif:motion?.dataset.motif||null,motionVisible:!!motion&&getComputedStyle(motion).display!=='none'};})()`);
     assert(themeCheck.text>=4.5&&themeCheck.accent>=4.5&&themeCheck.button>=4.5,key+' normal text and accent contrast');
     assert(themeCheck.motion<.001&&themeCheck.previewMotion<.001,key+' respects reduced motion');
-    if(key==='modern'){assert(!themeCheck.motionVisible,'Modern has no ambient motion');assert.equal(themeCheck.material,'none','Modern has no grid or texture gradient');assert.match(themeCheck.font,/Manrope.*Cormorant Garamond/,'Modern luxury font pairing');}
-    else assert.equal(themeCheck.motif,key,key+' has its own ambient motif');
+    if(['modern','pokemon','akatsuki'].includes(key))assert(!themeCheck.motionVisible,key+' uses lightweight page styling instead of animated SVG clones');
+    if(key==='modern'){assert.equal(themeCheck.material,'none','Modern has no grid or texture gradient');assert.match(themeCheck.font,/Manrope.*Cormorant Garamond/,'Modern luxury font pairing');}
+    else if(!['pokemon','akatsuki'].includes(key))assert.equal(themeCheck.motif,key,key+' has its own ambient motif');
     if(key==='pokemon')assert.match(themeCheck.font,/Nunito/,'Pokémon uses its playful legible font');
     if(key==='akatsuki')assert.match(themeCheck.font,/Manrope.*Permanent Marker/,'Akatsuki ink heading and readable body pairing');
     themeFonts.add(themeCheck.font);themeMaterials.add(themeCheck.material);
   }
-  assert.equal(themeFonts.size,8,'Eight distinct font pairings');assert.equal(themeMaterials.size,7,'Seven distinct materials, with Modern and Pokémon using solid surfaces');
+  assert.equal(themeFonts.size,8,'Eight distinct font pairings');assert.equal(themeMaterials.size,6,'Six surface materials plus independent section motifs');
   await click(button('Done'));
   for(const [width,height] of [[390,844],[1440,1000]]){
     await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:width===390?3:1,mobile:width===390});
@@ -134,9 +135,10 @@ let cleanup=async()=>{};
       await tab('Home');await click(`document.querySelector('button[aria-label="Change accent theme"]')`);await click(`document.querySelector('.theme-picker-grid button:has([data-theme="${key}"])')`);
       assert.equal(await evaluate(`getComputedStyle(document.querySelector('.theme-picker-grid')).gridTemplateColumns.split(' ').length`),width===390?2:3,'Picker columns at '+width);
       assert(await evaluate(`document.querySelector('.theme-sheet').getBoundingClientRect().right<=innerWidth+1`),key+' picker fits '+width);await click(button('Done'));
+      if(['modern','pokemon'].includes(key)){await click(`document.querySelector('button[aria-label="Change accent theme"]')`);assert.equal(await evaluate(`getComputedStyle(document.querySelector('.theme-backdrop')).backgroundColor`),'rgba(0, 0, 0, 0)',key+' live page remains visible behind picker');if(key==='pokemon')assert(await evaluate(`document.querySelector('.theme-preview[data-theme="pokemon"] .preview-pokeball').src.endsWith('/assets/themes/pokeball.svg')`),'Pokémon preview uses an actual Poké Ball');await click(button('Done'));}
       const themeShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync('/private/tmp/dailyos-'+key+'-'+width+'.png',Buffer.from(themeShot.data,'base64'));
       assert.equal(await evaluate(`ld('dos_theme_v1','')`),key,'Theme persists at '+width);
-      if(key==='modern')assert(await evaluate(`[...document.querySelectorAll('.app-nav>div>div[aria-hidden]')].every(element=>getComputedStyle(element).display==='none')`),'Modern opaque highlight does not cover navigation labels');
+      if(['modern','pokemon','akatsuki'].includes(key))assert(await evaluate(`[...document.querySelectorAll('.app-nav>div>div[aria-hidden]')].every(element=>getComputedStyle(element).display==='none')`),key+' opaque highlight does not cover navigation labels');
       for(const name of ['Home','Health','Habits','Stack','Progress']){
         await tab(name);
         await evaluate(`Promise.all([...document.querySelectorAll('.theme-character-frame img')].map(image=>image.decode()))`);
@@ -145,6 +147,9 @@ let cleanup=async()=>{};
         assert(layout.headings,key+' '+name+' title preserves descenders at '+width);
         assert.equal(layout.orbs,0,key+' '+name+' has no decorative corner orb');
         if(key==='pokemon'||key==='akatsuki'){assert(layout.artCount>0,key+' '+name+' includes bundled character artwork');assert(layout.artSafe,key+' '+name+' art loads and avoids text/controls at '+width);}
+        if(key==='pokemon'||key==='akatsuki')assert.equal(await evaluate(`document.querySelectorAll('.theme-character-frame figcaption').length`),0,'No character caption boxes');
+        if(key==='pokemon'&&name==='Home')assert.equal(await evaluate(`getComputedStyle(document.querySelector('.hero-row>div:first-child')).backgroundColor`),'rgba(0, 0, 0, 0)','Welcome text blends directly into sky');
+        if((key==='pokemon'&&name!=='Home')||key==='akatsuki')assert(await evaluate(`getComputedStyle(document.querySelector('.page-enter>div')).backgroundImage.includes('/motifs/')`),key+' '+name+' motifs extend across the section');
       }
     }
   }

@@ -483,6 +483,8 @@ html[data-motion-paused] .theme-motion *,html[data-motion-paused] body::before{a
 <link rel="stylesheet" href="./theme-fonts.css">
 <link rel="stylesheet" href="./theme-modern.css">
 <link rel="stylesheet" href="./theme-characters.css">
+<link rel="stylesheet" href="./theme-sections.css">
+<script src="./dailyos-weather.js"></script>
 </head>
 <body>
 <div id="root"><div style="padding:60px 20px;text-align:center;color:#555">Loading DailyOS…</div></div>
@@ -564,7 +566,7 @@ const THEMES = {
   aurora:   { label:"Aurora", motion:"Northern lights", swatch:["hsl(140 78% 66%)","hsl(170 85% 55%)","hsl(196 80% 50%)"] },
   modern: {label:"Modern",motion:"Matte stone & linen",symbol:"◒",rich:true,swatch:["#875c47","#715d4e","#ede6dc"],meaning:"Warm spaces, quiet daily rituals",palette:"Bone, greige and espresso with a restrained clay accent."},
   pokemon: {label:"Pokémon",motion:"Clouds & Poké Balls",symbol:"◓",rich:true,swatch:["#245da0","#9c302d","#ffe18a"],meaning:"Friendship, adventure, growing together",palette:"Open blue skies, warm sunlight and each partner’s type colors."},
-  akatsuki: {label:"Akatsuki",motion:"Red clouds & ink",symbol:"☁",rich:true,swatch:["#ff8792","#f0e8dd","#141216"],meaning:"Pain, loss and unyielding ambition",palette:"Dark cloth, blood-red clouds and bone-white lettering."},
+  akatsuki: {label:"Akatsuki",motion:"Red clouds & ink",symbol:"☁",rich:true,swatch:["#f58a98","#e8c2c7","#120c0e"],meaning:"Pain, loss and unyielding ambition",palette:"Ink black and blood-red motifs with pale-red lettering."},
   vintage: {label:"Vintage",motion:"Paper & printing ink",symbol:"❦",rich:true,swatch:["#e7bf8c","#bcd2bc","#d8bde4"],meaning:"Printed pages, a slower rhythm",palette:"Oat, sage and dusty lilac soften warm ink tones."},
   zen: {label:"Zen Garden",motion:"Raked sand & stones",symbol:"◎",rich:true,swatch:["#c5d3a0","#e8c29b","#b7d6cd"],meaning:"Enso circles, balance and renewal",palette:"Moss, rice paper and clay evoke a quiet garden."},
   lagoon: {label:"Tidal Lagoon",motion:"Sea glass & coral",symbol:"⌁",rich:true,swatch:["#9edcd1","#f1beb2","#bdd1ee"],meaning:"Coral branches, life below the tide",palette:"Sea glass and softened coral gently balance cool depths."},
@@ -573,19 +575,10 @@ const THEMES = {
 };
 const THEME_ALIAS = { OG:"og", Teal:"aqua", Violet:"violet", Crimson:"crimson" };
 const normTheme = k => THEMES[k] ? k : (THEME_ALIAS[k] || "og");
-// animate=true runs a circular clip-path reveal via the View Transitions API
-// (user-initiated switches only — never the pre-paint restore on boot).
-const applyTheme = (key, animate) => {
-  const set = () => { const k=normTheme(key);document.documentElement.dataset.theme=k;document.documentElement.dataset.identity=THEMES[k].rich?"rich":"classic"; };
-  if (animate && document.startViewTransition && !_reduceMotion()) {
-    const vt = document.startViewTransition(set);
-    vt.ready.then(() => {
-      document.documentElement.animate(
-        { clipPath: ["circle(0% at 88% 5%)", "circle(150% at 88% 5%)"] },
-        { duration: 540, easing: "cubic-bezier(0.22,1,0.36,1)", pseudoElement: "::view-transition-new(root)" }
-      );
-    }).catch(() => {});
-  } else set();
+const applyTheme = key => {
+  const k=normTheme(key);
+  document.documentElement.dataset.theme=k;
+  document.documentElement.dataset.identity=THEMES[k].rich?"rich":"classic";
 };
 
 
@@ -1953,25 +1946,17 @@ function uvPeakWindow(times, vals, peak){
   return `${fmtHour(sH)} – ${fmtHour(eH)}`;
 }
 
+function weatherView(d) {
+  if(!d?.current)return null;
+  const uvMax=Math.round(d.daily?.uv_index_max?.[0]||0);
+  return {temp:Math.round(d.current.temperature_2m),feels:Math.round(d.current.apparent_temperature),code:d.current.weathercode,uvNow:Math.round(d.current.uv_index||0),uvMax,uvWindow:uvPeakWindow(d.hourly?.time,d.hourly?.uv_index,uvMax)};
+}
 function useWeatherData() {
-  const [wx, setWx] = React.useState(null);
-  React.useEffect(()=>{
-    fetch("https://api.open-meteo.com/v1/forecast?latitude=33.6846&longitude=-117.8265&current=temperature_2m,apparent_temperature,weathercode,uv_index&hourly=uv_index&daily=uv_index_max&timezone=America%2FLos_Angeles&forecast_days=1&temperature_unit=fahrenheit")
-      .then(r=>r.json())
-      .then(d=>{
-        if(d?.current){
-          const uvMax = Math.round(d.daily?.uv_index_max?.[0]||0);
-          setWx({
-            temp: Math.round(d.current.temperature_2m),
-            feels: Math.round(d.current.apparent_temperature),
-            code: d.current.weathercode,
-            uvNow: Math.round(d.current.uv_index||0),
-            uvMax,
-            uvWindow: uvPeakWindow(d.hourly?.time, d.hourly?.uv_index, uvMax),
-          });
-        } else setWx({error:true});
-      })
-      .catch(()=>setWx({error:true}));
+  const [wx,setWx]=useState(()=>weatherView(window.DailyWeather.peek()));
+  useEffect(()=>{
+    let active=true;
+    window.DailyWeather.load().then(data=>{if(active)setWx(weatherView(data));}).catch(()=>{if(active)setWx(previous=>previous||{error:true});});
+    return ()=>{active=false;};
   },[]);
   return wx;
 }
@@ -3221,7 +3206,7 @@ function ToastHost() {
 
 function ThemeSheet({ theme, setTheme, soundEnabled, setSoundEnabled, onClose }) {
   return (
-    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(3px)",WebkitBackdropFilter:"blur(3px)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"backdropFade 0.25s ease"}}>
+    <div className="theme-backdrop" onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(3px)",WebkitBackdropFilter:"blur(3px)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"backdropFade 0.25s ease"}}>
       <div className="theme-sheet" role="dialog" aria-modal="true" aria-label="Choose theme" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,maxHeight:"88svh",overflowY:"auto",background:"color-mix(in srgb, var(--bg-1) 98%, transparent)",borderTop:"1px solid rgba(255,255,255,0.10)",borderRadius:"22px 22px 0 0",padding:"16px 18px calc(env(safe-area-inset-bottom,12px) + 22px)",animation:"sheetUp 0.38s cubic-bezier(0.22,1,0.36,1)"}}>
         <div style={{width:38,height:4,borderRadius:2,background:"rgba(255,255,255,0.16)",margin:"0 auto 16px"}}/>
         <div style={{fontFamily:"'Syne',sans-serif",fontSize:20,fontWeight:900,letterSpacing:-0.5,color:C.text,marginBottom:2}}>Theme</div>
@@ -3237,8 +3222,7 @@ function ThemeSheet({ theme, setTheme, soundEnabled, setSoundEnabled, onClose })
             return (
               <button key={k} className="tap" aria-pressed={active} aria-label={`${t.label} theme${active?", selected":""}`} onClick={()=>{ haptic(12);playCue("select"); setTheme(k); }} style={{display:"flex",flexDirection:"column",alignItems:"stretch",gap:8,padding:9,borderRadius:14,background:active?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?sw:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 20px color-mix(in srgb, ${sw} 20%, transparent)`:"none",transition:"border 0.2s,box-shadow 0.2s,background 0.2s"}}>
                 <span className="theme-preview" data-theme={k} data-preview={t.rich?"rich":"classic"} aria-hidden="true">
-                  <span className="preview-symbol">{t.symbol||"✦"}</span><span className="preview-heading">A little progress</span>
-                  {k==="pokemon"&&<img className="preview-character" src="./assets/themes/pokemon/pikachu-phone.png" alt=""/>}
+                  {k==="pokemon"?<img className="preview-symbol preview-pokeball" src="./assets/themes/pokeball.svg" alt=""/>:<span className="preview-symbol">{t.symbol||"✦"}</span>}<span className="preview-heading">A little progress</span>
                   {k==="akatsuki"&&<img className="preview-character" src="./assets/themes/akatsuki/home-phone.png" alt=""/>}
                   <span className="preview-card" style={{display:"block"}}>✓ Your daily rhythm<span className="preview-track" style={{display:"block"}}><span/></span></span>
                   <span style={{display:"flex",gap:4,marginTop:6}}>{t.swatch.map((c,i)=><span key={i} style={{width:14,height:4,borderRadius:4,background:c}}/>)}</span>
@@ -3600,7 +3584,7 @@ function ThemeCharacters({ theme, page }) {
   const section=page==="supplements"?"stack":page==="fitness"?"health":page;
   const label=names[page==="fitness"?"health":page];
   const image=name=><img key={name} src={`./assets/themes/${theme}/${name}-phone.png`} srcSet={`./assets/themes/${theme}/${name}-phone.png 1x, ./assets/themes/${theme}/${name}-desktop.png 2x`} alt="" aria-hidden="true" decoding="async"/>;
-  return ReactDOM.createPortal(<figure className="theme-character-frame" data-section={page} aria-label={label}>{theme==="pokemon"&&page==="home"?<div className="trainer-partners">{image("ash")}{image("pikachu")}</div>:image(section)}{theme==="akatsuki"&&page==="home"&&<img className="theme-crow" src="./assets/themes/akatsuki/crow.svg" alt="" aria-hidden="true"/>}<figcaption>{label}</figcaption></figure>,target);
+  return ReactDOM.createPortal(<figure className="theme-character-frame" data-section={page} aria-label={label}>{theme==="pokemon"&&page==="home"?<div className="trainer-partners">{image("ash")}{image("pikachu")}</div>:image(section)}{theme==="akatsuki"&&page==="home"&&<img className="theme-crow" src="./assets/themes/akatsuki/crow.svg" alt="" aria-hidden="true"/>}</figure>,target);
 }
 
 function ThemeMotion({ theme }) {
@@ -3613,8 +3597,6 @@ function ThemeMotion({ theme }) {
   const motif = () => {
     switch(theme){
       case "modern": return null;
-      case "pokemon": return <g><circle cx="60" cy="60" r="30" fill="var(--bg-1)"/><path d="M30 60 A30 30 0 0 1 90 60Z" fill="var(--c-bad)"/><path d="M30 60 H90"/><circle cx="60" cy="60" r="8" fill="var(--bg-1)"/><path d="M14 17 L18 28 L30 31 L18 35 L14 46 L10 35 L0 31 L10 28Z"/></g>;
-      case "akatsuki": return <g><path d="M26 82 C2 82 0 52 23 48 C19 27 47 17 58 36 C73 17 101 32 96 51 C124 51 125 85 99 87 H26Z" fill="var(--c-primary)" stroke="var(--ink)" strokeWidth="2"/><path d="M34 51 Q53 40 63 54 M66 72 Q80 62 96 72" stroke="var(--bg)"/></g>;
       case "vintage": return <g><rect x="16" y="24" width="88" height="72" rx="1"/><rect x="21" y="29" width="78" height="62" rx="1" opacity=".4"/><path d="M38 47 Q60 20 82 47 M38 73 Q60 100 82 73 M31 60 H89 M43 60 Q51 44 60 60 Q69 76 77 60"/><circle cx="60" cy="60" r="21" opacity=".35"/><path d="M8 16 H23 M15 9 V23 M97 104 H112 M105 97 V112"/></g>;
       case "zen": return <g><path d="M80 25 C29 3 4 66 39 93 C81 123 119 59 89 29" strokeWidth="4" opacity=".65"/><path d="M27 78 Q50 69 83 78 Q103 95 58 98 Q18 97 27 78Z" fill="currentColor" fillOpacity=".15"/>{[0,8,16].map(y=><path key={y} d={`M-10 ${40+y} Q25 ${22+y} 54 ${40+y} T130 ${40+y}`} opacity=".35"/>)}<path d="M104 51 Q88 65 106 74 M104 59 Q119 50 113 36"/></g>;
       case "lagoon": return <g><path d="M60 108 V64 Q37 47 37 23 M60 82 Q91 69 91 42 M37 43 L19 31 M38 55 L52 34 M91 58 L110 48 M61 64 L73 32" strokeWidth="3"/><path d="M-10 91 Q23 71 54 91 T130 91" opacity=".35"/>{[[15,62,4],[79,13,3],[103,91,5],[66,47,2]].map(([x,y,r])=><circle key={x} cx={x} cy={y} r={r} opacity=".5"/>)}<path d="M13 100 Q40 113 81 101"/></g>;
@@ -3634,7 +3616,7 @@ function ThemeMotion({ theme }) {
       default: return <g><circle cx="60" cy="60" r="27" opacity=".5"/><ellipse cx="60" cy="60" rx="54" ry="21" transform="rotate(-30 60 60)"/><circle cx="104" cy="34" r="3" fill="currentColor"/><path d="M24 91 H32 M28 87 V95"/></g>;
     }
   };
-  if(theme==="modern") return null;
+  if(["modern","pokemon","akatsuki"].includes(theme)) return null;
   return <div key={theme} className="theme-motion" data-motif={theme} aria-hidden="true">
     <svg viewBox="0 0 430 860" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <defs>
@@ -3672,8 +3654,12 @@ function AccountSheet({ onClose, syncStatus, onApiKey, soundEnabled, setSoundEna
   </GoalSheet>;
 }
 
+const StableThemeMotion=React.memo(ThemeMotion);
+const StableThemeCharacters=React.memo(ThemeCharacters);
+
 function App() {
   const [page, setPage]       = useState("home");
+  React.useLayoutEffect(()=>{document.documentElement.dataset.page=page;},[page]);
   const [scrollY, setScrollY] = useState(0);
   const [apiKey, setApiKey]   = useState(()=>ld("dos_api_key",""));
   const [meals, setMeals]     = useState(()=>ld("dos_meals_v7",{}));
@@ -3712,8 +3698,7 @@ function App() {
     return ()=>clearTimeout(sound);
   },[xp]);
   useEffect(()=>{if(!xpCelebration)return;const timer=setTimeout(()=>setXpCelebration(null),1800);return ()=>clearTimeout(timer);},[xpCelebration]);
-  const themeMounted = useRef(false);
-  useEffect(()=>{ applyTheme(theme, themeMounted.current); themeMounted.current = true; sv("dos_theme_v1",theme); },[theme]);
+  React.useLayoutEffect(()=>{applyTheme(theme);sv("dos_theme_v1",theme);},[theme]);
 
   // Auto-backup when stale (>7 days). iOS blocks downloads without a user
   // gesture, so there we open the sheet instead — one tap from "Back up now".
@@ -3776,8 +3761,8 @@ function App() {
 
   return (
     <div>
-      <ThemeMotion theme={theme}/>
-      <ThemeCharacters theme={theme} page={page}/>
+      <StableThemeMotion theme={theme}/>
+      <StableThemeCharacters theme={theme} page={page}/>
       <div className="account-bar" data-page={page}><button className="sync-chip" data-state={syncStatus.error?"error":syncStatus.online===false?"offline":syncStatus.message==="Synced"&&!syncStatus.pending?"synced":"syncing"} aria-label="Account and sync settings" title={syncStatus.message} onClick={()=>setShowAccount(true)}><span className="sync-dot"/>{syncStatus.error?"Sync issue":syncStatus.online===false?"Offline":syncStatus.message==="Synced"&&!syncStatus.pending?"Synced":"Syncing"}</button></div>
       {showAccount&&<AccountSheet onClose={()=>setShowAccount(false)} syncStatus={syncStatus} onApiKey={()=>{setShowAccount(false);setShowApiKey(true);}} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}/>}
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}

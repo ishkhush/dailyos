@@ -1,0 +1,94 @@
+html:is([data-theme="modern"],[data-theme="pokemon"]) .theme-backdrop{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+.preview-symbol.preview-pokeball{width:32px;height:32px;opacity:1;animation:none;right:8px;top:8px}
+.theme-preview[data-theme="pokemon"]{background:#86b9e3 url('./assets/themes/sky.svg') center/cover}
+.theme-preview[data-theme="modern"]{background:#ede6dc;border-color:#c8b8a8}
+html[data-theme="pokemon"] .hero-row>div:first-child{background:none;border-radius:0;padding:0;align-self:center}
+html[data-theme="pokemon"] .hero-title,html[data-theme="pokemon"] .hero-title>span{color:#182c43 !important;-webkit-text-fill-color:#182c43 !important;text-shadow:0 1px 0 #dceefa}
+html[data-theme="pokemon"] .hero-row>div:first-child>div:first-child{color:#263e56 !important;font-weight:700 !important}
+html[data-theme="pokemon"] .hero-row>div:first-child>div:last-child>div{background:none !important;border:0 !important;padding-left:0 !important}
+html[data-theme="pokemon"] .hero-header{padding-bottom:22px !important}
+.theme-character-frame{gap:0}
+.theme-character-frame figcaption{display:none}
+html[data-theme="pokemon"][data-page="fitness"]{
+ --bg:#151923;--bg-1:#202534;--bg-2:#292e3d;--bg-3:#343a49;--ink:#fff5d9;--ink-2:#ead9b3;--ink-3:#d2c3a5;
+ --c-primary:#e7c66c;--c-2:#d7b965;--c-3:#cfc4a5;--c-good:#e8d48f;--c-action:#e7c66c;--c-bad:#ffb4ac;--on-accent:#171b24;
+ --scene-motif:url('./assets/themes/motifs/umbreon.svg');--scene-size:480px 560px;--material-shadow:0 4px 0 #0b101b;
+}
+html[data-theme="pokemon"][data-page="habits"]{
+ --bg:#23162f;--bg-1:#30203e;--bg-2:#3b294b;--bg-3:#49325b;--ink:#f7edff;--ink-2:#dfcdeb;--ink-3:#cfb7e0;
+ --c-primary:#dab4f5;--c-2:#e7bff4;--c-3:#c9b9f4;--c-good:#d6c5ed;--c-action:#dab4f5;--c-bad:#ffb3c7;--on-accent:#291337;
+ --scene-motif:url('./assets/themes/motifs/gengar.svg');--scene-size:480px 560px;--material-shadow:0 4px 0 #140c1e;
+}
+html[data-theme="pokemon"][data-page="supplements"]{
+ --bg:#e9e2f4;--bg-1:#f7f1ff;--bg-2:#e1d4ee;--bg-3:#c9b8db;--ink:#2c203b;--ink-2:#4c365e;--ink-3:#614c72;
+ --c-primary:#73428f;--c-2:#704087;--c-3:#5f467e;--c-good:#57467a;--c-action:#73428f;--c-bad:#9f2d58;--on-accent:#fff5ff;
+ --scene-motif:url('./assets/themes/motifs/mewtwo.svg');--scene-size:480px 560px;--material-shadow:0 4px 0 #d2c1e3;
+}
+html[data-theme="pokemon"][data-page="progress"]{
+ --bg:#0e2b24;--bg-1:#183a30;--bg-2:#21463a;--bg-3:#2e5446;--ink:#f6f2d8;--ink-2:#e5dbac;--ink-3:#cfc8a2;
+ --c-primary:#ead07b;--c-2:#dfc27a;--c-3:#a9dcb7;--c-good:#b6ddad;--c-action:#ead07b;--c-bad:#ffb8aa;--on-accent:#152d21;
+ --scene-motif:url('./assets/themes/motifs/rayquaza.svg');--scene-size:480px 560px;--material-shadow:0 4px 0 #08231b;
+}
+html[data-theme="pokemon"][data-page="home"]{--scene-motif:url('./assets/themes/sky.svg');--scene-size:960px 400px}
+html[data-theme="pokemon"] :is(.page-header,.page-header:has([data-section])){--section-accent:var(--c-primary);background:var(--bg-1) !important;border-bottom-color:var(--c-primary)}
+html[data-theme="pokemon"] .page-header:has([data-section]){--bg-1:inherit;--ink:inherit;--ink-2:inherit;--ink-3:inherit}
+html[data-theme="pokemon"] .page-header::before{display:none}
+html[data-theme="pokemon"] :is(.page-enter>div,.home-layout,.habits-layout,.supplements-layout){background-color:var(--bg) !important;background-image:var(--scene-motif) !important;background-size:var(--scene-size);background-attachment:scroll}
+html[data-theme="pokemon"] .page-header{background-image:var(--scene-motif) !important;background-size:var(--scene-size);padding-top:calc(env(safe-area-inset-top,20px) + 36px) !important}
+html[data-theme="pokemon"] :is(.glass-card,.cyber-card,.daily-habits,.day-window,.prayer-card,[style*="backdrop-filter"],[style*="rgba(255, 255, 255"],[style*="rgba(255,255,255"]):not(.theme-backdrop){background-color:var(--bg-1) !important;border-color:color-mix(in srgb,var(--ink-3) 45%,var(--bg-1)) !important}
+html[data-theme="pokemon"] .app-nav{background:var(--bg-1) !important;border-color:var(--ink-3) !important}
+html[data-theme="pokemon"] [style*="background: color-mix"][style*="transparent"]:not(.theme-backdrop){background-color:var(--bg-1) !important}
+html[data-theme="pokemon"] [style*="color: rgb(255, 255, 255)"]{color:var(--ink) !important}
+html[data-theme="pokemon"] section[aria-label="Urgent Reminders"] :is(h2,span,div,button){color:#fff5f1 !important}
+html[data-theme="pokemon"][data-page="home"] .page-enter>div{background-color:#e6f2fc !important;background-size:1400px 580px}
+html[data-theme="pokemon"] .prayer-slot[data-emphasized="true"] .prayer-card{background:#fff2bf !important;border-color:#74571c !important}
+html[data-theme="pokemon"] .theme-sheet{background:var(--bg-1) !important}
+html[data-theme="pokemon"] .preview-card{background:var(--bg-1) !important}
+html[data-theme="pokemon"] .page-enter [style*="background: rgba(96, 165, 250"]{background:var(--bg-1) !important;border-color:var(--c-3) !important}
+html[data-theme="pokemon"] .page-enter [style*="background: linear-gradient"]>svg{stroke:var(--on-accent) !important}
+html[data-theme="pokemon"] .page-enter div[style*="border-radius: 50%"][style*="background: linear-gradient"]{color:var(--on-accent) !important;box-shadow:none !important}
+html[data-theme="pokemon"] .hero-row{gap:16px !important}
+
+html[data-theme="akatsuki"],.theme-preview[data-theme="akatsuki"]{
+ --bg:#120c0e;--bg-1:#211518;--bg-2:#2d1d21;--bg-3:#3a262b;--ink:#ffe9eb;--ink-2:#e8c2c7;--ink-3:#d2a8b0;
+ --c-primary:#f58a98;--c-2:#e7919c;--c-3:#e4b2bb;--c-good:#efa9b2;--c-action:#f58a98;--c-bad:#ff9ca6;--on-accent:#261014;
+ --c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2);--material:none;--material-size:auto;--scene-size:480px 560px;
+}
+html[data-theme="akatsuki"][data-page="home"]{--scene-motif:url('./assets/themes/motifs/itachi.svg')}
+html[data-theme="akatsuki"][data-page="fitness"]{--scene-motif:url('./assets/themes/motifs/orochimaru.svg')}
+html[data-theme="akatsuki"][data-page="habits"]{--scene-motif:url('./assets/themes/motifs/pain.svg')}
+html[data-theme="akatsuki"][data-page="supplements"]{--scene-motif:url('./assets/themes/motifs/hidan.svg')}
+html[data-theme="akatsuki"][data-page="progress"]{--scene-motif:url('./assets/themes/motifs/tobi.svg')}
+html[data-theme="akatsuki"] :is(.page-enter>div,.home-layout,.habits-layout,.supplements-layout){background-color:var(--bg) !important;background-image:var(--scene-motif) !important;background-size:var(--scene-size)}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) body::after{display:none}
+html[data-theme="akatsuki"] :is(.hero-header,.page-header){background-color:var(--bg-1) !important;background-image:var(--scene-motif) !important;background-size:var(--scene-size);border-bottom:2px solid #b34455 !important}
+html[data-theme="akatsuki"] .hero-header::before{background-image:url('./assets/themes/red-cloud.svg');background-position:right 24px top 18px;background-size:160px auto;opacity:.25}
+html[data-theme="akatsuki"] .page-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:url('./assets/themes/red-cloud.svg') right 18px top 20px/90px auto no-repeat;opacity:.2}
+html[data-theme="akatsuki"] :is(.glass-card,.cyber-card,.daily-habits,.day-window,.prayer-card,.xp-panel){background:var(--bg-1) !important;border-color:#86434e !important;box-shadow:0 3px 0 #080506 !important}
+html[data-theme="akatsuki"] [style*="backdrop-filter"]{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+html[data-theme="akatsuki"] .page-enter [style*="background: rgba"],html[data-theme="akatsuki"] .page-enter [style*="background: color-mix"][style*="transparent"]{background-color:var(--bg-1) !important;border-color:#86434e !important}
+html[data-theme="akatsuki"] .page-enter [style*="background: linear-gradient"]{background:var(--bg-2) !important}
+html[data-theme="akatsuki"] .page-enter [style*="background-clip: text"]{background:none !important;color:var(--ink) !important;-webkit-text-fill-color:var(--ink) !important}
+html[data-theme="akatsuki"] .page-enter [style*="box-shadow"]{box-shadow:0 3px 0 #080506 !important}
+html[data-theme="akatsuki"] .app-nav button>div{filter:none !important}
+html[data-theme="akatsuki"] .prayer-slot[data-emphasized="true"] .prayer-card{background:#412029 !important;border:2px solid #f58a98 !important}
+html[data-theme="akatsuki"] .prayer-outline{filter:none}
+html[data-theme="akatsuki"] .page-enter svg[fill]:not([fill="none"]){fill:var(--c-primary)}
+html[data-theme="akatsuki"] .page-enter svg :is([fill^="#"],[stroke^="#"]){fill:var(--c-primary);stroke:var(--c-primary)}
+html[data-theme="akatsuki"] section[aria-label="Urgent Reminders"]{background:#3f141d !important;border-color:#f58a98 !important}
+html[data-theme="akatsuki"] .xp-fill{background:#c8465b !important}
+html[data-theme="akatsuki"] .xp-panel [role="progressbar"]{background:var(--bg-3) !important}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav{background:var(--bg-1) !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav>div>div[aria-hidden]{display:none !important}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav button[aria-current="page"]{background:var(--bg-2) !important;border-bottom:2px solid var(--c-primary) !important}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .app-nav button>div{filter:none !important}
+html[data-theme="akatsuki"] .section-rule::before,html[data-theme="akatsuki"] .section-rule::after{height:22px;background:url('./assets/themes/red-cloud.svg') center/42px 22px repeat-x;opacity:.65}
+html[data-theme="akatsuki"] .page-enter .pill-badge{border-color:#86434e !important}
+html[data-theme="akatsuki"] .theme-preview{background:#211518 url('./assets/themes/red-cloud.svg') right 5px top 5px/66px auto no-repeat}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .home-layout>:is(section,div):not(.hero-header){background-color:var(--bg-1)}
+html[data-theme="akatsuki"] .hero-row>.theme-character-frame{width:40%;max-width:170px}
+html[data-theme="akatsuki"] .hero-row{padding-top:calc(env(safe-area-inset-top,20px) + 56px) !important}
+html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:250px;object-position:right bottom}
+html[data-theme="akatsuki"] .hero-row>.theme-character-frame .theme-crow{top:60px;left:-12px;opacity:.75}
+@media(min-width:1000px){html[data-theme="akatsuki"] .hero-row>.theme-character-frame{width:320px;max-width:320px;margin-right:45px}html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:340px}}
+@media(max-width:360px){html[data-theme="pokemon"] .hero-row{gap:6px !important}html[data-theme="akatsuki"] .hero-row>.theme-character-frame img:not(.theme-crow){height:210px}}
