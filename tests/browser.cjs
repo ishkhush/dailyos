@@ -105,34 +105,52 @@ let cleanup=async()=>{};
   for(const [width,height,columns] of [[390,844,2],[800,900,3],[1600,1000,5]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width===390});await wait(180);assert.equal(await evaluate(`getComputedStyle(document.querySelector('.progress-grid')).gridTemplateColumns.split(' ').length`),columns,'Responsive columns at '+width);await click(`document.querySelector('.progress-grid button')`);await loaded();assert(await evaluate(`(()=>{const r=document.querySelector('.photo-dialog').getBoundingClientRect();return r.top>=0&&r.left>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1;})()`),'Viewer fits viewport at '+width);await click(`document.querySelector('.photo-dialog button[aria-label="Close"]')`);}
   await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});await tab('Home');
   await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});assert(await evaluate(`parseFloat(getComputedStyle(document.querySelector('.xp-fill')).transitionDuration)<.001`),'Reduced motion disables XP animation');
-  const richThemeKeys=['modern','vintage','zen','lagoon','dunes','observatory'],themeFonts=new Set(),themeMaterials=new Set();
+  const richThemeKeys=['modern','pokemon','akatsuki','vintage','zen','lagoon','dunes','observatory'],themeFonts=new Set(),themeMaterials=new Set();
   await click(`document.querySelector('button[aria-label="Change accent theme"]')`);
-  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview[data-preview="rich"]').length`),6,'Six rich live preview thumbnails');
-  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview').length`),18,'Existing twelve themes remain available');
+  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview[data-preview="rich"]').length`),8,'Eight rich live preview thumbnails');
+  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview').length`),20,'All twenty themes remain available');
+  const allThemeKeys=await evaluate(`Object.keys(THEMES)`);
+  await evaluate(`window._themeWrites=[];window._themeWriteOriginal=DailySync.write;DailySync.write=(key,value)=>{if(key==='dos_theme_v1')window._themeWrites.push(value);return window._themeWriteOriginal(key,value);};`);
   for(const key of richThemeKeys){
     await click(`document.querySelector('.theme-picker-grid button:has([data-theme="${key}"])')`);
     assert.equal(await evaluate(`document.documentElement.dataset.theme`),key,'Live selection updates '+key);
     assert.equal(await evaluate(`ld('dos_theme_v1','')`),key,'Selection persists '+key);
+    assert.equal(await evaluate(`window._themeWrites.at(-1)`),key,'Selection queues synchronization '+key);
     assert(await evaluate(`!!document.querySelector('.theme-sheet')`),'Live preview leaves picker open');
-    const themeCheck=await evaluate(`(()=>{const s=getComputedStyle(document.documentElement),v=k=>s.getPropertyValue(k).trim();const lum=c=>{const a=c.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return a[0]*.2126+a[1]*.7152+a[2]*.0722;};const ratio=(a,b)=>{const l=[lum(a),lum(b)].sort((a,b)=>a-b);return(l[1]+.05)/(l[0]+.05);};const backgrounds=['--bg','--bg-1','--bg-2','--bg-3'],ink=['--ink','--ink-2','--ink-3'],accents=['--c-primary','--c-2','--c-3','--c-good','--c-action','--c-bad'];return {font:v('--font-body')+' / '+v('--font-display'),material:v('--material'),text:Math.min(...ink.flatMap(a=>backgrounds.map(b=>ratio(v(a),v(b))))),accent:Math.min(...accents.flatMap(a=>backgrounds.map(b=>ratio(v(a),v(b))))),button:Math.min(...accents.filter(a=>a!=='--c-bad').map(a=>ratio(v('--on-accent'),v(a)))),motion:parseFloat(getComputedStyle(document.querySelector('.theme-motif')).animationDuration),previewMotion:parseFloat(getComputedStyle(document.querySelector('.preview-symbol')).animationDuration),motif:document.querySelector('.theme-motion').dataset.motif};})()`);
+    const themeCheck=await evaluate(`(()=>{const s=getComputedStyle(document.documentElement),v=k=>s.getPropertyValue(k).trim();const lum=c=>{const a=c.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return a[0]*.2126+a[1]*.7152+a[2]*.0722;};const ratio=(a,b)=>{const l=[lum(a),lum(b)].sort((a,b)=>a-b);return(l[1]+.05)/(l[0]+.05);};const ink=['--ink','--ink-2','--ink-3'],accents=['--c-primary','--c-2','--c-3','--c-good','--c-action','--c-bad'];const motion=document.querySelector('.theme-motion'),motif=motion?.querySelector('.theme-motif'),preview=document.querySelector('.theme-preview[data-theme="${key}"] .preview-symbol');const duration=e=>e&&getComputedStyle(e).display!=='none'?parseFloat(getComputedStyle(e).animationDuration)||0:0;return {font:v('--font-body')+' / '+v('--font-display'),material:v('--material'),text:Math.min(...ink.flatMap(a=>['--bg','--bg-1'].map(b=>ratio(v(a),v(b))))),accent:Math.min(...accents.map(a=>ratio(v(a),v('--bg-1')))),button:Math.min(...accents.filter(a=>a!=='--c-bad').map(a=>ratio(v('--on-accent'),v(a)))),motion:duration(motif),previewMotion:duration(preview),motif:motion?.dataset.motif||null,motionVisible:!!motion&&getComputedStyle(motion).display!=='none'};})()`);
     assert(themeCheck.text>=4.5&&themeCheck.accent>=4.5&&themeCheck.button>=4.5,key+' normal text and accent contrast');
     assert(themeCheck.motion<.001&&themeCheck.previewMotion<.001,key+' respects reduced motion');
-    assert.equal(themeCheck.motif,key,key+' has its own ambient motif');themeFonts.add(themeCheck.font);themeMaterials.add(themeCheck.material);
+    if(key==='modern'){assert(!themeCheck.motionVisible,'Modern has no ambient motion');assert.equal(themeCheck.material,'none','Modern has no grid or texture gradient');assert.match(themeCheck.font,/Manrope.*Cormorant Garamond/,'Modern luxury font pairing');}
+    else assert.equal(themeCheck.motif,key,key+' has its own ambient motif');
+    if(key==='pokemon')assert.match(themeCheck.font,/Nunito/,'Pokémon uses its playful legible font');
+    if(key==='akatsuki')assert.match(themeCheck.font,/Manrope.*Permanent Marker/,'Akatsuki ink heading and readable body pairing');
+    themeFonts.add(themeCheck.font);themeMaterials.add(themeCheck.material);
   }
-  assert.equal(themeFonts.size,6,'Six distinct font pairings');assert.equal(themeMaterials.size,6,'Six distinct materials');
+  assert.equal(themeFonts.size,8,'Eight distinct font pairings');assert.equal(themeMaterials.size,7,'Seven distinct materials, with Modern and Pokémon using solid surfaces');
   await click(button('Done'));
   for(const [width,height] of [[390,844],[1440,1000]]){
     await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:width===390?3:1,mobile:width===390});
-    for(const key of richThemeKeys){
+    for(const key of allThemeKeys){
       await tab('Home');await click(`document.querySelector('button[aria-label="Change accent theme"]')`);await click(`document.querySelector('.theme-picker-grid button:has([data-theme="${key}"])')`);
       assert.equal(await evaluate(`getComputedStyle(document.querySelector('.theme-picker-grid')).gridTemplateColumns.split(' ').length`),width===390?2:3,'Picker columns at '+width);
       assert(await evaluate(`document.querySelector('.theme-sheet').getBoundingClientRect().right<=innerWidth+1`),key+' picker fits '+width);await click(button('Done'));
       const themeShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync('/private/tmp/dailyos-'+key+'-'+width+'.png',Buffer.from(themeShot.data,'base64'));
-      for(const name of ['Home','Health','Habits','Stack','Progress']){await tab(name);assert(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),key+' '+name+' has no overflow at '+width);}
+      assert.equal(await evaluate(`ld('dos_theme_v1','')`),key,'Theme persists at '+width);
+      if(key==='modern')assert(await evaluate(`[...document.querySelectorAll('.app-nav>div>div[aria-hidden]')].every(element=>getComputedStyle(element).display==='none')`),'Modern opaque highlight does not cover navigation labels');
+      for(const name of ['Home','Health','Habits','Stack','Progress']){
+        await tab(name);
+        await evaluate(`Promise.all([...document.querySelectorAll('.theme-character-frame img')].map(image=>image.decode()))`);
+        const layout=await evaluate(`(()=>{const headings=[...document.querySelectorAll('.page-title,.hero-title,.hero-title>span')];const safeHeadings=headings.length>0&&headings.every(e=>{const s=getComputedStyle(e);return parseFloat(s.lineHeight)/parseFloat(s.fontSize)>=1.2&&s.overflowY==='visible'&&parseFloat(s.paddingBottom)>0;});const frames=[...document.querySelectorAll('.theme-character-frame')];const overlaps=(a,b)=>a.left<b.right-1&&a.right>b.left+1&&a.top<b.bottom-1&&a.bottom>b.top+1;let artSafe=true;for(const frame of frames){const image=frame.querySelector('img'),header=frame.closest('.page-header,.hero-row');if(!image||!header||!image.complete||!image.naturalWidth||!image.src.startsWith(location.origin+'/')){artSafe=false;continue;}const imageRect=image.getBoundingClientRect();for(const control of header.querySelectorAll('button,input,select,textarea'))if(!frame.contains(control)&&overlaps(imageRect,control.getBoundingClientRect()))artSafe=false;const walker=document.createTreeWalker(header,NodeFilter.SHOW_TEXT);while(walker.nextNode()){const node=walker.currentNode;if(!node.textContent.trim()||frame.contains(node)||!node.parentElement.getClientRects().length)continue;const range=document.createRange();range.selectNodeContents(node);for(const rect of range.getClientRects())if(overlaps(imageRect,rect))artSafe=false;}}return {headings:safeHeadings,overflow:document.documentElement.scrollWidth<=innerWidth,orbs:document.querySelectorAll('.orb-drift').length,artSafe,artCount:frames.length};})()`);
+        assert(layout.overflow,key+' '+name+' has no overflow at '+width);
+        assert(layout.headings,key+' '+name+' title preserves descenders at '+width);
+        assert.equal(layout.orbs,0,key+' '+name+' has no decorative corner orb');
+        if(key==='pokemon'||key==='akatsuki'){assert(layout.artCount>0,key+' '+name+' includes bundled character artwork');assert(layout.artSafe,key+' '+name+' art loads and avoids text/controls at '+width);}
+      }
     }
   }
   await tab('Home');await click(`document.querySelector('button[aria-label="Change accent theme"]')`);await click(`document.querySelector('.theme-picker-grid button:has([data-theme="og"])')`);await click(button('Done'));
   assert.equal(await evaluate(`document.documentElement.dataset.identity`),'classic','Original theme skin restored');
+  await evaluate(`DailySync.write=window._themeWriteOriginal;delete window._themeWriteOriginal;delete window._themeWrites;`);
   await tab('Habits');const screenshot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync('/private/tmp/dailyos-desktop-sync.png',Buffer.from(screenshot.data,'base64'));
   const cacheReady=await evaluate(`Promise.race([navigator.serviceWorker.ready.then(async r=>{const keys=await caches.keys();const cache=await caches.open(keys.find(k=>k.startsWith('dailyos-')));return !!await cache.match('./dailyos-sync.js');}),new Promise(resolve=>setTimeout(()=>resolve(false),8000))])`);
   assert(cacheReady,'Service worker caches the bundled sync library');

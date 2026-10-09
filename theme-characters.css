@@ -1,0 +1,89 @@
+.page-title,.hero-title,.hero-title>span{line-height:1.25 !important;padding-bottom:.14em;overflow:visible}
+.page-title{display:block !important;background:none !important;color:var(--ink) !important;-webkit-text-fill-color:var(--ink) !important;background-clip:border-box !important}
+.page-title span{display:inline-block;line-height:1.25;padding-bottom:.08em}
+.page-header{overflow:visible !important;padding-bottom:20px !important}
+[data-theme="pokemon"]{
+ --bg:#e6f2fc;--bg-1:#fffdf3;--bg-2:#dceafa;--bg-3:#c6dced;--ink:#182c43;--ink-2:#344c64;--ink-3:#4a5b6d;
+ --c-primary:#245da0;--c-2:#79419b;--c-3:#34653f;--c-good:#32653c;--c-action:#245da0;--c-bad:#a32935;--on-accent:#fffdf3;
+ --font-body:'Nunito',sans-serif;--font-display:'Nunito',sans-serif;--shape:24px;--button-shape:15px;--material-shadow:0 4px 0 #bfd3e5;--material:none;--material-size:auto;
+}
+[data-theme="akatsuki"]{
+ --bg:#141216;--bg-1:#201d22;--bg-2:#29252b;--bg-3:#342d35;--ink:#f4ece1;--ink-2:#ded1c6;--ink-3:#c6b4ac;
+ --c-primary:#ff8792;--c-2:#cfb5dd;--c-3:#e7cba4;--c-good:#adc9b4;--c-action:#ff8792;--c-bad:#ff9e96;--on-accent:#211017;
+ --font-body:'Manrope',sans-serif;--font-display:'Permanent Marker',sans-serif;--shape:9px 22px 9px 22px;--button-shape:7px;--material-shadow:0 4px 0 #0b090d;--material:repeating-linear-gradient(85deg,#221d23 0 1px,#141216 1px 7px);--material-size:100% 100%;
+}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) body::before{display:none}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .scan-overlay{display:none}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .theme-motion{opacity:.12;z-index:0}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .hero-photo,html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .hero-portrait{display:none}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .hero-header{background:var(--bg-2) !important;border-bottom:2px solid var(--c-primary) !important}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .hero-title>span{background:none !important;-webkit-text-fill-color:var(--ink) !important;color:var(--ink)}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .page-header{min-height:240px;padding-right:140px !important;isolation:isolate;background:var(--bg-1) !important;border-bottom:2px solid var(--section-accent,var(--c-primary));margin-bottom:14px}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .page-title{font-size:clamp(28px,7.5vw,40px) !important;letter-spacing:-.6px !important}
+.theme-character-frame{pointer-events:none;user-select:none;position:absolute;right:8px;bottom:8px;width:124px;display:flex;flex-direction:column;align-items:center;gap:4px;z-index:0}
+.theme-character-frame img{width:100%;height:154px;object-fit:contain;object-position:center bottom}
+.theme-character-frame figcaption{font-family:var(--font-body);font-size:9px;font-weight:800;letter-spacing:.3px;line-height:1.5;color:var(--ink-2);background:var(--bg-1);border:1px solid var(--section-accent,var(--c-primary));border-radius:12px;padding:3px 7px;text-align:center}
+.hero-row>.theme-character-frame{position:relative;right:auto;bottom:auto;width:45%;flex-shrink:0;align-self:flex-end}
+.hero-row>.theme-character-frame img{height:220px}
+.trainer-partners{position:relative;width:100%;height:220px}
+.trainer-partners img:first-child{width:80%;height:220px;object-position:center bottom}
+.trainer-partners img:last-child{position:absolute;right:-5px;bottom:0;width:52%;height:120px}
+.hero-row>.theme-character-frame figcaption{max-width:100%}
+.hero-row>.theme-character-frame .theme-crow{position:absolute;top:25px;left:-14px;width:64px;height:44px;animation:crowPass 24s ease-in-out infinite alternate}
+html[data-theme="pokemon"] .hero-header::before{content:'';position:absolute;inset:0;background:#86b9e3 url('./assets/themes/sky.svg') center top/cover no-repeat;pointer-events:none}
+html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .hero-header>div{position:relative;z-index:1}
+html[data-theme="pokemon"] .hero-row>div:first-child{background:#fffdf3;border-radius:20px;padding:12px;align-self:center}
+html[data-theme="pokemon"] .hero-title{font-weight:900 !important;letter-spacing:.2px !important}
+html[data-theme="pokemon"] .xp-panel{border:2px solid #245da0 !important;background:#fffdf3 !important}
+html[data-theme="pokemon"] .xp-panel [role="progressbar"]{background:#c6dced !important;overflow:visible !important}
+html[data-theme="pokemon"] .xp-fill{background:#245da0 !important;position:relative;border-radius:20px}
+html[data-theme="pokemon"] .xp-fill::after{content:'';position:absolute;right:-7px;top:50%;width:14px;height:14px;transform:translateY(-50%);background:#fffdf3 url('./assets/themes/pokeball.svg') center/contain no-repeat;border-radius:50%}
+html[data-theme="pokemon"] button[aria-label^="Mark "]:active::after{content:'';display:block;position:absolute;right:5px;top:5px;width:16px;height:16px;background:url('./assets/themes/pokeball.svg') center/contain no-repeat;animation:ballCatch .4s ease}
+html[data-theme="pokemon"] :is(.glass-card,.cyber-card,.daily-habits,.day-window,.prayer-card,[style*="backdrop-filter"],[style*="rgba(255, 255, 255"],[style*="rgba(255,255,255"]){background-color:var(--bg-1) !important;background-image:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-color:#9aacbf !important}
+html[data-theme="pokemon"] [style*="color: rgb(255, 255, 255)"]:not([style*="background: rgb(190"]){color:var(--ink) !important}
+html[data-theme="pokemon"] [style*="color: rgb(254, 205, 211)"]{color:#ffe6eb !important}
+html[data-theme="pokemon"] .prayer-slot[data-emphasized="true"] .prayer-card{background:#fff2bf !important;border:2px solid #74571c !important;box-shadow:none}
+html[data-theme="pokemon"] .theme-preview{border:2px solid #245da0}
+html[data-theme="pokemon"] .page-header:has([data-section="fitness"]){--bg-1:#232737;--ink:#fff5d9;--ink-2:#ebd9ab;--ink-3:#d5c6aa;--section-accent:#e5c36d;background:#232737 !important}
+html[data-theme="pokemon"] .page-header:has([data-section="fitness"])::before{content:'';position:absolute;right:145px;top:28px;width:38px;height:38px;border:8px solid #e5c36d;border-radius:50%;pointer-events:none;z-index:-1}
+html[data-theme="pokemon"] .page-header:has([data-section="habits"]){--bg-1:#f0e3f8;--section-accent:#79419b;background:#f0e3f8 !important}
+html[data-theme="pokemon"] .page-header:has([data-section="habits"])::before{content:'✧  ◇  ✧';position:absolute;right:18px;top:35px;color:#79419b;font-size:20px;letter-spacing:8px;pointer-events:none}
+html[data-theme="pokemon"] .page-header:has([data-section="supplements"]){--bg-1:#eee6fb;--section-accent:#72418d;background:#eee6fb !important}
+html[data-theme="pokemon"] .page-header:has([data-section="supplements"])::before{content:'';position:absolute;right:20px;top:28px;width:94px;height:94px;border:2px solid #bca0d9;border-radius:50%;outline:1px solid #c9b4df;outline-offset:10px;pointer-events:none}
+html[data-theme="pokemon"] .page-header:has([data-section="progress"]){--bg-1:#e3f1e6;--section-accent:#34653f;background:#e3f1e6 !important;border-bottom-color:#867022}
+html[data-theme="pokemon"] .page-header:has([data-section="progress"])::before{content:'';position:absolute;right:24px;top:28px;width:80px;height:18px;border-top:2px solid #867022;border-bottom:2px solid #34653f;border-radius:50%;transform:rotate(-12deg);pointer-events:none}
+html[data-theme="pokemon"] section[aria-label="Urgent Reminders"]{background:#752236 !important;border-color:#752236 !important}
+html[data-theme="pokemon"] section[aria-label="Urgent Reminders"] :is(h2,span,div,button){color:#fff5f1 !important}
+html[data-theme="pokemon"] section[aria-label="Urgent Reminders"] button{background:#752236 !important}
+html[data-theme="pokemon"] section[aria-label="Urgent Reminders"] button[aria-checked="true"]{background:#fff0e7 !important;color:#54202a !important}
+html[data-theme="akatsuki"] .hero-header{background:#201d22 !important;border-bottom:3px solid #a82439 !important}
+html[data-theme="akatsuki"] .hero-header::before{content:'';position:absolute;inset:0;background:url('./assets/themes/red-cloud.svg') 90% 16px/180px auto no-repeat;opacity:.45;pointer-events:none}
+html[data-theme="akatsuki"] .page-title{font-weight:400 !important;letter-spacing:.3px !important}
+html[data-theme="akatsuki"] [style*="Syne"]:not(.hero-title):not(.page-title){font-family:var(--font-body) !important}
+html[data-theme="akatsuki"] .section-rule::before,html[data-theme="akatsuki"] .section-rule::after{height:16px;background:url('./assets/themes/red-cloud.svg') center/30px 16px repeat-x;opacity:.7}
+html[data-theme="akatsuki"] .xp-fill{background:#c4394e !important;box-shadow:none !important}
+html[data-theme="akatsuki"] .xp-panel [role="progressbar"]{background:#342d35 !important}
+html[data-theme="akatsuki"] button[aria-label^="Mark "][aria-pressed="true"]{background-image:url('./assets/themes/red-cloud.svg') !important;background-size:20px;background-repeat:no-repeat;background-position:right 6px center}
+html[data-theme="akatsuki"] .theme-motion[data-motif="akatsuki"] .theme-motif{animation:cloudDrift 45s ease-in-out infinite alternate}
+.theme-preview .preview-character{position:absolute;right:2px;bottom:2px;width:50px;height:68px;object-fit:contain;pointer-events:none}
+.theme-preview:has(.preview-character) .preview-card{padding-right:42px}
+html[data-theme="pokemon"] .theme-sheet{background:#fffdf3 !important}
+html[data-theme="pokemon"] .app-nav{background:#fffdf3 !important;backdrop-filter:none !important}
+@keyframes ballCatch{from{transform:rotate(-40deg) scale(.7)}to{transform:rotate(0) scale(1)}}
+@keyframes cloudDrift{from{transform:translate(-4px,2px)}to{transform:translate(6px,-3px)}}
+@keyframes crowPass{from{transform:translate(0,0) rotate(-5deg)}to{transform:translate(12px,-8px) rotate(5deg)}}
+@media(min-width:1000px){
+ html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .page-header{min-height:260px;padding-right:300px !important}
+ .page-header .theme-character-frame{width:240px;right:30px;bottom:12px}
+ .page-header .theme-character-frame img{height:200px}
+ .hero-row>.theme-character-frame{width:300px;margin-right:40px}
+ .hero-row>.theme-character-frame img{height:300px}
+ .trainer-partners{height:300px}
+ .trainer-partners img:first-child{height:300px}
+ .trainer-partners img:last-child{height:170px}
+ .theme-character-frame figcaption{font-size:11px}
+}
+@media(max-width:360px){html:is([data-theme="pokemon"],[data-theme="akatsuki"]) .page-header{padding-right:118px !important}.page-header .theme-character-frame{width:100px}.hero-row>.theme-character-frame img{height:180px}.hero-title>span{font-size:36px !important}}
+@media(prefers-reduced-motion:reduce){.theme-character-frame *,.theme-motion[data-motif="akatsuki"] .theme-motif,button[aria-label^="Mark "]::after{animation:none !important}}
+html[data-motion-paused] button[aria-label^="Mark "]::after{animation-play-state:paused !important}
+html[data-motion-paused] .theme-character-frame *{animation-play-state:paused !important}

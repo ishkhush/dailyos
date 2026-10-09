@@ -1,0 +1,166 @@
+html[data-theme="modern"],.theme-preview[data-theme="modern"] {
+  --glow:#c8b8a8;
+  --glow-strong:#a28a75;
+  --amb-1:#ede6dc;
+  --amb-2:#ede6dc;
+  --amb-3:#ede6dc;
+  color-scheme:light;
+}
+html[data-theme="modern"] body::before,
+html[data-theme="modern"] body::after,
+html[data-theme="modern"] .theme-motion,
+.theme-preview[data-theme="modern"]::before,
+.theme-preview[data-theme="modern"] .preview-symbol {
+  display:none;
+}
+html[data-theme="modern"] :is(.home-layout,.habits-layout,.supplements-layout,.day-window,.progress-grid) {
+  background-image:none !important;
+}
+html[data-theme="modern"] * {
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  text-shadow:none !important;
+}
+html[data-theme="modern"] [style*="box-shadow"],
+html[data-theme="modern"] :is(.glass-card,.cyber-card,.habit-list,.goal-sheet,.photo-dialog,.theme-sheet) {
+  box-shadow:0 4px 0 #e0d5c8 !important;
+}
+html[data-theme="modern"] :is(.home-layout,.habits-layout,.supplements-layout)>:is(section,div):not(.hero-header) {
+  box-shadow:0 4px 0 #e0d5c8;
+}
+html[data-theme="modern"] :is(.glass-card,.cyber-card,.pill-badge,.goal-sheet,.photo-dialog,.theme-sheet,.app-nav),
+html[data-theme="modern"] [style*="background: rgba"],
+html[data-theme="modern"] [style*="background: color-mix"][style*="transparent"] {
+  background:var(--bg-1) !important;
+  border-color:#c8b8a8 !important;
+}
+html[data-theme="modern"] [style*="background: linear-gradient"] {
+  background:var(--c-primary) !important;
+}
+html[data-theme="modern"] [style*="background: rgba"][style*="color: white"],
+html[data-theme="modern"] [style*="background: rgba"][style*="color: rgb(255, 255, 255)"] {
+  color:var(--ink) !important;
+}
+html[data-theme="modern"] [style*="background-clip: text"] {
+  background:none !important;
+  color:var(--ink) !important;
+  -webkit-text-fill-color:var(--ink) !important;
+}
+html[data-theme="modern"] [style*="border"][style*="rgba(255"],
+html[data-theme="modern"] [style*="border"][style*="color-mix"][style*="transparent"] {
+  border-color:#c8b8a8 !important;
+}
+html[data-theme="modern"] :is(.hero-header,.habits-layout>div:first-child),
+html[data-theme="modern"] [style*="background: linear-gradient(180deg"] {
+  background:var(--bg) !important;
+  border-color:#c8b8a8 !important;
+}
+html[data-theme="modern"] :is(.orb-drift,.scan-overlay::after),
+html[data-theme="modern"] [style*="background: radial-gradient"],
+html[data-theme="modern"] [style*="animation: shimmerMove"] {
+  display:none !important;
+}
+html[data-theme="modern"] :is(.hero-title,.syne,.bc,h1,h2,h3,[style*="Syne"],[style*="Barlow Condensed"]) {
+  font-weight:600 !important;
+  letter-spacing:.01em !important;
+}
+html[data-theme="modern"] .hero-title {
+  font-size:25px;
+}
+html[data-theme="modern"] .hero-title span {
+  font-weight:600 !important;
+}
+html[data-theme="modern"] :is(.home-layout,.habits-layout,.supplements-layout,.day-window,.progress-grid) {
+  letter-spacing:.015em;
+}
+html[data-theme="modern"] .section-rule span {
+  font-family:var(--font-body) !important;
+  font-weight:600;
+  letter-spacing:.16em;
+}
+html[data-theme="modern"] .section-rule::before,
+html[data-theme="modern"] .section-rule::after {
+  background:#c8b8a8 !important;
+}
+html[data-theme="modern"] .app-nav svg {
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:none;
+}
+html[data-theme="modern"] .app-nav button>div{filter:none !important}
+html[data-theme="modern"] .app-nav>div>div[aria-hidden]{display:none !important}
+html[data-theme="modern"] .level-badge{background:#e6dbce}
+html[data-theme="modern"] .app-nav button[aria-current="page"]{background:#e6dbce !important;border-bottom:2px solid #875c47 !important}
+html[data-theme="modern"] .hero-photo{mask-image:none !important;-webkit-mask-image:none !important;animation:none !important}
+html[data-theme="modern"] .hero-title>span{font-family:var(--font-display) !important}
+html[data-theme="modern"] svg [filter]{filter:none !important}
+html[data-theme="modern"] .app-nav>div>button:hover,
+html[data-theme="modern"] .app-nav>div>button[aria-current="page"] {
+  background:#e6dbce !important;
+}
+html[data-theme="modern"] :is(.planner-title,.time-fields input,input,textarea,select) {
+  background:#fffaf3 !important;
+  border-color:#a28a75 !important;
+  color:var(--ink) !important;
+  color-scheme:light;
+}
+html[data-theme="modern"] :is(input,textarea)::placeholder {
+  color:#6a5b50;
+}
+html[data-theme="modern"] .xp-panel {
+  background:#f7f1e8 !important;
+}
+html[data-theme="modern"] .xp-fill {
+  background:var(--c-primary) !important;
+}
+html[data-theme="modern"] .prayer-card {
+  animation:none !important;
+}
+html[data-theme="modern"] .prayer-slot[data-emphasized="true"] .prayer-card {
+  background:#e4d5c3 !important;
+  border:2px solid #875c47 !important;
+  box-shadow:0 4px 0 #c8b8a8 !important;
+}
+html[data-theme="modern"] .prayer-card[aria-pressed="true"] {
+  background:#e0e6d9 !important;
+  border-color:#4d6549 !important;
+}
+html[data-theme="modern"] .prayer-outline {
+  filter:none;
+}
+html[data-theme="modern"] button[aria-pressed="true"]:not(.prayer-card):not(.planner-action) {
+  background:#e4d5c3 !important;
+  border-color:#875c47 !important;
+}
+html[data-theme="modern"] section[aria-label="Urgent Reminders"] {
+  background:#f2ded4 !important;
+  border-color:#9b3c31 !important;
+}
+html[data-theme="modern"] section[aria-label="Urgent Reminders"] :is(h2,span,div,button) {
+  color:#652a23 !important;
+}
+html[data-theme="modern"] section[aria-label="Urgent Reminders"] button {
+  background:#fff5ed !important;
+  border-color:#9b3c31 !important;
+}
+html[data-theme="modern"] section[aria-label="Urgent Reminders"] button[aria-checked="true"] {
+  background:#e0e6d9 !important;
+  color:#375233 !important;
+  border-color:#4d6549 !important;
+}
+html[data-theme="modern"] button[aria-label="Add urgent reminder"] {
+  color:#9b3c31 !important;
+}
+.theme-preview[data-theme="modern"] {
+  border-color:#c8b8a8;
+}
+.theme-preview[data-theme="modern"] .preview-card {
+  border-color:#c8b8a8;
+  box-shadow:0 3px 0 #e0d5c8;
+}
+@media (prefers-reduced-motion:reduce) {
+  html[data-theme="modern"] .prayer-outline rect {
+    animation:none !important;
+  }
+}

@@ -87,7 +87,7 @@
 <script src="./dailyos-audio.js"></script>
 <script src="./dailyos-photos.js"></script>
 <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Barlow+Condensed:wght@400;600;700;800&amp;family=Barlow:wght@300;400;500;600;700&amp;display=swap">
-<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Outfit:wght@400;600;700;800&amp;family=Libre+Baskerville:wght@400;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Noto+Sans:wght@400;500;600;700&amp;family=Noto+Serif+JP:wght@400;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;family=Marcellus&amp;family=Source+Sans+3:wght@400;500;600;700&amp;family=Fraunces:wght@400;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Libre+Baskerville:wght@400;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Noto+Sans:wght@400;500;600;700&amp;family=Noto+Serif+JP:wght@400;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;family=Marcellus&amp;family=Source+Sans+3:wght@400;500;600;700&amp;family=Fraunces:wght@400;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Space Grotesk","Barlow",-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 /* ── THEME TOKENS ─────────────────────────────────────────────────────────────
@@ -215,10 +215,10 @@
 [data-theme="crimson"],[data-theme="solar"],[data-theme="aqua"],[data-theme="violet"],[data-theme="emerald"],[data-theme="graphite"],[data-theme="midnight"],[data-theme="sakura"],[data-theme="ember"],[data-theme="synthwave"],[data-theme="aurora"]{--c-blue:var(--c-3);--c-orange:var(--c-primary);--c-pink:var(--c-2)}
 html{background:var(--bg);-webkit-overflow-scrolling:touch;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
 [data-theme="modern"]{
- --bg:#101b25;--bg-1:#182833;--bg-2:#20343f;--bg-3:#283e49;--ink:#edf6f8;--ink-2:#c1d2d8;--ink-3:#a9c0c7;
- --c-primary:#9cdecb;--c-2:#b5bfeb;--c-3:#a3d7ec;--c-good:#b4dfa7;--c-action:#9cdecb;--c-bad:#ffb4bd;--on-accent:#10252a;
- --font-body:'Manrope',sans-serif;--font-display:'Outfit',sans-serif;--shape:12px;--button-shape:8px;--material-shadow:0 8px 28px #020c1438,inset 0 1px 0 #e7ffff12;
- --material:linear-gradient(90deg,#bce9e809 1px,transparent 1px),linear-gradient(#bce9e809 1px,transparent 1px);--material-size:36px 36px;
+ --bg:#ede6dc;--bg-1:#f7f1e8;--bg-2:#e6dbce;--bg-3:#d5c5b4;--ink:#30261f;--ink-2:#55483e;--ink-3:#6a5b50;
+ --c-primary:#875c47;--c-2:#715d4e;--c-3:#53656b;--c-good:#4d6549;--c-action:#875c47;--c-bad:#9b3c31;--on-accent:#fffaf3;
+ --font-body:'Manrope',sans-serif;--font-display:'Cormorant Garamond',serif;--shape:22px;--button-shape:14px;--material-shadow:0 4px 0 #e0d5c8;
+ --material:none;--material-size:auto;
 }
 [data-theme="vintage"]{
  --bg:#28211e;--bg-1:#352c27;--bg-2:#40362e;--bg-3:#4a3e34;--ink:#fff0d9;--ink-2:#decab3;--ink-3:#d1b99c;
@@ -266,13 +266,11 @@ html[data-identity="rich"] :is(.planner-action,.pill-badge,.app-nav button){bord
 html[data-identity="rich"] .section-rule::before,html[data-identity="rich"] .section-rule::after{background:color-mix(in srgb,var(--c-primary) 25%,transparent)}
 html[data-identity="rich"] .theme-motion{opacity:.32}
 html[data-identity="rich"] .app-nav svg{stroke-width:1.5}
-html[data-theme="modern"] .app-nav svg{stroke-width:2;stroke-linecap:square}
 html[data-theme="vintage"] .app-nav svg{stroke-width:1.8;stroke-dasharray:3 .7}
 html[data-theme="zen"] .app-nav svg{stroke-width:1.4;stroke-linecap:round}
 html[data-theme="lagoon"] .app-nav svg{stroke-width:1.7;filter:drop-shadow(0 1px 3px var(--glow))}
 html[data-theme="dunes"] .app-nav svg{stroke-width:2;stroke-linejoin:bevel}
 html[data-theme="observatory"] .app-nav svg{stroke-width:1.2;filter:drop-shadow(0 0 3px var(--glow))}
-.theme-motion[data-motif="modern"] .theme-motif{animation-name:waveDrift;animation-duration:44s}
 .theme-motion[data-motif="vintage"] .theme-motif{animation-name:starBreathe;animation-duration:24s}
 .theme-motion[data-motif="zen"] .theme-motif{animation-name:solarTurn;animation-duration:100s}
 .theme-motion[data-motif="lagoon"] .theme-motif{animation-name:waveDrift;animation-duration:42s}
@@ -482,6 +480,9 @@ html[data-motion-paused] .theme-motion *,html[data-motion-paused] body::before{a
 }
 @media (prefers-reduced-motion:reduce){.xp-fill{transition:none}.level-up,.level-celebration{animation:none}}
 </style>
+<link rel="stylesheet" href="./theme-fonts.css">
+<link rel="stylesheet" href="./theme-modern.css">
+<link rel="stylesheet" href="./theme-characters.css">
 </head>
 <body>
 <div id="root"><div style="padding:60px 20px;text-align:center;color:#555">Loading DailyOS…</div></div>
@@ -561,7 +562,9 @@ const THEMES = {
   ember:    { label:"Ember", motion:"Rising sparks", swatch:["hsl(32 88% 68%)","hsl(22 88% 55%)","hsl(10 72% 44%)"] },
   synthwave:{ label:"Synthwave", motion:"Neon horizons", swatch:["hsl(315 90% 62%)","hsl(265 85% 68%)","hsl(185 95% 58%)"] },
   aurora:   { label:"Aurora", motion:"Northern lights", swatch:["hsl(140 78% 66%)","hsl(170 85% 55%)","hsl(196 80% 50%)"] },
-  modern: {label:"Modern",motion:"Glass & geometry",symbol:"◇",rich:true,swatch:["#9cdecb","#b5bfeb","#a3d7ec"],meaning:"Clear geometry, room to breathe",palette:"Soft mint, slate and periwinkle balance cool clarity."},
+  modern: {label:"Modern",motion:"Matte stone & linen",symbol:"◒",rich:true,swatch:["#875c47","#715d4e","#ede6dc"],meaning:"Warm spaces, quiet daily rituals",palette:"Bone, greige and espresso with a restrained clay accent."},
+  pokemon: {label:"Pokémon",motion:"Clouds & Poké Balls",symbol:"◓",rich:true,swatch:["#245da0","#9c302d","#ffe18a"],meaning:"Friendship, adventure, growing together",palette:"Open blue skies, warm sunlight and each partner’s type colors."},
+  akatsuki: {label:"Akatsuki",motion:"Red clouds & ink",symbol:"☁",rich:true,swatch:["#ff8792","#f0e8dd","#141216"],meaning:"Pain, loss and unyielding ambition",palette:"Dark cloth, blood-red clouds and bone-white lettering."},
   vintage: {label:"Vintage",motion:"Paper & printing ink",symbol:"❦",rich:true,swatch:["#e7bf8c","#bcd2bc","#d8bde4"],meaning:"Printed pages, a slower rhythm",palette:"Oat, sage and dusty lilac soften warm ink tones."},
   zen: {label:"Zen Garden",motion:"Raked sand & stones",symbol:"◎",rich:true,swatch:["#c5d3a0","#e8c29b","#b7d6cd"],meaning:"Enso circles, balance and renewal",palette:"Moss, rice paper and clay evoke a quiet garden."},
   lagoon: {label:"Tidal Lagoon",motion:"Sea glass & coral",symbol:"⌁",rich:true,swatch:["#9edcd1","#f1beb2","#bdd1ee"],meaning:"Coral branches, life below the tide",palette:"Sea glass and softened coral gently balance cool depths."},
@@ -2155,9 +2158,6 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
 
       {/* ── COSMIC HERO HEADER ─────────────────────────────────────────── */}
       <div className="hero-header" style={{position:"relative",overflow:"hidden",background:`linear-gradient(160deg,${C.bg} 0%,color-mix(in srgb, var(--bg-1) 98%, transparent) 100%)`,paddingBottom:24,borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
-        <div className="orb-drift" style={{position:"absolute",top:-60,right:-40,width:280,height:280,borderRadius:"50%",background:`radial-gradient(circle,${tc.glow} 0%,transparent 65%)`,pointerEvents:"none",animationDuration:"26s"}}/>
-        <div className="orb-drift" style={{position:"absolute",bottom:-50,left:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-2) 10%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"30s",animationDelay:"8s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:"30%",left:"40%",width:140,height:140,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-3) 6%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"35s",animationDelay:"15s"}}/>
         {setShowThemeSheet && (
           <button aria-label="Change accent theme" className="tap" onClick={()=>{ haptic(); setShowThemeSheet(true); }} style={{position:"absolute",top:"calc(env(safe-area-inset-top,20px) + 14px)",right:14,zIndex:5,width:34,height:34,borderRadius:11,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,0.12)",display:"flex",alignItems:"center",justifyContent:"center"}}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={C.text} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -2180,7 +2180,7 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
               </div>
             </div>
           </div>
-          <div style={{position:"relative",flexShrink:0,alignSelf:"flex-end",marginRight:-6}}>
+          <div className="hero-portrait" style={{position:"relative",flexShrink:0,alignSelf:"flex-end",marginRight:-6}}>
             <div style={{position:"absolute",right:14,bottom:10,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle, var(--glow,color-mix(in srgb, var(--c-2) 30%, transparent)) 0%,transparent 70%)",filter:"blur(6px)",pointerEvents:"none"}}/>
             <img src={ISH_CROPPED} alt="" aria-hidden="true" className="float hero-photo" style={{position:"relative",display:"block",height:208,width:"auto",objectFit:"contain",pointerEvents:"none",maskImage:"radial-gradient(ellipse 78% 86% at 50% 42%, #000 52%, transparent 100%)",WebkitMaskImage:"radial-gradient(ellipse 78% 86% at 50% 42%, #000 52%, transparent 100%)"}}/>
           </div>
@@ -2627,14 +2627,12 @@ function FitnessPage({ meals, setMeals, attend, setAttend, apiKey, favorites, se
       {showChat&&<FoodAIChat apiKey={apiKey} onAddMeal={m=>setMeals(prev=>({...prev,[dKey]:[...(prev[dKey]||[]),{...m,id:crypto.randomUUID()}]}))} onClose={()=>setShowChat(false)} favorites={favorites} onSaveFavorite={saveFavorite}/>}
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
 
-      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 48px) 20px 14px",position:"relative",overflow:"hidden"}}>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-good) 14%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-3) 10%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
+      <div className="page-header" style={{padding:"calc(env(safe-area-inset-top, 20px) + 48px) 20px 14px",position:"relative",overflow:"visible"}}>
         <div className="pill-badge" style={{marginBottom:10,position:"relative"}}>
           <DumbbellIcon size={12} color={C.amber}/>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Health</span>
         </div>
-        <div style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-1.5,lineHeight:0.92,position:"relative",background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Track Your Day</div>
+        <div className="page-title" style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-1.5,lineHeight:1.25,position:"relative",background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Track Your Day</div>
       </div>
 
       {/* Date nav */}
@@ -2897,14 +2895,12 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
 
   return (
     <div className="supplements-layout">
-      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 16px",position:"relative",overflow:"hidden"}}>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-3) 16%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:10,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-2) 9%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
+      <div className="page-header" style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 16px",position:"relative",overflow:"visible"}}>
         <div className="pill-badge" style={{marginBottom:10,position:"relative",background:"color-mix(in srgb, var(--c-3) 10%, transparent)",border:"1px solid color-mix(in srgb, var(--c-3) 22%, transparent)"}}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 3 8 3Z"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Stack</span>
         </div>
-        <div style={{display:"inline-block",fontFamily:"'Syne',sans-serif",fontSize:32,fontWeight:900,letterSpacing:-1.0,lineHeight:0.95,position:"relative",paddingRight:6,background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
+        <div className="page-title" style={{display:"inline-block",fontFamily:"'Syne',sans-serif",fontSize:32,fontWeight:900,letterSpacing:-1.0,lineHeight:1.25,position:"relative",paddingRight:6,background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
         <div style={{fontSize:13,color:C.text2,marginTop:6,position:"relative"}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
       </div>
 
@@ -3092,16 +3088,14 @@ function HabitsPage({ habits, setHabits, habitChecked, setHabitChecked, planner,
   return (
     <div className="habits-layout" style={{paddingBottom:110}}>
       {/* Header */}
-      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 0",background:`linear-gradient(180deg,var(--bg) 0%,${C.bg} 100%)`,position:"relative",overflow:"hidden"}}>
+      <div className="page-header" style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 0",background:`linear-gradient(180deg,var(--bg) 0%,${C.bg} 100%)`,position:"relative",overflow:"visible"}}>
         <div className="scan-overlay"/>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-2) 16%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"28s"}}/>
-        <div className="orb-drift" style={{position:"absolute",top:0,left:-40,width:150,height:150,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--c-pink) 10%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"34s",animationDelay:"6s"}}/>
         <div style={{position:"relative",zIndex:1}}>
           <div className="pill-badge" style={{marginBottom:10,background:"color-mix(in srgb, var(--c-2) 10%, transparent)",border:"1px solid color-mix(in srgb, var(--c-2) 22%, transparent)"}}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.violet} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill={C.violet} stroke="none"/></svg>
             <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Daily Rituals</span>
           </div>
-          <div style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,color:C.text,letterSpacing:-1.5,lineHeight:0.92,marginBottom:6}}>
+          <div className="page-title" style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,color:C.text,letterSpacing:-1.5,lineHeight:1.25,marginBottom:6}}>
             Your{" "}
             <span style={{background:`linear-gradient(100deg,${C.violet},${C.pink})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Habits</span>
           </div>
@@ -3244,6 +3238,8 @@ function ThemeSheet({ theme, setTheme, soundEnabled, setSoundEnabled, onClose })
               <button key={k} className="tap" aria-pressed={active} aria-label={`${t.label} theme${active?", selected":""}`} onClick={()=>{ haptic(12);playCue("select"); setTheme(k); }} style={{display:"flex",flexDirection:"column",alignItems:"stretch",gap:8,padding:9,borderRadius:14,background:active?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.03)",border:`1.5px solid ${active?sw:"rgba(255,255,255,0.10)"}`,boxShadow:active?`0 0 20px color-mix(in srgb, ${sw} 20%, transparent)`:"none",transition:"border 0.2s,box-shadow 0.2s,background 0.2s"}}>
                 <span className="theme-preview" data-theme={k} data-preview={t.rich?"rich":"classic"} aria-hidden="true">
                   <span className="preview-symbol">{t.symbol||"✦"}</span><span className="preview-heading">A little progress</span>
+                  {k==="pokemon"&&<img className="preview-character" src="./assets/themes/pokemon/pikachu-phone.png" alt=""/>}
+                  {k==="akatsuki"&&<img className="preview-character" src="./assets/themes/akatsuki/home-phone.png" alt=""/>}
                   <span className="preview-card" style={{display:"block"}}>✓ Your daily rhythm<span className="preview-track" style={{display:"block"}}><span/></span></span>
                   <span style={{display:"flex",gap:4,marginTop:6}}>{t.swatch.map((c,i)=><span key={i} style={{width:14,height:4,borderRadius:4,background:c}}/>)}</span>
                 </span>
@@ -3476,13 +3472,12 @@ function ProgressPage({ bwLog, setShowBackupSheet }) {
         onClose={()=>setSheetDate(null)}/>}
 
       {/* Header */}
-      <div style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 14px",position:"relative",overflow:"hidden"}}>
-        <div className="orb-drift" style={{position:"absolute",top:-50,right:-30,width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,color-mix(in srgb, var(--tab-5) 16%, transparent) 0%,transparent 65%)",pointerEvents:"none",animationDuration:"30s"}}/>
+      <div className="page-header" style={{padding:"calc(env(safe-area-inset-top, 20px) + 40px) 20px 14px",position:"relative",overflow:"visible"}}>
         <div className="pill-badge" style={{marginBottom:10,position:"relative",background:"color-mix(in srgb, var(--tab-5) 10%, transparent)",border:"1px solid color-mix(in srgb, var(--tab-5) 24%, transparent)"}}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--tab-5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l2-3h8l2 3h3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="3.8"/></svg>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Body</span>
         </div>
-        <div style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-1.5,lineHeight:0.92,position:"relative",background:`linear-gradient(100deg,${C.text},var(--tab-5))`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Progress</div>
+        <div className="page-title" style={{fontFamily:"'Syne',sans-serif",fontSize:40,fontWeight:900,letterSpacing:-1.5,lineHeight:1.25,position:"relative",background:`linear-gradient(100deg,${C.text},var(--tab-5))`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Progress</div>
         <div style={{fontSize:13,color:C.text2,marginTop:6,position:"relative"}}>
           {photos.length === 0 ? "Your transformation starts today" : `${photos.length} photo${photos.length>1?"s":""} · since ${new Date(first.date+"T00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"})}`}
         </div>
@@ -3597,6 +3592,17 @@ function ProgressPage({ bwLog, setShowBackupSheet }) {
   );
 }
 
+function ThemeCharacters({ theme, page }) {
+  const [target,setTarget]=useState(null);
+  useEffect(()=>{setTarget(document.querySelector(page==="home"?".hero-row":".page-header"));},[theme,page]);
+  if(!target||!["pokemon","akatsuki"].includes(theme))return null;
+  const names=theme==="pokemon"?{home:"Ash & Pikachu · Together, stronger",health:"Umbreon · Dark / Synchronize",habits:"Gengar · Ghost & Poison / Cursed Body",supplements:"Mewtwo · Psychic / Pressure",progress:"Rayquaza · Dragon & Flying / Air Lock"}:{home:"Itachi · Loss & resolve",health:"Orochimaru · Transformation",habits:"Pain · Pain & purpose",supplements:"Hidan · Undying resolve",progress:"Tobi · Hidden ambition"};
+  const section=page==="supplements"?"stack":page==="fitness"?"health":page;
+  const label=names[page==="fitness"?"health":page];
+  const image=name=><img key={name} src={`./assets/themes/${theme}/${name}-phone.png`} srcSet={`./assets/themes/${theme}/${name}-phone.png 1x, ./assets/themes/${theme}/${name}-desktop.png 2x`} alt="" aria-hidden="true" decoding="async"/>;
+  return ReactDOM.createPortal(<figure className="theme-character-frame" data-section={page} aria-label={label}>{theme==="pokemon"&&page==="home"?<div className="trainer-partners">{image("ash")}{image("pikachu")}</div>:image(section)}{theme==="akatsuki"&&page==="home"&&<img className="theme-crow" src="./assets/themes/akatsuki/crow.svg" alt="" aria-hidden="true"/>}<figcaption>{label}</figcaption></figure>,target);
+}
+
 function ThemeMotion({ theme }) {
   useEffect(()=>{
     const sync=()=>document.documentElement.toggleAttribute("data-motion-paused",document.hidden);
@@ -3606,7 +3612,9 @@ function ThemeMotion({ theme }) {
   },[]);
   const motif = () => {
     switch(theme){
-      case "modern": return <g><rect x="20" y="20" width="56" height="56" rx="3"/><rect x="44" y="44" width="56" height="56" rx="3" fill="currentColor" fillOpacity=".05"/><circle cx="48" cy="48" r="14"/><path d="M20 92 H35 M27 85 V100 M90 15 V32 M82 23 H99"/></g>;
+      case "modern": return null;
+      case "pokemon": return <g><circle cx="60" cy="60" r="30" fill="var(--bg-1)"/><path d="M30 60 A30 30 0 0 1 90 60Z" fill="var(--c-bad)"/><path d="M30 60 H90"/><circle cx="60" cy="60" r="8" fill="var(--bg-1)"/><path d="M14 17 L18 28 L30 31 L18 35 L14 46 L10 35 L0 31 L10 28Z"/></g>;
+      case "akatsuki": return <g><path d="M26 82 C2 82 0 52 23 48 C19 27 47 17 58 36 C73 17 101 32 96 51 C124 51 125 85 99 87 H26Z" fill="var(--c-primary)" stroke="var(--ink)" strokeWidth="2"/><path d="M34 51 Q53 40 63 54 M66 72 Q80 62 96 72" stroke="var(--bg)"/></g>;
       case "vintage": return <g><rect x="16" y="24" width="88" height="72" rx="1"/><rect x="21" y="29" width="78" height="62" rx="1" opacity=".4"/><path d="M38 47 Q60 20 82 47 M38 73 Q60 100 82 73 M31 60 H89 M43 60 Q51 44 60 60 Q69 76 77 60"/><circle cx="60" cy="60" r="21" opacity=".35"/><path d="M8 16 H23 M15 9 V23 M97 104 H112 M105 97 V112"/></g>;
       case "zen": return <g><path d="M80 25 C29 3 4 66 39 93 C81 123 119 59 89 29" strokeWidth="4" opacity=".65"/><path d="M27 78 Q50 69 83 78 Q103 95 58 98 Q18 97 27 78Z" fill="currentColor" fillOpacity=".15"/>{[0,8,16].map(y=><path key={y} d={`M-10 ${40+y} Q25 ${22+y} 54 ${40+y} T130 ${40+y}`} opacity=".35"/>)}<path d="M104 51 Q88 65 106 74 M104 59 Q119 50 113 36"/></g>;
       case "lagoon": return <g><path d="M60 108 V64 Q37 47 37 23 M60 82 Q91 69 91 42 M37 43 L19 31 M38 55 L52 34 M91 58 L110 48 M61 64 L73 32" strokeWidth="3"/><path d="M-10 91 Q23 71 54 91 T130 91" opacity=".35"/>{[[15,62,4],[79,13,3],[103,91,5],[66,47,2]].map(([x,y,r])=><circle key={x} cx={x} cy={y} r={r} opacity=".5"/>)}<path d="M13 100 Q40 113 81 101"/></g>;
@@ -3626,6 +3634,7 @@ function ThemeMotion({ theme }) {
       default: return <g><circle cx="60" cy="60" r="27" opacity=".5"/><ellipse cx="60" cy="60" rx="54" ry="21" transform="rotate(-30 60 60)"/><circle cx="104" cy="34" r="3" fill="currentColor"/><path d="M24 91 H32 M28 87 V95"/></g>;
     }
   };
+  if(theme==="modern") return null;
   return <div key={theme} className="theme-motion" data-motif={theme} aria-hidden="true">
     <svg viewBox="0 0 430 860" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <defs>
@@ -3768,6 +3777,7 @@ function App() {
   return (
     <div>
       <ThemeMotion theme={theme}/>
+      <ThemeCharacters theme={theme} page={page}/>
       <div className="account-bar" data-page={page}><button className="sync-chip" data-state={syncStatus.error?"error":syncStatus.online===false?"offline":syncStatus.message==="Synced"&&!syncStatus.pending?"synced":"syncing"} aria-label="Account and sync settings" title={syncStatus.message} onClick={()=>setShowAccount(true)}><span className="sync-dot"/>{syncStatus.error?"Sync issue":syncStatus.online===false?"Offline":syncStatus.message==="Synced"&&!syncStatus.pending?"Synced":"Syncing"}</button></div>
       {showAccount&&<AccountSheet onClose={()=>setShowAccount(false)} syncStatus={syncStatus} onApiKey={()=>{setShowAccount(false);setShowApiKey(true);}} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}/>}
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}

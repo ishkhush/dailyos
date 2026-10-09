@@ -13,7 +13,7 @@ echo "Deploying DailyOS..."
 # Stamp sw.js with current Unix time so every deploy busts the browser cache
 sed -i '' "s/const CACHE = 'dailyos-[^']*'/const CACHE = 'dailyos-$(date +%s)'/" sw.js
 
-git add index.html sw.js deploy.sh dailyos-sync.js dailyos-photos.js dailyos-xp.js dailyos-audio.js sync-config.js supabase.min.js supabase-setup.sql supabase-security-hardening.sql supabase-security-check.sql SYNC-SETUP.md DAILYOS-GUIDE.md SECURITY-REVIEW.md docs/theme-design.md .nojekyll tests
+git add index.html sw.js deploy.sh dailyos-sync.js dailyos-photos.js dailyos-xp.js dailyos-audio.js sync-config.js supabase.min.js supabase-setup.sql supabase-security-hardening.sql supabase-security-check.sql SYNC-SETUP.md DAILYOS-GUIDE.md SECURITY-REVIEW.md docs/theme-design.md .nojekyll tests theme-modern.css theme-characters.css theme-fonts.css assets
 git -c core.hooksPath=/dev/null commit -m "deploy: $(date '+%Y-%m-%d %H:%M')"
 git push origin main
 
@@ -28,6 +28,9 @@ import urllib.request
 site = "https://ishkhush.github.io/dailyos/"
 expected = {name: hashlib.sha256(pathlib.Path(name).read_bytes()).digest()
             for name in ("index.html", "sw.js", "dailyos-sync.js", "dailyos-photos.js", "dailyos-xp.js", "dailyos-audio.js", "sync-config.js", "supabase.min.js", "SYNC-SETUP.md", "supabase-setup.sql", "supabase-security-hardening.sql", "supabase-security-check.sql", "DAILYOS-GUIDE.md", "SECURITY-REVIEW.md")}
+expected.update({str(path): hashlib.sha256(path.read_bytes()).digest()
+                 for path in [pathlib.Path(name) for name in ("theme-modern.css", "theme-characters.css", "theme-fonts.css")]
+                 + list(pathlib.Path("assets").rglob("*")) if path.is_file()})
 deadline = time.monotonic() + 600
 print("Pushed to GitHub. Waiting for Pages to publish…", flush=True)
 while time.monotonic() < deadline:

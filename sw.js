@@ -4,8 +4,8 @@
 // Cache name is versioned — bumping the version here forces all clients to
 // drop the old cache on next activate, which is how you push a forced update.
 
-const CACHE = 'dailyos-1791502494';
-const PUBLIC_FILES = ['./','./index.html','./sw.js','./dailyos-sync.js','./dailyos-photos.js','./dailyos-xp.js','./dailyos-audio.js','./sync-config.js','./supabase.min.js'];
+const CACHE = 'dailyos-1791507291';
+const PUBLIC_FILES = ['./','./index.html','./sw.js','./dailyos-sync.js','./dailyos-photos.js','./dailyos-xp.js','./dailyos-audio.js','./sync-config.js','./supabase.min.js','./theme-fonts.css','./theme-modern.css','./theme-characters.css','./assets/fonts/cormorant-garamond-700.woff2','./assets/fonts/manrope-800.woff2','./assets/fonts/nunito-400.woff2','./assets/fonts/permanent-marker-400.woff2','./assets/themes/akatsuki/crow.svg','./assets/themes/akatsuki/habits-desktop.png','./assets/themes/akatsuki/habits-phone.png','./assets/themes/akatsuki/health-desktop.png','./assets/themes/akatsuki/health-phone.png','./assets/themes/akatsuki/home-desktop.png','./assets/themes/akatsuki/home-phone.png','./assets/themes/akatsuki/progress-phone.png','./assets/themes/akatsuki/progress-desktop.png','./assets/themes/akatsuki/stack-phone.png','./assets/themes/akatsuki/stack-desktop.png','./assets/themes/pokeball.svg','./assets/themes/pokemon/ash-desktop.png','./assets/themes/pokemon/ash-phone.png','./assets/themes/pokemon/habits-desktop.png','./assets/themes/pokemon/habits-phone.png','./assets/themes/pokemon/health-desktop.png','./assets/themes/pokemon/health-phone.png','./assets/themes/pokemon/pikachu-desktop.png','./assets/themes/pokemon/pikachu-phone.png','./assets/themes/pokemon/progress-desktop.png','./assets/themes/pokemon/progress-phone.png','./assets/themes/pokemon/stack-desktop.png','./assets/themes/pokemon/stack-phone.png','./assets/themes/red-cloud.svg','./assets/themes/sky.svg'];
 const PUBLIC_SCRIPTS = [
   'https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js',
