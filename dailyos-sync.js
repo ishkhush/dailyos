@@ -136,6 +136,7 @@
     if (working || starting || reconciling || !session || !navigator.onLine) { dirty=true; return; }
     working=true; dirty=false; report('Syncing…');
     try {
+      do {
       while(Object.keys(meta.pending).length) {
         const candidates=Object.values(meta.pending).slice(0,150),batch=[];
         for (const row of candidates) {
@@ -154,6 +155,8 @@
         batch.forEach(row=>{acknowledged[row.path]=row;if(meta.pending[row.path] && compare(meta.pending[row.path],row)===0)delete meta.pending[row.path];});
         await applyRows(data||[]);
       }
+      await applyRows(await pull());
+      } while(Object.keys(meta.pending).length);
       meta.lastSynced=Date.now(); report('Synced');
     } catch(error) { report(navigator.onLine?'Sync needs attention':'Offline · changes queued',error.message); }
     finally { working=false; persist(); if(dirty)schedule(); }
@@ -192,7 +195,7 @@
         meta.owner=session.user.id; meta.pending={};
         await applyRows(await pull(),true);
       } else await applyRows(remote);
-      starting=false; await flush(); report(Object.keys(meta.pending).length?'Changes queued':'Synced');
+      starting=false; await flush();
     } catch(e) { report('Sync needs attention',e.message); throw e; }
     finally { starting=false; }
   }

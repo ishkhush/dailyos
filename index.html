@@ -2862,7 +2862,7 @@ function SupplementsPage({ supps, setSupps, checked, setChecked }) {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H16C18.21 3 20 4.79 20 7V17C20 19.21 18.21 21 16 21H8C5.79 21 4 19.21 4 17V7C4 4.79 5.79 3 8 3Z"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
           <span style={{fontSize:12,fontWeight:700,color:C.text,letterSpacing:0.2}}>Stack</span>
         </div>
-        <div className="page-title" style={{display:"inline-block",fontFamily:"'Syne',sans-serif",fontSize:32,fontWeight:900,letterSpacing:-1.0,lineHeight:1.25,position:"relative",paddingRight:6,background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
+        <div className="page-title" style={{display:"inline-block",maxWidth:"100%",overflowWrap:"anywhere",fontFamily:"'Syne',sans-serif",fontSize:"clamp(24px, 8vw, 32px)",fontWeight:900,letterSpacing:-1.0,lineHeight:1.25,position:"relative",paddingRight:6,background:`linear-gradient(100deg,${C.text},${C.teal})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Supplements</div>
         <div style={{fontSize:13,color:C.text2,marginTop:6,position:"relative"}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
       </div>
 

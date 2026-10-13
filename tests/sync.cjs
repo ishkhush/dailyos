@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),{webcrypto}=require('node:crypto');
 const {compare,flatten,validRow}=require('../dailyos-sync.js');
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-const server={rows:{},channels:[],fail:false,mergeDelay:0,onMerge:null};
+const server={rows:{},channels:[],fail:false,mergeDelay:0,onMerge:null,silent:false};
 class Storage {
   getItem(k){return this[k]??null;} setItem(k,v){this[k]=String(v);} removeItem(k){delete this[k];}
 }
@@ -18,7 +18,7 @@ function device(storage=new Storage(),confirmed=false,userId='same-user',options
       if(server.fail)return {error:{message:'Simulated lost connection'}};
       if(name==='dailyos_seed'){if(!Object.keys(server.rows).length)changes.forEach(r=>server.rows[r.path]=structuredClone(r));}
       else changes.forEach(r=>{if(compare(r,server.rows[r.path])>0)server.rows[r.path]=structuredClone(r);});
-      server.channels.forEach(c=>setTimeout(()=>c.callback(),0));
+      if(!server.silent)server.channels.forEach(c=>setTimeout(()=>c.callback(),0));
       return {data:changes.map(r=>structuredClone(server.rows[r.path]))};
     },storage:{from:()=>({upload:async()=>({}),download:async()=>({data:new Blob()})})}
   };
@@ -44,6 +44,12 @@ function device(storage=new Storage(),confirmed=false,userId='same-user',options
   const laptop=device();laptop.storage.setItem('dos_habits_v1',JSON.stringify([{id:'starter',name:'Starter'}]));await laptop.start();await laptop.api.login('me@example.com','password');
   assert.deepEqual(laptop.read('dos_habits_v1'),phone.read('dos_habits_v1'),'Phone seeds; laptop adopts, without starter pollution');
   phone.write('dos_habit_checked_v1',{'2026-10-07':{a:true}});await wait(650);assert.equal(laptop.read('dos_habit_checked_v1')['2026-10-07'].a,true,'Realtime marks arrive without refresh');
+  server.silent=true;
+  phone.write('dos_energy_v1',{'2026-10-07':4});await wait(350);
+  laptop.write('dos_water_v2',{date:'2026-10-07',count:2,days:{'2026-10-07':2}});await wait(350);
+  assert.equal(laptop.api.status().message,'Synced');
+  assert.deepEqual(laptop.read('dos_energy_v1'),{'2026-10-07':4},'Synced includes a cloud refresh even when realtime delivery is unavailable');
+  server.silent=false;
   phone.nav.onLine=false;laptop.nav.onLine=false;
   phone.write('dos_planner_v1',{'2026-10-07':{habitTimes:{a:{start:'10:00',end:''}}}});
   laptop.write('dos_habits_v1',[{id:'a',name:'Read a book'},{id:'b',name:'Run'}]);
@@ -56,7 +62,9 @@ function device(storage=new Storage(),confirmed=false,userId='same-user',options
   phone.write('dos_habits_v1',[{id:'b',name:'Run'}]);await wait(650);assert.deepEqual(laptop.read('dos_habits_v1'),[{id:'b',name:'Run'}]);
   phone.nav.onLine=false;phone.write('dos_habit_checked_v1',{'2026-10-07':{a:true,b:true}});await wait(220);
   const restart=device(phone.storage);restart.nav.onLine=false;await restart.start();assert(restart.api.status().pending>0,'Offline queue persists across restart');restart.nav.onLine=true;await restart.api.login('me@example.com','password');await wait(650);assert.equal(laptop.read('dos_habit_checked_v1')['2026-10-07'].b,true);
-  server.fail=true;restart.write('dos_planner_v1',{'2026-10-07':{hiddenHabits:{b:true}}});await wait(300);assert(restart.api.status().pending>0,'Failed upload retains queue');server.fail=false;await restart.api.retry();await wait(650);assert.equal(laptop.read('dos_planner_v1')['2026-10-07'].hiddenHabits.b,true);
+  server.fail=true;restart.write('dos_planner_v1',{'2026-10-07':{hiddenHabits:{b:true}}});await wait(300);assert(restart.api.status().pending>0,'Failed upload retains queue');
+  await restart.api.retry();assert.equal(restart.api.status().message,'Sync needs attention','Retry preserves the upload failure status');assert.match(restart.api.status().error,/Simulated lost connection/);
+  server.fail=false;await restart.api.retry();await wait(650);assert.equal(laptop.read('dos_planner_v1')['2026-10-07'].hiddenHabits.b,true);
   await assert.rejects(()=>restart.api.configure('https://test.supabase.co','sb_secret_bad'),/browser key/);
   await assert.rejects(()=>restart.api.configure('https://another.supabase.co','sb_publishable_test'),/another project/);
   await assert.rejects(()=>restart.api.login('other@example.com','password',true),/account creation is disabled/);
