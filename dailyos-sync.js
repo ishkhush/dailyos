@@ -59,6 +59,8 @@
   meta.pending=Object.fromEntries(Object.entries(meta.pending).filter(([path,row])=>path===row.path && validRow(row)));
   meta.clock=Number.isSafeInteger(meta.clock)&&meta.clock>=0?meta.clock:0;
   let client, session, channel, adapter, working = false, dirty = false, starting = false, reconciling=false, authSubscription, timer, seedAuthorized = false, photoError = '';
+  let liveTimer, applyingLive=false, refreshNeeded=false;
+  const liveRows=new Map();
   const baseline = {};
   Object.keys(localStorage).filter(eligible).forEach(key=>{
     const stored = meta.owner ? materialize(meta.rows,[key]) : read(key,null);
@@ -113,7 +115,7 @@
       }
     });
     persist();
-    for (const key of affected) {
+    for (const key of [...affected].sort((a,b)=>Number(a==='photos')-Number(b==='photos'))) {
       if (key==='__seed') continue;
       const value=materialize(meta.rows,[key]);
       if (key==='photos') { try { await adapter.applyPhotos(value||{}); photoError=''; } catch(error) { photoError=error.message||String(error); } continue; }
@@ -131,7 +133,29 @@
     }
     return rows;
   }
-  const schedule = () => { clearTimeout(timer); timer=setTimeout(()=>flush(),180); };
+  const schedule = () => { clearTimeout(timer); timer=setTimeout(()=>flush(),60); };
+  const scheduleLive = () => { if(!liveTimer)liveTimer=setTimeout(()=>{liveTimer=null;applyLive();},25); };
+  async function applyLive() {
+    if(starting || applyingLive || !session || !navigator.onLine)return;
+    applyingLive=true;
+    try {
+      const rows=[...liveRows.values()];liveRows.clear();
+      if(rows.length)await applyRows(rows);
+      if(photoError)report('Sync needs attention',photoError);
+      else if(rows.length && !working && !reconciling && !Object.keys(meta.pending).length){meta.lastSynced=Date.now();persist();report('Synced','');}
+    } catch(error) { refreshNeeded=true; report('Sync needs attention',error.message); }
+    finally { applyingLive=false;if(liveRows.size)scheduleLive(); }
+    if(refreshNeeded)await reconcile();
+  }
+  function receiveLive(payload) {
+    if(!session)return;
+    const row=payload?.new;
+    if(row && Object.keys(row).length){
+      if(row.user_id!==session.user.id || !validRow(row))return;
+      if(compare(row,liveRows.get(row.path))>0)liveRows.set(row.path,row);
+    } else refreshNeeded=true;
+    scheduleLive();
+  }
   async function uploadPhoto(path,photo) {
     const bytes=await photo.blob.arrayBuffer();
     if(!bytes.byteLength || bytes.byteLength!==photo.blob.size)throw Error(`Photo ${photo.date}: the saved image has no readable content. Reimport the original photo to retry.`);
@@ -145,7 +169,8 @@
     try {
       do {
         while(Object.keys(meta.pending).some(path=>!blocked.has(path))) {
-          const candidates=Object.values(meta.pending).filter(row=>!blocked.has(row.path)).sort((a,b)=>Number(JSON.parse(a.path)[0]==='photos')-Number(JSON.parse(b.path)[0]==='photos')).slice(0,150),batch=[];
+          const available=Object.values(meta.pending).filter(row=>!blocked.has(row.path)),records=available.filter(row=>JSON.parse(row.path)[0]!=='photos'||row.deleted);
+          const candidates=(records.length?records:available).slice(0,150),batch=[];
           for (const row of candidates) {
             if(JSON.parse(row.path)[0]==='photos' && !row.deleted) {
               try {
@@ -169,7 +194,7 @@
       if(failed.length || photoError)report('Sync needs attention',failed[0]||photoError);
       else { meta.lastSynced=Date.now(); report('Synced',''); }
     } catch(error) { report(navigator.onLine?'Sync needs attention':'Offline · changes queued',error.message); }
-    finally { working=false; persist(); if(dirty)schedule(); }
+    finally { working=false; persist(); if(dirty)schedule();if(refreshNeeded||liveRows.size)scheduleLive(); }
   }
   async function hydrate(nextSession,allowSeed=seedAuthorized) {
     if (!nextSession) { session=null; checkingSession=false; if(channel)await client.removeChannel(channel); channel=null; report('Sign in to sync'); return; }
@@ -177,10 +202,7 @@
     session=nextSession; checkingSession=false; starting=true; report(navigator.onLine?'Connecting…':'Offline');
     try {
       if (channel)await client.removeChannel(channel);
-      channel=client.channel('dailyos-'+session.user.id).on('postgres_changes',{event:'*',schema:'public',table:'dailyos_records',filter:'user_id=eq.'+session.user.id},()=>{
-        if(starting){dirty=true;return;}
-        clearTimeout(timer); timer=setTimeout(()=>reconcile(),150);
-      }).subscribe(state=>{if(state==='SUBSCRIBED') { if(!starting&&meta.owner)reconcile(); } else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT')report('Reconnecting…');});
+      channel=client.channel('dailyos-'+session.user.id).on('postgres_changes',{event:'*',schema:'public',table:'dailyos_records',filter:'user_id=eq.'+session.user.id},receiveLive).subscribe(state=>{if(state==='SUBSCRIBED') { if(meta.owner){refreshNeeded=true;scheduleLive();} } else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT')report('Reconnecting…');});
       const remote=await pull();
       const joining=!meta.owner;
       if (joining) {
@@ -206,15 +228,19 @@
       } else await applyRows(remote);
       starting=false; await flush();
     } catch(e) { report('Sync needs attention',e.message); throw e; }
-    finally { starting=false; }
+    finally { starting=false;if(refreshNeeded||liveRows.size)scheduleLive(); }
   }
   async function reconcile() {
-    if (!session || starting || working || reconciling || !navigator.onLine)return;
+    if(!session || !navigator.onLine)return;
+    if(starting || working || reconciling){refreshNeeded=true;return;}
+    refreshNeeded=false;
     if(!meta.owner){try{await hydrate(session,false);}catch(e){report('Sync needs attention',e.message);}return;}
     reconciling=true; report('Syncing…');
     try { await applyRows(await pull()); } catch(e) { report('Sync needs attention',e.message); return; }
-    finally { reconciling=false; }
-    await flush();
+    finally { reconciling=false;if(refreshNeeded||liveRows.size)scheduleLive(); }
+    if(Object.keys(meta.pending).length)await flush();
+    else if(photoError)report('Sync needs attention',photoError);
+    else {meta.lastSynced=Date.now();persist();report('Synced','');}
   }
   async function connect() {
     const config=read('dos_sync_config_v1',root.DAILYOS_SYNC||{});
@@ -238,7 +264,7 @@
     async start(nextAdapter) {
       adapter=nextAdapter;
       Object.keys(localStorage).filter(eligible).forEach(key=>localDoc(key,read(key,null)));
-      const recover=()=>{if(session)reconcile();else if(status.error)connect().catch(e=>report('Sync needs attention',e.message));};
+      const recover=()=>{if(session){if(liveRows.size)scheduleLive();reconcile();}else if(status.error)connect().catch(e=>report('Sync needs attention',e.message));};
       window.addEventListener('online',recover); document.addEventListener('visibilitychange',()=>{if(!document.hidden)recover();});
       window.addEventListener('offline',()=>report('Offline · changes queued'));
       window.addEventListener('storage',e=>{
@@ -247,7 +273,7 @@
           else if(eligible(e.key)){const value=e.newValue===null?adapter.defaults[e.key]:JSON.parse(e.newValue);baseline[e.key]=e.newValue===null?{}:flatten(value,[e.key]);adapter.apply(e.key,value);}
         }catch(error){report('Sync needs attention',error.message);}
       });
-      setInterval(reconcile,15000);
+      setInterval(()=>{if(!document.hidden&&navigator.onLine)reconcile();},2000);
       try {await connect();}catch(e){report('Sync needs attention',e.message);throw e;}
     },
     write:localDoc,
