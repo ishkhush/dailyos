@@ -25,7 +25,7 @@ function device(name){
       return {data:changes.map(row=>structuredClone(server.rows[row.path]))};
     },
     storage:{from:()=>({
-      upload:async(path,blob)=>{server.events.push({device:name,kind:'upload',path});if(server.uploadFailure)return {error:{message:'Synthetic photo upload failure'}};server.objects.set(path,blob);return {};},
+      upload:async(path,bytes)=>{server.events.push({device:name,kind:'upload',path});if(server.uploadFailure)return {error:{message:'Synthetic photo upload failure'}};server.objects.set(path,new Blob([bytes],{type:'image/jpeg'}));return {};},
       download:async(path)=>{server.events.push({device:name,kind:'download',path});if(downloadFailure)return {error:{message:'Synthetic photo download failure'}};return server.objects.has(path)?{data:server.objects.get(path)}:{error:{message:'Object not found before upload'}};}
     })}
   };

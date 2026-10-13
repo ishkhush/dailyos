@@ -132,6 +132,12 @@
     return rows;
   }
   const schedule = () => { clearTimeout(timer); timer=setTimeout(()=>flush(),180); };
+  async function uploadPhoto(path,photo) {
+    const bytes=await photo.blob.arrayBuffer();
+    if(!bytes.byteLength || bytes.byteLength!==photo.blob.size)throw Error(`Photo ${photo.date}: the saved image has no readable content. Reimport the original photo to retry.`);
+    const {error}=await client.storage.from('dailyos-photos').upload(path,bytes,{contentType:'image/jpeg',upsert:true});
+    if(error)throw error;
+  }
   async function flush() {
     if (working || starting || reconciling || !session || !navigator.onLine) { dirty=true; return; }
     working=true; dirty=false; report('Syncing…');
@@ -145,8 +151,7 @@
               try {
                 const photo=await adapter.photoBlob(row.value.data.date);
                 if(!photo || photo.ts!==row.value.data.ts){if(meta.pending[row.path]&&compare(meta.pending[row.path],row)===0)throw Error('A queued photo is missing locally. Restore your backup before retrying.');continue;}
-                const {error}=await client.storage.from('dailyos-photos').upload(row.value.data.path,photo.blob,{contentType:'image/jpeg',upsert:true});
-                if(error)throw error;
+                await uploadPhoto(row.value.data.path,photo);
               } catch(error) { blocked.set(row.path,error.message||String(error)); continue; }
             }
             batch.push(row);
@@ -189,8 +194,7 @@
           records[pathKey(['photos'])]={type:'object'};
           for (const [date,photo] of Object.entries(snapshot.photos)) {
             const path=session.user.id+'/'+date+'/'+at+'-'+device+'.jpg';
-            const {error}=await client.storage.from('dailyos-photos').upload(path,photo.blob,{contentType:'image/jpeg',upsert:true});
-            if(error)throw error;
+            await uploadPhoto(path,photo);
             records[pathKey(['photos',date])]={type:'value',data:{date,ts:photo.ts,path}};
           }
           records[pathKey(['__seed'])]={type:'value',data:true};
