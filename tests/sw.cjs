@@ -1,8 +1,8 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const source=fs.readFileSync('sw.js','utf8'),current=source.match(/const CACHE = '([^']+)'/)[1];
-const handlers={},put=[],deleted=[],waits=[];
+const handlers={},put=[],deleted=[],waits=[],fetched=[];
 const cache={addAll:async urls=>{for(const file of ['./dailyos-sync.js','./dailyos-theme.js','./theme-akatsuki.css','./theme-modern.css','./theme-characters.css','./theme-fonts.css','./assets/themes/pokemon/health-desktop.png','./assets/themes/akatsuki/cloud-phone.png','./assets/themes/akatsuki/cloud-desktop.png','./assets/themes/akatsuki/stack-phone.png','./assets/themes/akatsuki/stack-desktop.png','./assets/themes/akatsuki/progress-phone.png','./assets/themes/akatsuki/progress-desktop.png'])assert(urls.includes(file),file+' precached');for(const file of urls.filter(url=>url.startsWith('./')&&url!=='./'))assert(fs.existsSync(file),file+' exists');},put:async key=>put.push(typeof key==='string'?key:key.url),match:async key=>'offline:'+key};
-const context={URL,Set,Promise,self:{location:{href:'https://example.test/dailyos/sw.js',origin:'https://example.test'},addEventListener:(name,fn)=>handlers[name]=fn,skipWaiting:async()=>{},clients:{claim:async()=>{}}},caches:{open:async()=>cache,keys:async()=>['dailyos-old','other-app-cache',current],delete:async key=>deleted.push(key)},fetch:async()=>({status:200,type:'basic',clone:()=>({})})};
+const context={URL,Set,Promise,self:{location:{href:'https://example.test/dailyos/sw.js',origin:'https://example.test'},addEventListener:(name,fn)=>handlers[name]=fn,skipWaiting:async()=>{},clients:{claim:async()=>{}}},caches:{open:async()=>cache,keys:async()=>['dailyos-old','other-app-cache',current],delete:async key=>deleted.push(key)},fetch:async(req,options)=>{fetched.push({req,options});return {status:200,type:'basic',clone:()=>({})};}};
 vm.runInNewContext(source,context);
 const request=(url,method='GET',auth=false,mode='cors')=>({url,method,mode,headers:{has:()=>auth}});
 const dispatch=async req=>{let response;handlers.fetch({request:req,waitUntil:p=>waits.push(p),respondWith:p=>response=p});if(response)await response;await Promise.all(waits.splice(0));return response;};
@@ -22,6 +22,7 @@ const dispatch=async req=>{let response;handlers.fetch({request:req,waitUntil:p=
   for(const req of excluded)assert.equal(await dispatch(req),undefined,req.url+' bypasses offline cache');
   assert.equal(put.length,0);
   await dispatch(request('https://example.test/dailyos/dailyos-sync.js'));
+  assert.equal(fetched.at(-1).options?.cache,'no-cache','Sync script revalidates instead of serving the previous deployed runtime from HTTP cache');
   await dispatch(request('https://example.test/dailyos/','GET',false,'navigate'));
   assert.deepEqual(put,['https://example.test/dailyos/dailyos-sync.js','./']);
   context.fetch=async()=>{throw Error('offline');};

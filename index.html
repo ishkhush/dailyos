@@ -3615,7 +3615,8 @@ function AccountSheet({ onClose, syncStatus, onApiKey, soundEnabled, setSoundEna
   const [setup,setSetup]=useState(!config.url);
   const run=async action=>{setBusy(true);setMessage("");try{setMessage(await action()||"");}catch(e){setMessage(e.message);}finally{setBusy(false);}};
   return <GoalSheet title="Account & sync" onClose={busy?()=>{}:onClose}>
-    <p role="status" style={{fontSize:13,color:C.text2,marginBottom:10}}>{syncStatus.email||"Use the same account on your phone and laptop."}<br/>{syncStatus.message}{syncStatus.pending?` · ${syncStatus.pending} changes waiting`:""}</p>
+    <p role="status" style={{fontSize:13,color:C.text2,marginBottom:10}}>{syncStatus.email||"Use the same account on your phone and laptop."}<br/>This device: {syncStatus.message}{syncStatus.pending?` · ${syncStatus.pending} changes waiting`:""}</p>
+    <p style={{fontSize:12,color:C.text2,marginBottom:12}}>Changes waiting on another device appear here after that device uploads them.</p>
     <p style={{fontSize:12,color:C.text2,marginBottom:12}}>{syncStatus.online===false?"Offline":"Online"} · {syncStatus.pending||0} pending changes<br/>Last synced: {syncStatus.lastSynced?new Date(syncStatus.lastSynced).toLocaleString():"Not yet"}</p>
     {syncStatus.error&&<p role="alert" style={{fontSize:12,color:C.red,marginBottom:12}}>{syncStatus.error}</p>}
     {syncStatus.message==="Choose migration source"&&<div style={{marginBottom:14}}><p style={{fontSize:12,color:C.text2,marginBottom:8}}>Your account is empty. Open this sheet in the iPhone app that contains your saved data, then upload from there.</p><button className="planner-action" disabled={busy} onClick={()=>run(()=>window.DailySync.seed())}>Upload this device’s existing data</button></div>}
@@ -3714,9 +3715,11 @@ function App() {
       async snapshot(){const data={};Object.keys(localStorage).filter(window.DailySync.eligible).forEach(key=>data[key]=ld(key,null));const photos=Object.fromEntries((await idbGetAll()).map(p=>[p.date,p]));return {data,photos};},
       async backupPhotos(photos){const db=await new Promise((resolve,reject)=>{const req=indexedDB.open("dailyos-before-sync",1);req.onupgradeneeded=()=>req.result.createObjectStore("photos",{keyPath:"date"});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});await new Promise((resolve,reject)=>{const tx=db.transaction("photos","readwrite");Object.values(photos).forEach(p=>tx.objectStore("photos").put(p));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});db.close();},
       async applyPhotos(next){const current=await idbGetAll(),byDate=new Map(current.map(p=>[p.date,p]));let changed=false;
-        for(const [date,p] of Object.entries(next)){const local=byDate.get(date);if(local?.ts===p.ts&&local?.path===p.path)continue;const blob=await window.DailySync.downloadPhoto(p.path);if(window.DailySync.photoCurrent(date)?.path!==p.path)continue;await idbPut({date,ts:p.ts,path:p.path,blob},true);changed=true;}
+        const errors=[];
+        for(const [date,p] of Object.entries(next)){const local=byDate.get(date);if(local?.ts===p.ts&&(local?.path===p.path||window.DailySync.photoPending(date)?.path===p.path))continue;try{const blob=await window.DailySync.downloadPhoto(p.path);if(window.DailySync.photoCurrent(date)?.path!==p.path)continue;await idbPut({date,ts:p.ts,path:p.path,blob},true);changed=true;}catch(error){errors.push(`Photo ${date}: ${error.message||String(error)}`);}}
         for(const p of current){if(!next[p.date]&&!window.DailySync.photoCurrent(p.date)){await idbDel(p.date,true);changed=true;}}
         if(changed){sv("dos_body_index_v1",(await idbGetAll()).map(p=>({date:p.date,ts:p.ts})));window.dispatchEvent(new Event("dailyos-photos"));}
+        if(errors.length)throw Error(errors.join(" "));
       }
     }).catch(e=>toast(e.message,"error"));
     return unsubscribe;
@@ -3740,7 +3743,7 @@ function App() {
     <div>
       <StableThemeMotion theme={theme}/>
       <StableThemeCharacters theme={theme} page={page}/>
-      <div className="account-bar" data-page={page}><button className="sync-chip" data-state={syncStatus.error?"error":syncStatus.online===false?"offline":syncStatus.message==="Synced"&&!syncStatus.pending?"synced":"syncing"} aria-label="Account and sync settings" title={syncStatus.message} onClick={()=>setShowAccount(true)}><span className="sync-dot"/>{syncStatus.error?"Sync issue":syncStatus.online===false?"Offline":syncStatus.message==="Synced"&&!syncStatus.pending?"Synced":"Syncing"}</button></div>
+      <div className="account-bar" data-page={page}><button className="sync-chip" data-state={syncStatus.error?"error":syncStatus.online===false?"offline":syncStatus.message==="Synced"&&!syncStatus.pending?"synced":"syncing"} aria-label="Account and sync settings" title={`This device: ${syncStatus.message}`} onClick={()=>setShowAccount(true)}><span className="sync-dot"/>{syncStatus.error?"Sync issue":syncStatus.online===false?"Offline":syncStatus.message==="Synced"&&!syncStatus.pending?"Synced here":"Syncing"}</button></div>
       {showAccount&&<AccountSheet onClose={()=>setShowAccount(false)} syncStatus={syncStatus} onApiKey={()=>{setShowAccount(false);setShowApiKey(true);}} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}/>}
       {showBwModal&&<WeightLogModal bwLog={bwLog} setBwLog={setBwLog} onClose={()=>setShowBwModal(false)}/>}
       {showThemeSheet&&<ThemeSheet theme={theme} setTheme={setTheme} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} onClose={()=>setShowThemeSheet(false)}/>}

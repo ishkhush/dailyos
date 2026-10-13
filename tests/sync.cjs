@@ -20,13 +20,13 @@ function device(storage=new Storage(),confirmed=false,userId='same-user',options
       else changes.forEach(r=>{if(compare(r,server.rows[r.path])>0)server.rows[r.path]=structuredClone(r);});
       if(!server.silent)server.channels.forEach(c=>setTimeout(()=>c.callback(),0));
       return {data:changes.map(r=>structuredClone(server.rows[r.path]))};
-    },storage:{from:()=>({upload:async()=>({}),download:async()=>({data:new Blob()})})}
+    },storage:{from:()=>({upload:async()=>options.uploadError?{error:{message:options.uploadError}}:{},download:async()=>({data:new Blob()})})}
   };
   const context={localStorage:storage,navigator:nav,crypto:webcrypto,Blob,location:{origin:'https://example.com',pathname:'/'},supabase:{createClient:()=>client},document:{addEventListener(){}},setTimeout,clearTimeout,setInterval:(fn,ms)=>{const t=setInterval(fn,ms);t.unref();return t;},atob};
   context.window=context;context.addEventListener=(event,fn)=>listeners[event]=fn;
   vm.runInNewContext(fs.readFileSync(require.resolve('../dailyos-sync.js'),'utf8'),context);
   const api=context.DailySync;
-  return {storage,nav,api,listeners,async start(){await api.start({defaults:{dos_habits_v1:[],dos_habit_checked_v1:{},dos_planner_v1:{}},apply:(key,value)=>storage.setItem(key,JSON.stringify(value)),photoBlob:async()=>null,backupPhotos:async()=>{},applyPhotos:async()=>{},snapshot:async()=>({data:Object.fromEntries(Object.keys(storage).filter(api.eligible).map(k=>[k,JSON.parse(storage[k])])),photos:{}})});},write(key,value){storage.setItem(key,JSON.stringify(value));api.write(key,value);},read:key=>JSON.parse(storage.getItem(key))};
+  return {storage,nav,api,listeners,async start(){await api.start({defaults:{dos_habits_v1:[],dos_habit_checked_v1:{},dos_planner_v1:{}},apply:(key,value)=>storage.setItem(key,JSON.stringify(value)),photoBlob:async date=>options.photos?.[date]||null,backupPhotos:async()=>{},applyPhotos:async()=>{if(options.photoError)throw Error(options.photoError);},snapshot:async()=>({data:Object.fromEntries(Object.keys(storage).filter(api.eligible).map(k=>[k,JSON.parse(storage[k])])),photos:{}})});},write(key,value){storage.setItem(key,JSON.stringify(value));api.write(key,value);},read:key=>JSON.parse(storage.getItem(key))};
 }
 (async()=>{
   let finishSession,finishPull;
@@ -108,6 +108,27 @@ function device(storage=new Storage(),confirmed=false,userId='same-user',options
   assert.equal(validRow(invalid),false);assert.equal(validRow({...invalid,path:'["dos_api_key"]'}),false);
   assert.throws(()=>flatten(JSON.parse('{"__proto__":{"polluted":true}}'),['dos_test_v1']),/Invalid sync data path/);assert.equal({}.polluted,undefined);
   const badConfigStorage=new Storage();const badConfig=device(badConfigStorage);badConfigStorage.setItem('dos_sync_config_v1',JSON.stringify({url:'https://test.supabase.co',publishableKey:'sb_secret_bad'}));await assert.rejects(()=>badConfig.start(),/browser key/);
+  const photoOptions={photos:{},uploadError:'Simulated photo upload failure'};
+  const photoPhone=device(undefined,true,'same-user',photoOptions);await photoPhone.start();
+  photoPhone.nav.onLine=false;
+  const photoDate='2026-10-12',photo={date:photoDate,ts:Date.now(),blob:new Blob(['synthetic jpeg'],{type:'image/jpeg'})};
+  photoOptions.photos[photoDate]=photo;
+  await photoPhone.api.photo(photoDate,photo);
+  photoPhone.write('dos_energy_v1',{'2026-10-12':5});
+  photoPhone.nav.onLine=true;await photoPhone.api.retry();await wait(400);
+  assert.equal(server.rows['["dos_energy_v1","2026-10-12"]']?.value.data,5,'A failed photo upload cannot block ordinary inputs');
+  assert.equal(photoPhone.api.status().pending,1,'Only the failed photo remains queued');
+  assert.match(photoPhone.api.status().error,/Simulated photo upload failure/);
+  photoOptions.uploadError='';photoOptions.photoError='Simulated photo download failure';
+  photoPhone.nav.onLine=false;photoPhone.write('dos_energy_v1',{'2026-10-12':3});photoPhone.nav.onLine=true;
+  await photoPhone.api.retry();await wait(400);
+  assert.equal(server.rows['["dos_energy_v1","2026-10-12"]']?.value.data,3,'A failed photo download cannot prevent queued inputs from uploading');
+  assert.equal(photoPhone.api.status().pending,0);
+  assert.equal(photoPhone.api.status().message,'Sync needs attention','Photo download failure remains visible even with no pending records');
+  assert.match(photoPhone.api.status().error,/Simulated photo download failure/);
+  photoOptions.photoError='';await photoPhone.api.retry();await wait(400);
+  assert.equal(photoPhone.api.status().message,'Synced');
+  await laptop.api.retry();assert.equal(laptop.read('dos_energy_v1')['2026-10-12'],3);
   console.log('Passed: migration, realtime, offline merge/deletion/restart/retry; cross-tab queue/application/in-flight acknowledgement; concurrent weight logs; root tombstones; account/project/photo isolation; signup and stored secret-key rejection; prototype/path validation (mock backend).');
   process.exit(0);
 })().catch(e=>{console.error(e);process.exit(1);});

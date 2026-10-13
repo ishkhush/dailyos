@@ -58,7 +58,7 @@
   meta.rows=Object.fromEntries(Object.entries(meta.rows).filter(([path,row])=>path===row.path && validRow(row)));
   meta.pending=Object.fromEntries(Object.entries(meta.pending).filter(([path,row])=>path===row.path && validRow(row)));
   meta.clock=Number.isSafeInteger(meta.clock)&&meta.clock>=0?meta.clock:0;
-  let client, session, channel, adapter, working = false, dirty = false, starting = false, reconciling=false, authSubscription, timer, seedAuthorized = false;
+  let client, session, channel, adapter, working = false, dirty = false, starting = false, reconciling=false, authSubscription, timer, seedAuthorized = false, photoError = '';
   const baseline = {};
   Object.keys(localStorage).filter(eligible).forEach(key=>{
     const stored = meta.owner ? materialize(meta.rows,[key]) : read(key,null);
@@ -68,7 +68,7 @@
   const acknowledged = {};
   let checkingSession = true;
   let status = { message:'Checking session…', checkingSession:true, online:navigator.onLine, lastSynced:meta.lastSynced||null, pending:Object.keys(meta.pending).length, email:null, connected:false, error:'' };
-  const report = (message,error='') => { status={message,error,checkingSession,online:navigator.onLine,lastSynced:meta.lastSynced||null,pending:Object.keys(meta.pending).length,email:session?.user.email||null,connected:!!session}; listeners.forEach(fn=>fn({...status})); };
+  const report = (message,error=status.error) => { status={message,error,checkingSession,online:navigator.onLine,lastSynced:meta.lastSynced||null,pending:Object.keys(meta.pending).length,email:session?.user.email||null,connected:!!session}; listeners.forEach(fn=>fn({...status})); };
   const persist = () => {mergeStoredMeta();put('dos_sync_meta_v1',meta);};
   const stamp = () => meta.clock = Math.max(Date.now(),meta.clock+1);
   function mergeStoredMeta(stored=read('dos_sync_meta_v1',null)) {
@@ -116,7 +116,7 @@
     for (const key of affected) {
       if (key==='__seed') continue;
       const value=materialize(meta.rows,[key]);
-      if (key==='photos') { await adapter.applyPhotos(value||{}); continue; }
+      if (key==='photos') { try { await adapter.applyPhotos(value||{}); photoError=''; } catch(error) { photoError=error.message||String(error); } continue; }
       if (!eligible(key)) continue;
       if (value!==undefined) { baseline[key]=flatten(value,[key]); put(key,value); adapter.apply(key,value); }
       else { localStorage.removeItem(key); baseline[key]={}; adapter.apply(key,adapter.defaults[key]); }
@@ -135,29 +135,34 @@
   async function flush() {
     if (working || starting || reconciling || !session || !navigator.onLine) { dirty=true; return; }
     working=true; dirty=false; report('Syncing…');
+    const blocked=new Map();
     try {
       do {
-      while(Object.keys(meta.pending).length) {
-        const candidates=Object.values(meta.pending).slice(0,150),batch=[];
-        for (const row of candidates) {
-          if(JSON.parse(row.path)[0]==='photos' && !row.deleted) {
-            const photo=await adapter.photoBlob(row.value.data.date);
-            if(!photo || photo.ts!==row.value.data.ts){if(meta.pending[row.path]&&compare(meta.pending[row.path],row)===0)throw Error('A queued photo is missing locally. Restore your backup before retrying.');continue;}
-            const {error}=await client.storage.from('dailyos-photos').upload(row.value.data.path,photo.blob,{contentType:'image/jpeg',upsert:true});
-            if(error)throw error;
+        while(Object.keys(meta.pending).some(path=>!blocked.has(path))) {
+          const candidates=Object.values(meta.pending).filter(row=>!blocked.has(row.path)).sort((a,b)=>Number(JSON.parse(a.path)[0]==='photos')-Number(JSON.parse(b.path)[0]==='photos')).slice(0,150),batch=[];
+          for (const row of candidates) {
+            if(JSON.parse(row.path)[0]==='photos' && !row.deleted) {
+              try {
+                const photo=await adapter.photoBlob(row.value.data.date);
+                if(!photo || photo.ts!==row.value.data.ts){if(meta.pending[row.path]&&compare(meta.pending[row.path],row)===0)throw Error('A queued photo is missing locally. Restore your backup before retrying.');continue;}
+                const {error}=await client.storage.from('dailyos-photos').upload(row.value.data.path,photo.blob,{contentType:'image/jpeg',upsert:true});
+                if(error)throw error;
+              } catch(error) { blocked.set(row.path,error.message||String(error)); continue; }
+            }
+            batch.push(row);
           }
-          batch.push(row);
+          if(!batch.length)break;
+          const {data,error}=await client.rpc('dailyos_merge',{changes:batch});
+          if(error)throw error;
+          mergeStoredMeta();
+          batch.forEach(row=>{acknowledged[row.path]=row;if(meta.pending[row.path] && compare(meta.pending[row.path],row)===0)delete meta.pending[row.path];});
+          await applyRows(data||[]);
         }
-        if(!batch.length)continue;
-        const {data,error}=await client.rpc('dailyos_merge',{changes:batch});
-        if(error)throw error;
-        mergeStoredMeta();
-        batch.forEach(row=>{acknowledged[row.path]=row;if(meta.pending[row.path] && compare(meta.pending[row.path],row)===0)delete meta.pending[row.path];});
-        await applyRows(data||[]);
-      }
-      await applyRows(await pull());
-      } while(Object.keys(meta.pending).length);
-      meta.lastSynced=Date.now(); report('Synced');
+        await applyRows(await pull());
+      } while(Object.keys(meta.pending).some(path=>!blocked.has(path)));
+      const failed=[...blocked].filter(([path])=>meta.pending[path]).map(([,error])=>error);
+      if(failed.length || photoError)report('Sync needs attention',failed[0]||photoError);
+      else { meta.lastSynced=Date.now(); report('Synced',''); }
     } catch(error) { report(navigator.onLine?'Sync needs attention':'Offline · changes queued',error.message); }
     finally { working=false; persist(); if(dirty)schedule(); }
   }
@@ -252,6 +257,7 @@
       meta.rows[path]=row;meta.pending[path]=row;persist();report('Photo queued');schedule();
     },
     photoCurrent:date=>materialize(meta.rows,['photos',date]),
+    photoPending:date=>{const row=meta.pending[pathKey(['photos',date])];return row&&!row.deleted?row.value.data:null;},
     async configure(url,publishableKey) {
       const browserKey=publishableKey.trim();
       if(!browserKeyAllowed(browserKey))throw Error('Use only a Supabase publishable or anon browser key. Secret and service-role keys are rejected.');
