@@ -2283,10 +2283,10 @@ function HomePage({ meals, usage, supps, suppChecked, setPage, scrollY=0, bwLog,
       {/* Nutrition + Body moved to the Health tab */}
 
       {/* ── WATER TRACKER ──────────────────────────────────────────────── */}
-      <div className="slide-up" style={{margin:"12px 16px 0",background:"color-mix(in srgb, var(--c-blue) 6%, transparent)",border:"1px solid color-mix(in srgb, var(--c-blue) 15%, transparent)",borderRadius:20,padding:"14px 16px",animationDelay:"0.10s"}}>
+      <div className="slide-up" data-ce-hydration="true" style={{margin:"12px 16px 0",background:"color-mix(in srgb, var(--c-blue) 6%, transparent)",border:"1px solid color-mix(in srgb, var(--c-blue) 15%, transparent)",borderRadius:20,padding:"14px 16px",animationDelay:"0.10s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",gap:7}}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.blue} strokeWidth="2" strokeLinecap="round"><path d="M12 2C8 8 4 12.5 4 16a8 8 0 0016 0c0-3.5-4-8-8-14z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 38" fill="none" stroke={C.blue} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 2h6M9 2v4.2a3 3 0 0 1-.7 1.9L6.6 10a4 4 0 0 0-.8 2.4V32a4 4 0 0 0 4 4h4.4a4 4 0 0 0 4-4V12.4a4 4 0 0 0-.8-2.4l-1.7-1.9a3 3 0 0 1-.7-1.9V2"/></svg>
             <span style={{fontSize:11,fontWeight:700,color:C.blue,textTransform:"uppercase",letterSpacing:1}}>Hydration</span>
           </div>
           <span style={{fontFamily:"'Syne',sans-serif",fontSize:16,fontWeight:800,color:wCount>=BOTTLE_GOAL?C.blue:C.text}}>{wCount}<span style={{fontSize:10,color:C.text3,fontWeight:500}}>/{BOTTLE_GOAL} bottles</span></span>
@@ -3446,7 +3446,7 @@ function ProgressPage({ bwLog, setShowBackupSheet }) {
 
       <div style={{padding:"0 16px 24px"}}>
         {/* Add button */}
-        <button className="tap" onClick={()=>openCapture(todayKey)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:9,padding:"14px 0",borderRadius:16,background:"linear-gradient(135deg, var(--tab-5), color-mix(in srgb, var(--tab-5) 60%, var(--c-bad)))",border:"none",color:"var(--on-accent)",fontSize:15,fontWeight:800,letterSpacing:0.2,boxShadow:"0 8px 26px color-mix(in srgb, var(--tab-5) 30%, transparent)",marginBottom:16}}>
+        <button className="tap ce-photo-action" onClick={()=>openCapture(todayKey)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:9,padding:"14px 0",borderRadius:16,background:"linear-gradient(135deg, var(--tab-5), color-mix(in srgb, var(--tab-5) 60%, var(--c-bad)))",border:"none",color:"var(--on-accent)",fontSize:15,fontWeight:800,letterSpacing:0.2,boxShadow:"0 8px 26px color-mix(in srgb, var(--tab-5) 30%, transparent)",marginBottom:16}}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l2-3h8l2 3h3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="3.8"/></svg>
           {byDate[todayKey] ? "Replace today's photo" : "Add today's photo"}
         </button>
@@ -3561,7 +3561,14 @@ function ThemeCharacters({ theme, page }) {
   const section=page==="supplements"?"stack":page==="fitness"?"health":page;
   const label=names[page==="fitness"?"health":page];
   const image=name=><img key={name} src={`./assets/themes/${theme}/${name}-phone.png`} srcSet={`./assets/themes/${theme}/${name}-phone.png 1x, ./assets/themes/${theme}/${name}-desktop.png 2x`} alt="" aria-hidden="true" decoding="async"/>;
-  return ReactDOM.createPortal(<figure className="theme-character-frame" data-section={page} aria-label={label}>{theme==="pokemon"&&page==="home"?<div className="trainer-partners">{image("ash")}{image("pikachu")}</div>:image(section)}{theme==="akatsuki"&&page==="home"&&<img className="theme-crow" src="./assets/themes/akatsuki/crow.svg" alt="" aria-hidden="true"/>}</figure>,target);
+  return ReactDOM.createPortal(<figure className="theme-character-frame" data-section={page} aria-label={label}>
+    {theme==="akatsuki"&&<div className="ce-art" aria-hidden="true">
+      {page==="home"&&<><img className="ce-eye" src="./assets/themes/akatsuki/crimson/itachi-mangekyo.svg" alt=""/><img className="ce-crow ce-crow-a" src="./assets/themes/akatsuki/crimson/crow-spread.svg" alt=""/><img className="ce-crow ce-crow-b" src="./assets/themes/akatsuki/crimson/crow-bank.svg" alt=""/><img className="ce-crow ce-crow-c" src="./assets/themes/akatsuki/crimson/crow-spread.svg" alt=""/></>}
+      {page==="habits"&&<img className="ce-eye ce-rinnegan" src="./assets/themes/akatsuki/crimson/rinnegan.svg" alt=""/>}
+      {page==="supplements"&&<img className="ce-ritual" src="./assets/themes/akatsuki/crimson/jashin.svg" alt=""/>}
+    </div>}
+    {theme==="pokemon"&&page==="home"?<div className="trainer-partners">{image("ash")}{image("pikachu")}</div>:image(section)}
+  </figure>,target);
 }
 
 function ThemeMotion({ theme }) {

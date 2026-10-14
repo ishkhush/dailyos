@@ -18,6 +18,11 @@ PNG assets retain real alpha transparency and have phone/desktop variants. PNG r
 | Akatsuki `stack-{phone,desktop}.png` | Hidan | [Owner-supplied WallpaperCat image](https://wallpapercat.com/w/full/a/a/c/738377-1932x2572-iphone-hd-hidan-background.jpg); white background removed with built-in imagegen, refined alpha, local 360/900px PNG variants |
 | Akatsuki `progress-{phone,desktop}.png` | Tobi | [Owner-supplied Google image thumbnail](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM8hEGk6oBhVO6QmxsElqvP7wPPe0DDD0TGBW_vH8P_w&s=10), 324×617 source; transparent cutout and edge refinement with built-in imagegen, local 360/900px variants |
 | Akatsuki `crow.svg` | Crow | Original vector motif |
+| Akatsuki `crimson/itachi-mangekyo.svg` | Itachi's Mangekyo Sharingan | [ShounenSuki's Itachi-specific vector](https://commons.wikimedia.org/wiki/File:Mangekyou_Sharingan_Itachi.svg), [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/); geometry retained, viewBox added. The adapted SVG remains under CC BY-SA 3.0. |
+| Akatsuki `crimson/crow-{spread,bank}.svg` | Itachi's crows | Original feathered vector redraws based on [an anime still](https://www.looper.com/836420/the-untold-truth-of-itachi-uchiha-from-naruto/); the prior `crow.svg` is no longer rendered. |
+| Akatsuki `crimson/rinnegan.svg` | Pain's Rinnegan | Original lavender, concentric-ring vector redrawn against [this reposted anime close-up](https://br.pinterest.com/pin/848787861027733681/). |
+| Akatsuki `crimson/jashin.svg` | Hidan's ritual mark | Original inverted triangle inside a circle, checked against [the official Hidan retrospective](https://naruto-official.com/en/news/01_1749). |
+| Akatsuki `crimson/{settings,appearance}.svg` | Interface controls | Original utility icons; they do not represent anime symbols. |
 
 ## Images still needed
 
