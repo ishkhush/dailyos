@@ -5,10 +5,10 @@ const boot=saved=>{
  const window={document:{documentElement:html},localStorage:{getItem:()=>saved}};
  vm.runInNewContext(source,{window,JSON});return {theme:window.DailyTheme,html,attributes};
 };
-for(const [saved,expected] of [['"akatsuki"','akatsuki'],['"pokemon"','pokemon'],['"modern"','modern'],['"vintage"','vintage'],['"Crimson"','crimson'],['bad-json','og'],['"unknown"','og']]){
+for(const [saved,expected] of [['"ufc"','ufc'],['"akatsuki"','akatsuki'],['"pokemon"','pokemon'],['"modern"','modern'],['"vintage"','vintage'],['"Crimson"','crimson'],['bad-json','og'],['"unknown"','og']]){
  const {theme,html,attributes}=boot(saved);assert.equal(html.dataset.theme,expected,'Saved theme applies before React starts');
  assert.equal(html.dataset.page,'home');assert.equal(html.dataset.identity,theme.catalog[expected].rich?'rich':'classic');
- for(const key of Object.keys(theme.catalog)){theme.apply(key);assert.equal(html.dataset.theme,key);assert.equal(attributes.has('data-character-theme'),['pokemon','akatsuki'].includes(key),'Character skin does not leak to '+key);}
+ for(const key of Object.keys(theme.catalog)){theme.apply(key);assert.equal(html.dataset.theme,key);assert.equal(attributes.has('data-character-theme'),['pokemon','akatsuki','ufc'].includes(key),'Character skin does not leak to '+key);}
 }
 const ak=fs.readFileSync('theme-akatsuki.css','utf8');
 assert(ak.includes('.theme-preview[data-theme="akatsuki"]'),'Preview uses its own theme scope');

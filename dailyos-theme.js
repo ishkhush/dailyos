@@ -1,5 +1,6 @@
 (function(root){
 const catalog = {
+  ufc: {label:"UFC",motion:"",rich:true,swatch:["#D20A0A","#EEE9DF","#B59A63"]},
   og:       { label:"OG", motion:"Orbital light", swatch:["#F59E0B","#10B981","#8B5CF6","#06B6D4"] },
   crimson:  { label:"Crimson", motion:"Silk ribbons", swatch:["hsl(348 88% 74%)","hsl(348 85% 60%)","hsl(348 74% 44%)"] },
   solar:    { label:"Solar", motion:"Sunlit halos", swatch:["hsl(46 92% 70%)","hsl(38 95% 58%)","hsl(28 80% 46%)"] },
@@ -26,7 +27,7 @@ const normalize=key=>catalog[key]?key:(aliases[key]||"og");
 const apply=key=>{
   const k=normalize(key),html=root.document.documentElement;
   html.dataset.theme=k;html.dataset.identity=catalog[k].rich?"rich":"classic";
-  html.toggleAttribute("data-character-theme",["pokemon","akatsuki"].includes(k));
+  html.toggleAttribute("data-character-theme",["pokemon","akatsuki","ufc"].includes(k));
 };
 root.DailyTheme={catalog,aliases,normalize,apply};
 let saved="og";

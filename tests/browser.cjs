@@ -113,8 +113,8 @@ let cleanup=async()=>{};
   await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});assert(await evaluate(`parseFloat(getComputedStyle(document.querySelector('.xp-fill')).transitionDuration)<.001`),'Reduced motion disables XP animation');
   const richThemeKeys=['modern','pokemon','akatsuki','vintage','zen','lagoon','dunes','observatory'],themeFonts=new Set(),themeMaterials=new Set();
   await click(`document.querySelector('button[aria-label="Change accent theme"]')`);
-  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview[data-preview="rich"]').length`),8,'Eight rich live preview thumbnails');
-  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview').length`),20,'All twenty themes remain available');
+  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview[data-preview="rich"]').length`),9,'Nine rich live preview thumbnails');
+  assert.equal(await evaluate(`document.querySelectorAll('.theme-preview').length`),21,'All twenty-one themes remain available');
   const allThemeKeys=await evaluate(`Object.keys(THEMES)`);
   await evaluate(`window._themeWrites=[];window._themeWriteOriginal=DailySync.write;DailySync.write=(key,value)=>{if(key==='dos_theme_v1')window._themeWrites.push(value);return window._themeWriteOriginal(key,value);};`);
   for(const key of richThemeKeys){

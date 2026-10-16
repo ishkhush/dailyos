@@ -64,3 +64,11 @@ Refinement prompt: "Use case: background-extraction. Refine ONLY the alpha bound
 - [Official Naruto Noir Edge Itachi feature](https://naruto-official.com/en/news/01_2624) describes monochrome with crimson accents, Sharingan red, and crow wings emerging from Itachi's cloak.
 - [Official Akatsuki figure project](https://naruto-official.com/en/news/01_2348) identifies the group and characters.
 - [Akatsuki background reference](https://naruto.fandom.com/wiki/Akatsuki) provides the red-cloud cloak identity and the organization's evolution through loss and ambition. Pain/loss symbolism is narrative visual inspiration and is not health guidance.
+
+## UFC Championship Belt — October 16, 2026
+
+Approved direction 5 from the Fight Night study, integrated at the owner's explicit deployment request. UFC logo and four fighter photos were supplied by the owner. GSP, Topuria, McGregor and Islam use transparent imagegen extractions. Islam's previously retained photo background was removed at the owner's follow-up request; the selected extraction is exec-997954b9-f707-4d2f-bd5d-15e045baafe1.png. Both header and picker use that RGBA PNG. The original transparent logo's red is #D20A0A; glow is static CSS. Picker fighter frames have no border or polygon outline.
+
+The supplied UFC Sans item was a WebP reference, so Barlow Condensed is locally bundled under SIL OFL (license in ufc/fonts/OFL.txt). Source: https://github.com/google/fonts/tree/main/ofl/barlowcondensed .
+
+Carbon, washi, cape, slate and leather textures and the cartoon octagon were generated for the design study. Enso, horn and mountain decorative motifs are code-native SVG. Triquetra geometry is AnonMoos's public-domain https://commons.wikimedia.org/wiki/File:Triquetra-tightly-knotted.svg, recolored gold/obsidian. Caucasus ornament is a public-domain Dagestan/Kuba rug crop from https://www.metmuseum.org/art/collection/search/13966 . Original references and extraction/generated originals remain retained outside the deployed runtime.
